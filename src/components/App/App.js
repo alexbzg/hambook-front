@@ -1,11 +1,18 @@
 import React from "react"
-import { Layout } from "../../components"
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { LoginPage, Layout } from "../../components"
 
 export default function App() {
   return (
-    <Layout>
-      <h1>Hambook</h1>
-    </Layout>
+    <BrowserRouter>
+      <Layout>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+        </Routes>
+      </Layout>
+    </BrowserRouter>
   )
 }
+
+
 

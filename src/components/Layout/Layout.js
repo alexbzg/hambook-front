@@ -1,18 +1,25 @@
 import React from "react"
 import { Helmet } from "react-helmet"
-import styled from "styled-components"
+import { Navbar } from "../../components"
+import styled, { ThemeProvider } from "styled-components"
+import "../../assets/css/fonts.css"
+import "../../assets/css/override.css"
 
 const StyledLayout = styled.div`
-  width: 100%;
-  max-width: 100vw;
-  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+  color: #333;
+  text-align: center;
+  font-family: 'Nunito', sans-serif;
   background: #EDEEF0;
+  -webkit-font-smoothing: antialiased;
+  position: relative;
   display: flex;
   flex-direction: column;
 `
 
 const StyledMain = styled.main`
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
 `
@@ -25,9 +32,12 @@ export default function Layout({ children }) {
         <title>HAMBOOK.net - Amateur radio social network. Plus online-logger!</title>
         <link rel="canonical" href="https://hambook.net" />
       </Helmet>
-      <StyledLayout>
-        <StyledMain>{children}</StyledMain>
-      </StyledLayout>
+      <ThemeProvider theme={{}}>
+        <StyledLayout>
+          <Navbar />
+          <StyledMain>{children}</StyledMain>
+        </StyledLayout>
+      </ThemeProvider>
     </React.Fragment>
   )
 }
