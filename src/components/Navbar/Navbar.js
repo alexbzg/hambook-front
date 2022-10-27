@@ -1,6 +1,6 @@
 import React from "react"
 import styled from "styled-components"
-import UserMenu from "./UserMenu"
+import UserMenu from "./UserMenu/UserMenu"
 import MainMenu from "./MainMenu/MainMenu"
 
 const StyledNavbar = styled.div`

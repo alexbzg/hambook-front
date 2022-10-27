@@ -1,7 +1,11 @@
 import React from "react"
 import styled from "styled-components"
+import { connect } from "react-redux"
+import { useNavigate } from "react-router-dom"
+
 import LoginFormField from "./LoginFormField"
 import validation from "../../../utils/validation"
+import { Actions as authActions,  FETCHING_USER_FROM_TOKEN_SUCCESS } from "../../../redux/auth"
 
 const LoginFormWrapper = styled.form`
 	width: 300px;
@@ -18,24 +22,24 @@ const LoginFormSubmit = styled.input`
     font-weight: bold;
 `
 
-export default function LoginForm({
-  requestUserLogin = async ({ email, password }) =>
-    console.log(`Logging in with ${email} and ${password}.`),
-  ...props
-}) {
+function LoginForm({ user, authError, isLoading, isAuthenticated, requestUserLogin, registerUser, ...props }) {
 
+  const navigate = useNavigate()
   const [form, setForm] = React.useState({
     email: "",
     password: ""
   })
-
   const [errors, setErrors] = React.useState({})
+  const [hasSubmitted, setHasSubmitted] = React.useState(false)
+
+  React.useEffect(() => {
+    if (user?.email && isAuthenticated) {
+      navigate("/")
+    }
+  }, [user, navigate, isAuthenticated])
 
   const validateInput = (label, value) => {
-    // grab validation function and run it on input if it exists
-    // if it doesn't exists, just assume the input is valid
     const isValid = validation?.[label] ? validation?.[label]?.(value) : true
-    // set an error if the validation function did NOT return true
     setErrors((errors) => ({ ...errors, [label]: !isValid }))
   }
 
@@ -46,15 +50,30 @@ export default function LoginForm({
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    // validate inputs before submitting
     Object.keys(form).forEach((label) => validateInput(label, form[label]))
-    // if any input hasn't been entered in, return early
     if (!Object.values(form).every((value) => Boolean(value))) {
       setErrors((errors) => ({ ...errors, form: `You must fill out all fields.` }))
       return
     }
-    await requestUserLogin({ email: form.email, password: form.password })
+    setHasSubmitted(true)
+    const action = await (props.register ? registerUser : requestUserLogin)(
+        { email: form.email, password: form.password })
+    if (action.type !== FETCHING_USER_FROM_TOKEN_SUCCESS) setForm(form => ({ ...form, password: "" }))    
   }
+
+  const getFormErrors = () => {
+    const formErrors = []
+    if (authError && hasSubmitted && !isLoading) {
+      formErrors.push(`Invalid email/password. Please try again.`)
+    }
+    if (errors.form) {
+      formErrors.push(errors.form)
+    }
+    return formErrors
+  }
+  const FormErrors = getFormErrors().map((entry, index) => 
+	<span key={index}>{entry}</span>
+  )
 
   return (
     <LoginFormWrapper onSubmit={handleSubmit}>
@@ -72,12 +91,24 @@ export default function LoginForm({
 			name="password"
 			invalid={Boolean(errors.password)}
 			onChange={handleInputChange}/>
+        {FormErrors}
         <LoginFormSubmit
             type="submit"
             name="submit"
+            disabled={isLoading}
             value={props.register ? "Create new account" : "Login"}/>
     </LoginFormWrapper>
   )
 }
 
-
+const mapStateToProps = (state) => ({
+  authError: state.auth.error,
+  isLoading: state.auth.isLoading,
+  isAuthenticated: state.auth.isAuthenticated,
+  user: state.auth.user,
+})
+const mapDispatchToProps = (dispatch) => ({
+  requestUserLogin: ({ email, password }) => dispatch(authActions.requestUserLogin({ email, password })),
+  registerUser:({ email, password }) => dispatch(authActions.registerNewUser({ email, password }))
+})
+export default connect(mapStateToProps, mapDispatchToProps)(LoginForm)

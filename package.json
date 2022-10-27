@@ -7,6 +7,7 @@
     "@elastic/eui": "^70.0.0",
     "@emotion/css": "^11.10.0",
     "@emotion/react": "^11.10.4",
+    "@reduxjs/toolkit": "^1.8.6",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -37,19 +38,19 @@
       "react-app/jest"
     ],
     "rules": {
-	  "import/no-anonymous-default-export": [
+      "import/no-anonymous-default-export": [
         "error",
         {
           "allowArray": true,
           "allowArrowFunction": true,
           "allowAnonymousClass": true,
           "allowAnonymousFunction": true,
-          "allowCallExpression": true, 
+          "allowCallExpression": true,
           "allowLiteral": true,
           "allowObject": true
         }
-      ]        
-	}
+      ]
+    }
   },
   "browserslist": {
     "production": [

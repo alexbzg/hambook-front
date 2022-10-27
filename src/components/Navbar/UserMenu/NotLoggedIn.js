@@ -1,15 +1,7 @@
 import React from "react"
 import styled from "styled-components"
 import {Link} from "react-router-dom"
-import { connect } from "react-redux"
 
-import { Actions as authActions } from "../../redux/auth"
-
-const UserMenuWrapper = styled.div`
-	width: 250px;
-	text-align: center;
-	z-index: 4;
-`
 const UserMenuLoginButton = styled.div`
 	width: 150px;
 	margin: 10px auto;
@@ -24,16 +16,11 @@ const UserMenuLoginButtonLink = styled(Link)`
     }
 `
 
-function UserMenu({ user, logUserOut, ...props }) {
+export default function UserMenu({ user, logUserOut, ...props }) {
   return (
-    <UserMenuWrapper>
       <UserMenuLoginButton className="button">
         <UserMenuLoginButtonLink to="/login">Login / Register</UserMenuLoginButtonLink>
       </UserMenuLoginButton>
-    </UserMenuWrapper>
   )
 }
 
-export default connect((state) => ({ user: state.auth.user }), {
-  logUserOut: authActions.logUserOut
-})(UserMenu)
