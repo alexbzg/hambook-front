@@ -5,7 +5,9 @@ import { useNavigate } from "react-router-dom"
 
 import LoginFormField from "./LoginFormField"
 import validation from "../../../utils/validation"
-import { Actions as authActions,  FETCHING_USER_FROM_TOKEN_SUCCESS } from "../../../redux/auth"
+import { extractErrorMessages } from "../../../utils/errors"
+import { Actions as authActions } from "../../../redux/auth"
+import errorIconImage from "../../../assets/img/icons/icon_error.gif"
 
 const LoginFormWrapper = styled.form`
 	width: 300px;
@@ -21,14 +23,33 @@ const LoginFormSubmit = styled.input`
     cursor: pointer;
     font-weight: bold;
 `
+const LoginFormUserAgreementWrapper = styled.div`
+    padding-left: 50px;
+`
+const LoginFormUserAgreementCheckbox = styled.input`
+    width: 30px;
+`
+
 
 function LoginForm({ user, authError, isLoading, isAuthenticated, requestUserLogin, registerUser, ...props }) {
 
   const navigate = useNavigate()
+
   const [form, setForm] = React.useState({
     email: "",
-    password: ""
+    password: "",
   })
+  React.useEffect(() => {
+    setForm((form) => {
+        if (props.register)
+            return {...form, confirmUserAgreement: false}
+        else {
+            const { confirmUserAgreement, ...rest } = form
+            return rest
+        }
+    })
+  }, [props.register])
+
   const [errors, setErrors] = React.useState({})
   const [hasSubmitted, setHasSubmitted] = React.useState(false)
 
@@ -48,23 +69,28 @@ function LoginForm({ user, authError, isLoading, isAuthenticated, requestUserLog
     setForm((form) => ({ ...form, [label]: value }))
   }
 
+  const authErrorList = extractErrorMessages(authError)     
+
   const handleSubmit = async (e) => {
+    setErrors({})
     e.preventDefault()
     Object.keys(form).forEach((label) => validateInput(label, form[label]))
+    if (!Object.keys(form).every((value) => !Boolean(errors[value]))) {
+      return
+    }
     if (!Object.values(form).every((value) => Boolean(value))) {
-      setErrors((errors) => ({ ...errors, form: `You must fill out all fields.` }))
+   //   setErrors((errors) => ({ ...errors, form: `You must fill out all fields.` }))
       return
     }
     setHasSubmitted(true)
-    const action = await (props.register ? registerUser : requestUserLogin)(
+    await (props.register ? registerUser : requestUserLogin)(
         { email: form.email, password: form.password })
-    if (action.type !== FETCHING_USER_FROM_TOKEN_SUCCESS) setForm(form => ({ ...form, password: "" }))    
   }
 
   const getFormErrors = () => {
     const formErrors = []
-    if (authError && hasSubmitted && !isLoading) {
-      formErrors.push(`Invalid email/password. Please try again.`)
+    if (hasSubmitted && authErrorList.length && !isLoading) {
+      formErrors.push(...authErrorList)
     }
     if (errors.form) {
       formErrors.push(errors.form)
@@ -74,6 +100,19 @@ function LoginForm({ user, authError, isLoading, isAuthenticated, requestUserLog
   const FormErrors = getFormErrors().map((entry, index) => 
 	<span key={index}>{entry}</span>
   )
+
+  const UserAgreementErrorIcon = errors.confirmUserAgreement ? 
+        <img src={errorIconImage} alt="Please confirm user agreement"/> : ''
+
+  const ConfirmUserAgreement = props.register ?
+        <LoginFormUserAgreementWrapper>
+            {UserAgreementErrorIcon}
+            <LoginFormUserAgreementCheckbox 
+                type="checkbox"
+                onChange={(e) => handleInputChange(props.name, e.target.value)}
+                name="confirmUserAgreement"/>
+            I agree with <a href="/path/to/agrrement">Hambook User Agreement</a>
+        </LoginFormUserAgreementWrapper> : ''
 
   return (
     <LoginFormWrapper onSubmit={handleSubmit}>
@@ -91,6 +130,7 @@ function LoginForm({ user, authError, isLoading, isAuthenticated, requestUserLog
 			name="password"
 			invalid={Boolean(errors.password)}
 			onChange={handleInputChange}/>
+        {ConfirmUserAgreement}
         {FormErrors}
         <LoginFormSubmit
             type="submit"

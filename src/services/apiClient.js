@@ -20,7 +20,7 @@ const getClient = (token = null) => {
  * @param {String} url - relative api endpoint url
  * @param {String} method - "GET", "POST", "PUT", "DELETE"
  * @param {Object} types - object with three keys representing the different action types: REQUEST, SUCCESS, FAILURE
- * @param {Object} options - object with potential data and query params
+ * @param {Object} options - object with potential data, query params and headers
  * @param {Function} onSuccess - callback to run with the returned data, if any
  * @param {Function} onFailure - callback to run with the returned error, if any
  */

@@ -89,6 +89,7 @@ export default function authReducer(state = initialState.auth, action = {}) {
 export const Actions = {}
 
 Actions.logUserOut = () => {
+  localStorage.removeItem("access_token")
   return { type: REQUEST_LOG_USER_OUT }
 }
 
@@ -173,7 +174,4 @@ Actions.registerNewUser = ({ email, password }) => {
       })
     )
 }
-
-
-
 

@@ -1,6 +1,6 @@
 /**
- * VERY simple email validation
- *
+ * basic email validation 
+ * to be impoved
  * @param {String} text - email to be validated
  * @return {Boolean}
  */
@@ -22,6 +22,7 @@ export function validatePassword(password, length = 8) {
 export default {
   email: validateEmail,
   password: validatePassword,
+  confirmUserAgreement: value => value
 }
 
 
