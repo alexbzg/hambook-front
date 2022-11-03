@@ -48,6 +48,8 @@ function LoginForm({ user, authError, isLoading, isAuthenticated, requestUserLog
             return rest
         }
     })
+    setErrors({})
+    setHasSubmitted(false)
   }, [props.register])
 
   const [errors, setErrors] = React.useState({})
@@ -109,7 +111,7 @@ function LoginForm({ user, authError, isLoading, isAuthenticated, requestUserLog
             {UserAgreementErrorIcon}
             <LoginFormUserAgreementCheckbox 
                 type="checkbox"
-                onChange={(e) => handleInputChange(props.name, e.target.value)}
+                onChange={(e) => handleInputChange(e.target.name, e.target.checked)}
                 name="confirmUserAgreement"/>
             I agree with <a href="/path/to/agrrement">Hambook User Agreement</a>
         </LoginFormUserAgreementWrapper> : ''
