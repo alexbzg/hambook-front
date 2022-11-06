@@ -18,10 +18,22 @@ const StyledLayout = styled.div`
   display: flex;
   flex-direction: column;
 `
-
 const StyledMain = styled.main`
-  display: flex;
-  flex-direction: column;
+  text-align: center;
+  padding-top: 20px;
+  //display: flex;
+  //flex-direction: column;
+`
+const LeftColumn = styled.div`
+  width: 830px;
+  display: inline-block;
+  padding-right: 20px;
+  vertical-align: top;
+`
+const RightColumn = styled.div`
+  width: 250px;
+  display: inline-block;
+  vertical-align: top;
 `
 
 export default function Layout({ children }) {
@@ -35,7 +47,10 @@ export default function Layout({ children }) {
       <ThemeProvider theme={{}}>
         <StyledLayout>
           <Navbar />
-          <StyledMain>{children}</StyledMain>
+          <StyledMain>
+			<LeftColumn>{children}</LeftColumn>
+			<RightColumn></RightColumn>
+		  </StyledMain>
         </StyledLayout>
       </ThemeProvider>
     </React.Fragment>
