@@ -25,3 +25,13 @@ export const AuthPageTitle = styled.span`
 		color: var(--grey);
     `}
 `
+export const AuthPageSubmit = styled.input`
+	display: block;
+	width: auto;
+    margin: 20px auto;
+    background-color: var(--orange);
+    color: var(--black);
+    cursor: pointer;
+    font-weight: bold;
+`
+

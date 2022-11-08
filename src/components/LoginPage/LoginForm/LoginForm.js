@@ -4,24 +4,17 @@ import { connect } from "react-redux"
 import { useNavigate } from "react-router-dom"
 
 import LoginFormField from "./LoginFormField"
+import { AuthPageSubmit } from "../../../components"
 import validation from "../../../utils/validation"
 import { extractErrorMessages } from "../../../utils/errors"
 import { Actions as authActions } from "../../../redux/auth"
 import errorIconImage from "../../../assets/img/icons/icon_error.gif"
 
+
 const LoginFormWrapper = styled.form`
 	width: 300px;
 	margin: 0 auto;
 	text-align: left;
-`
-const LoginFormSubmit = styled.input`
-	display: block;
-	width: auto;
-    margin: 20px auto;
-    background-color: var(--orange);
-    color: var(--black);
-    cursor: pointer;
-    font-weight: bold;
 `
 const LoginFormUserAgreementWrapper = styled.div`
     padding-left: 50px;
@@ -134,7 +127,7 @@ function LoginForm({ user, authError, isLoading, isAuthenticated, requestUserLog
 			onChange={handleInputChange}/>
         {ConfirmUserAgreement}
         {FormErrors}
-        <LoginFormSubmit
+        <AuthPageSubmit
             type="submit"
             name="submit"
             disabled={isLoading}

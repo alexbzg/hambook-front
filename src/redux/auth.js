@@ -12,6 +12,10 @@ export const FETCHING_USER_FROM_TOKEN_FAILURE = "@@auth/FETCHING_USER_FROM_TOKEN
 export const REQUEST_USER_SIGN_UP = "@@auth/REQUEST_USER_SIGN_UP"
 export const REQUEST_USER_SIGN_UP_SUCCESS = "@@auth/REQUEST_USER_SIGN_UP_SUCCESS"
 export const REQUEST_USER_SIGN_UP_FAILURE = "@@auth/REQUEST_USER_SIGN_UP_FAILURE"
+export const REQUEST_EMAIL_VERIFICATION = "@@auth/REQUEST_EMAIL_VERIFICATION"
+export const REQUEST_EMAIL_VERIFICATION_SUCCESS = "@@auth/REQUEST_EMAIL_VERIFICATION_SUCCESS"
+export const REQUEST_EMAIL_VERIFICATION_FAILURE = "@@auth/REQUEST_EMAIL_VERIFICATION_FAILURE"
+
 
 export default function authReducer(state = initialState.auth, action = {}) {
   switch(action.type) {
@@ -80,7 +84,24 @@ export default function authReducer(state = initialState.auth, action = {}) {
         isAuthenticated: false,
         error: action.error
       }
-          
+
+    case REQUEST_EMAIL_VERIFICATION:
+      return {
+        ...state,
+        isLoading: true,
+      }
+    case REQUEST_EMAIL_VERIFICATION_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+      }
+    case REQUEST_EMAIL_VERIFICATION_FAILURE:
+      return {
+        ...state,
+        isLoading: false,
+      }
+
+         
     default:
       return state
   }
@@ -140,7 +161,7 @@ Actions.fetchUserFromToken = (access_token) => {
             FAILURE: FETCHING_USER_FROM_TOKEN_FAILURE
           },
           options: {},
-          onSuccess: (res) => ({ type: res.type, success: false, status: res.status, error: res.error }),
+          onSuccess: (res) => ({ type: res.type, success: true, status: res.status, error: res.error }),
           onFailure: (res) => ({ type: res.type, success: false, status: res.status, error: res.error })
         })
       )
@@ -174,4 +195,29 @@ Actions.registerNewUser = ({ email, password }) => {
       })
     )
 }
+
+Actions.requestEmailVerification = (callback) => {    
+  const token = localStorage.getItem("access_token")
+  return (dispatch) => {
+    if (token) {
+      dispatch(
+        apiClient({
+          url: `/users/email_verification/request`,
+          method: `GET`,
+          types: {
+            REQUEST: REQUEST_EMAIL_VERIFICATION,
+            SUCCESS: REQUEST_EMAIL_VERIFICATION_SUCCESS,
+            FAILURE: REQUEST_EMAIL_VERIFICATION_FAILURE
+          },
+          options: {},
+          onSuccess: (res) => callback(res),
+          onFailure: (res) => callback(res)
+        })
+      )
+    } else 
+      return dispatch({ type: REQUEST_EMAIL_VERIFICATION_FAILURE, error: 'No token found.' })
+  }
+}
+
+
 
