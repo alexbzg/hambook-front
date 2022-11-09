@@ -4,7 +4,7 @@ import { connect } from "react-redux"
 import { Actions as authActions, 
     REQUEST_EMAIL_VERIFICATION_SUCCESS, 
     REQUEST_EMAIL_VERIFICATION_FAILURE } from "../../redux/auth"
-import { AuthPageWrapper, AuthPageTitle, AuthPageSubmit } from "../../components"
+import { AuthPageWrapper, AuthPageTitle, AuthForm, AuthPageSubmit } from "../../components"
 
 function EmailVerification({ user, isLoading, requestEmailVerification }) {
     const [requestResult, setRequestResult] = React.useState(null)
@@ -26,13 +26,13 @@ function EmailVerification({ user, isLoading, requestEmailVerification }) {
             )
         default:        
             return (
-                <form onSubmit={handleSubmit}>
+                <AuthForm onSubmit={handleSubmit}>
                     <AuthPageSubmit
                         type="submit"
                         name="submit"
                         disabled={isLoading}
                         value="Send the message once more"/>
-                </form>
+                </AuthForm>
             )
         }
     }

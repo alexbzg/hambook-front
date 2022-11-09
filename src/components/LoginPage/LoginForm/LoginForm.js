@@ -3,19 +3,12 @@ import styled from "styled-components"
 import { connect } from "react-redux"
 import { useNavigate } from "react-router-dom"
 
-import LoginFormField from "./LoginFormField"
-import { AuthPageSubmit } from "../../../components"
+import { AuthForm, AuthPageSubmit, AuthPageField } from "../../../components"
 import validation from "../../../utils/validation"
 import { extractErrorMessages } from "../../../utils/errors"
 import { Actions as authActions } from "../../../redux/auth"
 import errorIconImage from "../../../assets/img/icons/icon_error.gif"
 
-
-const LoginFormWrapper = styled.form`
-	width: 300px;
-	margin: 0 auto;
-	text-align: left;
-`
 const LoginFormUserAgreementWrapper = styled.div`
     padding-left: 50px;
 `
@@ -110,15 +103,15 @@ function LoginForm({ user, authError, isLoading, isAuthenticated, requestUserLog
         </LoginFormUserAgreementWrapper> : ''
 
   return (
-    <LoginFormWrapper onSubmit={handleSubmit}>
-		<LoginFormField
+    <AuthForm onSubmit={handleSubmit}>
+		<AuthPageField
 			title="Email"
 			note="(requires confirmation)"
 			type="text" 
 			name="email"
 			invalid={Boolean(errors.email)}
 			onChange={handleInputChange}/>
-		<LoginFormField
+		<AuthPageField
 			title="Password"
 			note="(8-20 symbols)"
 			type="password" 
@@ -132,7 +125,7 @@ function LoginForm({ user, authError, isLoading, isAuthenticated, requestUserLog
             name="submit"
             disabled={isLoading}
             value={props.register ? "Create new account" : "Login"}/>
-    </LoginFormWrapper>
+    </AuthForm>
   )
 }
 
