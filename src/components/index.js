@@ -8,3 +8,4 @@ export { AuthPageWrapper, AuthForm, AuthPageTitle, AuthPageSubmit } from "./Auth
 export { default as AuthPageField } from "./AuthPage/AuthPageField.js"
 export { default as EmailVerification } from "./EmailVerification/EmailVerification.js"
 export { default as PasswordResetRequest } from "./PasswordReset/PasswordResetRequest.js"
+export { default as PasswordReset } from "./PasswordReset/PasswordReset.js"

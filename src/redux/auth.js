@@ -18,6 +18,10 @@ export const REQUEST_EMAIL_VERIFICATION_FAILURE = "@@auth/REQUEST_EMAIL_VERIFICA
 export const REQUEST_PASSWORD_RESET_MESSAGE = "@@auth/REQUEST_PASSWORD_RESET_MESSAGE"
 export const REQUEST_PASSWORD_RESET_MESSAGE_SUCCESS = "@@auth/REQUEST_PASSWORD_RESET_MESSAGE_SUCCESS"
 export const REQUEST_PASSWORD_RESET_MESSAGE_FAILURE = "@@auth/REQUEST_PASSWORD_RESET_MESSAGE_FAILURE"
+export const REQUEST_PASSWORD_RESET = "@@auth/REQUEST_PASSWORD_RESET"
+export const REQUEST_PASSWORD_RESET_SUCCESS = "@@auth/REQUEST_PASSWORD_RESET_SUCCESS"
+export const REQUEST_PASSWORD_RESET_FAILURE = "@@auth/REQUEST_PASSWORD_RESET_FAILURE"
+
 
 
 export default function authReducer(state = initialState.auth, action = {}) {
@@ -115,6 +119,21 @@ export default function authReducer(state = initialState.auth, action = {}) {
         isLoading: false,
       }
     case REQUEST_PASSWORD_RESET_MESSAGE_FAILURE:
+      return {
+        ...state,
+        isLoading: false,
+      }
+    case REQUEST_PASSWORD_RESET:
+      return {
+        ...state,
+        isLoading: true,
+      }
+    case REQUEST_PASSWORD_RESET_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+      }
+    case REQUEST_PASSWORD_RESET_FAILURE:
       return {
         ...state,
         isLoading: false,
@@ -256,5 +275,27 @@ Actions.requestPasswordResetMessage = ({email, callback}) => {
       )
   }
 }
+
+Actions.requestPasswordReset = ({password, token, callback}) => {    
+  return (dispatch) => {
+      dispatch(
+        apiClient({
+          url: `/users/password_reset`,
+          method: `POST`,
+          types: {
+            REQUEST: REQUEST_PASSWORD_RESET,
+            SUCCESS: REQUEST_PASSWORD_RESET_SUCCESS,
+            FAILURE: REQUEST_PASSWORD_RESET_FAILURE
+          },
+          options: {
+              data: {password_reset: { password, token }}
+          },
+          onSuccess: (res) => callback(res),
+          onFailure: (res) => callback(res)
+        })
+      )
+  }
+}
+
 
 
