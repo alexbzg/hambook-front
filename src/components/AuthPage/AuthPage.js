@@ -39,3 +39,21 @@ export const AuthForm = styled.form`
 	margin: 0 auto;
 	text-align: left;
 `
+
+export const AuthPageResponseError = styled.div`
+    padding: 15px;
+    text-align: center;
+    background-color: var(--yellow-lite);
+    border: 1px solid var(--orange);
+    border-radius: 5px;
+    margin-bottom: 20px;
+`
+export const AuthPageResponseOK = styled.div`
+	background-color: var(--green-lite);
+    border: 1px solid var(--green);
+    padding: 15px;
+    text-align: center;
+    border-radius: 5px;
+    margin-bottom: 20px;
+`
+
