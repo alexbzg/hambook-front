@@ -4,11 +4,11 @@ import { Link } from "react-router-dom"
 import { connect } from "react-redux"
 import { useNavigate } from "react-router-dom"
 
-import { 
-	AuthPageWrapper, 
-	AuthPageTitle, 
-	AuthForm, 
-	AuthPageField, 
+import {
+	AuthPageWrapper,
+	AuthPageTitle,
+	AuthForm,
+	AuthPageField,
 	AuthPageSubmit,
 	AuthPageResponseError } from "../../components"
 import { useAuthForm } from "../../hooks/ui/useAuthForm"
@@ -29,7 +29,8 @@ const PasswordResetLink = styled(Link)`
     }
 `
 const LoginFormUserAgreementWrapper = styled.div`
-    padding-left: 50px;
+    padding-left: 0px;
+    text-align: center;
 `
 const LoginFormUserAgreementCheckbox = styled.input`
     width: 30px;
@@ -69,7 +70,7 @@ function LoginPage({ requestUserLogin, registerNewUser }) {
     setHasSubmitted(false)
     setSubmitRequested(false)
   }, [register])
-   
+
 
   const navigate = useNavigate()
   React.useEffect(() => {
@@ -78,17 +79,17 @@ function LoginPage({ requestUserLogin, registerNewUser }) {
     }
   }, [user, navigate, isAuthenticated])
 
-  const authErrorList = extractErrorMessages(error)     
-  const FormErrors = authErrorList.map((entry, index) => 
+  const authErrorList = extractErrorMessages(error)
+  const FormErrors = authErrorList.map((entry, index) =>
 	<span key={index}>{entry}<br/></span>
   )
 
-  const UserAgreementErrorIcon = register && errors.confirmUserAgreement && 
+  const UserAgreementErrorIcon = register && errors.confirmUserAgreement &&
         <img src={errorIconImage} alt="Please confirm user agreement"/>
   const UserAgreement = register && (
         <LoginFormUserAgreementWrapper>
             {UserAgreementErrorIcon}
-            <LoginFormUserAgreementCheckbox 
+            <LoginFormUserAgreementCheckbox
                 type="checkbox"
                 onChange={(e) => handleInputChange(e.target.name, e.target.checked)}
                 name="confirmUserAgreement"/>
@@ -99,12 +100,12 @@ function LoginPage({ requestUserLogin, registerNewUser }) {
   return (
     <AuthPageWrapper>
 		<AuthPageTitle
-			inactive={register} 
+			inactive={register}
 			onClick={() => setRegister(false)}
 			>
 			Login
 		</AuthPageTitle>
-		<AuthPageTitle 
+		<AuthPageTitle
 			inactive={!register}
 			onClick={() => setRegister(true)}>
 			Register
@@ -114,15 +115,15 @@ function LoginPage({ requestUserLogin, registerNewUser }) {
         <AuthForm onSubmit={handleSubmit}>
             <AuthPageField
                 title="Email"
-                note="(requires confirmation)"
-                type="text" 
+                note={register && "(requires confirmation)"}
+                type="text"
                 name="email"
                 invalid={Boolean(errors.email) && submitRequested}
                 onChange={handleInputChange}/>
             <AuthPageField
                 title="Password"
-                note="(8-20 symbols)"
-                type="password" 
+                note={register && "(8-20 symbols)"}
+                type="password"
                 name="password"
                 invalid={Boolean(errors.password) && submitRequested}
                 onChange={handleInputChange}/>

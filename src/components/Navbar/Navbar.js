@@ -4,7 +4,7 @@ import UserMenu from "./UserMenu/UserMenu"
 import MainMenu from "./MainMenu/MainMenu"
 
 const StyledNavbar = styled.div`
-  height: 90px;
+  height: 80px;
   display: flex;
   flex-direction: row;
   justify-content: center;

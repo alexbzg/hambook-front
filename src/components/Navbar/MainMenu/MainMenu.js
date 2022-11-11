@@ -31,20 +31,18 @@ const MainMenuOptions = styled.div`
 	position: absolute;
 	top: 0;
 	left: 80px;
-	margin-top: 65px;
+	margin-top: 55px;
 	z-index: 3;
 `
 
 const mainMenu = [
-	"MYBOOK", 
-	"WORLDBOOK", 
-	"LOGBOOK", 
-	"QSLBOOK", 
-	"PHOTOBOOK",
-	"ALL BOOKS"
+	"MYBOOK",
+	"WORLDBOOK",
+	"LOGBOOK",
+	"PHOTOBOOK"
 ]
 
-const MainMenuItems = mainMenu.map((entry, index) => 
+const MainMenuItems = mainMenu.map((entry, index) =>
 	<MainMenuItem title={entry} key={index}/>
 )
 

@@ -35,7 +35,7 @@ export const AuthPageSubmit = styled.input`
     font-weight: bold;
 `
 export const AuthForm = styled.form`
-	width: 300px;
+	width: 350px;
 	margin: 0 auto;
 	text-align: left;
 `
