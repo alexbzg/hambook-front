@@ -6,7 +6,6 @@ import {
 	AuthPageWrapper, 
 	AuthPageTitle, 
 	AuthForm, 
-	AuthPageField, 
 	AuthPageSubmit,
 	AuthPageResponseOK,
 	AuthPageResponseError } from "../../components"
@@ -32,6 +31,7 @@ function PasswordResetRequest({ requestPasswordReset }) {
     }
   })
   const {
+    AuthFormFields,
 	errors,
 	requestResult,
 	requestErrors,
@@ -55,13 +55,12 @@ function PasswordResetRequest({ requestPasswordReset }) {
 	  )}
       {requestResult !== true && (
           <AuthForm onSubmit={handleSubmit}>
-            <AuthPageField
-                title="Your new password"
-                type="password" 
-                name="password"
-			    note="(8-20 symbols)"
-                invalid={Boolean(errors.password) && submitRequested}
-                onChange={handleInputChange}/>
+            {AuthFormFields([{
+                title: "Your new password",
+                type: "password",
+                name: "password",
+			    note: "(8-20 symbols)"
+            }])}
             <AuthPageSubmit
                 type="submit"
                 name="submit"

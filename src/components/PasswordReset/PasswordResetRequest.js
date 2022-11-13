@@ -5,7 +5,6 @@ import {
 	AuthPageWrapper, 
 	AuthPageTitle, 
 	AuthForm, 
-	AuthPageField, 
 	AuthPageSubmit,
 	AuthPageResponseOK,
 	AuthPageResponseError } from "../../components"
@@ -23,12 +22,10 @@ function PasswordResetRequestMessage({ requestPasswordResetMessage }) {
     }
   })
   const {
-	errors,
+    AuthFormFields,
 	requestResult,
 	requestErrors,
     isLoading,
-	submitRequested,
-    handleInputChange,
 	handleSubmit
   } = useAuthForm({ initialFormState: {email: ""}, getAction, getActionArgs })
 
@@ -51,12 +48,11 @@ function PasswordResetRequestMessage({ requestPasswordResetMessage }) {
 	  )}
       {requestResult !== true && (
           <AuthForm onSubmit={handleSubmit}>
-            <AuthPageField
-                title="Your registered email"
-                type="text" 
-                name="email"
-                invalid={Boolean(errors.email) && submitRequested}
-                onChange={handleInputChange}/>
+            {AuthFormFields([{
+                title: "Your registered email",
+                type: "text",
+                name: "email"
+            }])}
             <AuthPageSubmit
                 type="submit"
                 name="submit"

@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useAuthenticatedUser } from "../../hooks/auth/useAuthenticatedUser"
+import { FormField } from "../../components"
 import validation from "../../utils/validation"
 
 export const useAuthForm = ({ initialFormState, getAction, getActionArgs }) => {
@@ -46,6 +47,16 @@ export const useAuthForm = ({ initialFormState, getAction, getActionArgs }) => {
     await getAction()(getActionArgs({form, setRequestResult, setRequestErrors}))
   }
 
+  const isFieldValid = (label) => !submitRequested || !Boolean(errors[label])
+
+  const AuthFormFields = (items) => items.map( (item, index) => 
+    <FormField 
+        {...item} 
+        key={index} 
+        isValid={isFieldValid} 
+        onChange={handleInputChange}
+    /> )
+
   return {
 	user, 
 	error,
@@ -55,6 +66,8 @@ export const useAuthForm = ({ initialFormState, getAction, getActionArgs }) => {
     setForm,
 	errors,
 	setErrors,
+    isFieldValid,
+    AuthFormFields,
 	submitRequested,
 	setSubmitRequested,
     hasSubmitted,

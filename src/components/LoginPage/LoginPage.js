@@ -8,7 +8,6 @@ import {
 	AuthPageWrapper,
 	AuthPageTitle,
 	AuthForm,
-	AuthPageField,
 	AuthPageSubmit,
 	AuthPageResponseError } from "../../components"
 import { useAuthForm } from "../../hooks/ui/useAuthForm"
@@ -32,9 +31,6 @@ const LoginFormUserAgreementWrapper = styled.div`
     padding-left: 0px;
     text-align: center;
 `
-const LoginFormUserAgreementCheckbox = styled.input`
-    width: 30px;
-`
 
 function LoginPage({ requestUserLogin, registerNewUser }) {
   const [register, setRegister] = React.useState(false)
@@ -48,12 +44,11 @@ function LoginPage({ requestUserLogin, registerNewUser }) {
 	errors,
     setForm,
     setErrors,
+    AuthFormFields,
     setHasSubmitted,
     isLoading,
-	submitRequested,
     setSubmitRequested,
     hasSubmitted,
-    handleInputChange,
 	handleSubmit
   } = useAuthForm({ initialFormState: {email: "", password: ""}, getAction, getActionArgs })
 
@@ -84,16 +79,32 @@ function LoginPage({ requestUserLogin, registerNewUser }) {
 	<span key={index}>{entry}<br/></span>
   )
 
+  const Fields = AuthFormFields([{
+      title: "Email",
+      note: register && "(requires confirmation)",
+      type: "text",
+      name: "email"
+    }, {
+      title: "Password",
+      note: register && "(8-20 symbols)",
+      type: "password",
+      name: "password",
+    }])
+
   const UserAgreementErrorIcon = register && errors.confirmUserAgreement &&
         <img src={errorIconImage} alt="Please confirm user agreement"/>
   const UserAgreement = register && (
         <LoginFormUserAgreementWrapper>
-            {UserAgreementErrorIcon}
-            <LoginFormUserAgreementCheckbox
-                type="checkbox"
-                onChange={(e) => handleInputChange(e.target.name, e.target.checked)}
-                name="confirmUserAgreement"/>
-            I agree with <a href="/path/to/agreement">Hambook User Agreement</a>
+            {AuthFormFields([{
+                preInputContent: UserAgreementErrorIcon,
+                type: "checkbox",
+                name: "confirmUserAgreement",
+                postInputContent: (
+                    <>
+                        I agree with <a href="/path/to/agreement">Hambook User Agreement</a>
+                    </>
+                )
+            }])}
         </LoginFormUserAgreementWrapper>
   )
 
@@ -113,20 +124,7 @@ function LoginPage({ requestUserLogin, registerNewUser }) {
         {error && hasSubmitted &&
             <AuthPageResponseError>{FormErrors}</AuthPageResponseError>}
         <AuthForm onSubmit={handleSubmit}>
-            <AuthPageField
-                title="Email"
-                note={register && "(requires confirmation)"}
-                type="text"
-                name="email"
-                invalid={Boolean(errors.email) && submitRequested}
-                onChange={handleInputChange}/>
-            <AuthPageField
-                title="Password"
-                note={register && "(8-20 symbols)"}
-                type="password"
-                name="password"
-                invalid={Boolean(errors.password) && submitRequested}
-                onChange={handleInputChange}/>
+            {Fields}
             {UserAgreement}
             <AuthPageSubmit
                 type="submit"
