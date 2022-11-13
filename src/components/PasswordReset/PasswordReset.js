@@ -32,12 +32,9 @@ function PasswordResetRequest({ requestPasswordReset }) {
   })
   const {
     AuthFormFields,
-	errors,
 	requestResult,
 	requestErrors,
     isLoading,
-	submitRequested,
-    handleInputChange,
 	handleSubmit
   } = useAuthForm({ initialFormState: {password: ""}, getAction, getActionArgs })
 

@@ -35,6 +35,7 @@ export default function FormField({...props}) {
         <InputElement
             type={props.type} 
             name={props.name}
+            defaultValue={props.defaultValue}
 			className={`${classInvalid}`}
             onChange={onChange}/>
         {props.postInputContent}

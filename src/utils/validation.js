@@ -19,10 +19,15 @@ export function validatePassword(password, length = 8) {
   return password?.length >= length
 }
 
+export function validateCallsign(text) {
+  return /^[a-zA-Z]{1,4}\d{1,3}[a-zA-Z]{1,4}$/.test(text)
+}
+
 export default {
   email: validateEmail,
   password: validatePassword,
-  confirmUserAgreement: value => value
+  confirmUserAgreement: value => value,
+  current_callsign: value => value === null || validateCallsign(value)
 }
 
 

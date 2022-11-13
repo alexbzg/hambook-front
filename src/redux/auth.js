@@ -21,6 +21,9 @@ export const REQUEST_PASSWORD_RESET_MESSAGE_FAILURE = "@@auth/REQUEST_PASSWORD_R
 export const REQUEST_PASSWORD_RESET = "@@auth/REQUEST_PASSWORD_RESET"
 export const REQUEST_PASSWORD_RESET_SUCCESS = "@@auth/REQUEST_PASSWORD_RESET_SUCCESS"
 export const REQUEST_PASSWORD_RESET_FAILURE = "@@auth/REQUEST_PASSWORD_RESET_FAILURE"
+export const REQUEST_USER_PROFILE_UPDATE = "@@auth/REQUEST_USER_PROFILE_UPDATE"
+export const REQUEST_USER_PROFILE_UPDATE_SUCCESS = "@@auth/REQUEST_USER_PROFILE_UPDATE_SUCCESS"
+export const REQUEST_USER_PROFILE_UPDATE_FAILURE = "@@auth/REQUEST_USER_PROFILE_UPDATE_FAILURE"
 
 
 
@@ -31,6 +34,7 @@ export default function authReducer(state = initialState.auth, action = {}) {
       return {
         ...state,
         isLoading: true,
+        error: null,
       }
     case REQUEST_LOGIN_FAILURE:
       return {
@@ -77,6 +81,7 @@ export default function authReducer(state = initialState.auth, action = {}) {
       return {
         ...state,
         isLoading: true,
+        error: null,
       }
     case REQUEST_USER_SIGN_UP_SUCCESS:
       return {
@@ -89,6 +94,26 @@ export default function authReducer(state = initialState.auth, action = {}) {
         ...state,
         isLoading: false,
         isAuthenticated: false,
+        error: action.error
+      }
+
+    case REQUEST_USER_PROFILE_UPDATE:
+      return {
+        ...state,
+        isLoading: true,
+        error: null,
+      }
+    case REQUEST_USER_PROFILE_UPDATE_SUCCESS:
+      return {
+        ...state,
+        user: { ...state.user, profile: action.data },
+        isLoading: false,
+        error: null
+      }
+    case REQUEST_USER_PROFILE_UPDATE_FAILURE:
+      return {
+        ...state,
+        isLoading: false,
         error: action.error
       }
 
@@ -205,6 +230,25 @@ Actions.fetchUserFromToken = (access_token) => {
       )
     } else 
       return dispatch({ type: FETCHING_USER_FROM_TOKEN_FAILURE, error: 'No token found.' })
+  }
+}
+
+Actions.updateUserProfile = (data) => {    
+  return (dispatch) => {
+      dispatch(
+        apiClient({
+          url: `/profiles/me`,
+          method: `PUT`,
+          types: {
+            REQUEST: REQUEST_USER_PROFILE_UPDATE,
+            SUCCESS: REQUEST_USER_PROFILE_UPDATE_SUCCESS,
+            FAILURE: REQUEST_USER_PROFILE_UPDATE_FAILURE
+          },
+            options: { data: { profile_update: data } },
+          onSuccess: (res) => ({ type: res.type, success: true, status: res.status, error: res.error }),
+          onFailure: (res) => ({ type: res.type, success: false, status: res.status, error: res.error })
+        })
+      )
   }
 }
 
