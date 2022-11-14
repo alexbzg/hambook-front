@@ -55,7 +55,8 @@ function ProfilePage({ updateUserProfile }) {
                             defaultValue: user.profile.phone,
                             title: "phone",
                             note: '(format: +12345678901)',
-                            type: "text",
+                            type: "tel",
+                            pattern: "\\+\\d{11}"
                         },
                         {
                             name: 'address',
