@@ -1,0 +1,50 @@
+.columnsWrapper {
+	display: flex;
+	flex-direction: row;
+}
+.column1 input, .column1 textarea {
+	text-align: left;
+	font-weight: normal;
+	width: 228px;
+}
+.column2 input, .column2 textarea {
+	text-align: left;
+	font-weight: normal;
+	width: 438px;
+}
+
+.column1, .column2{
+	width: 250px;
+	padding: 0;
+	margin: 0;
+	text-align: left;
+	font-size: 12px;
+	line-height: 12px;
+	color: #aaa;
+}
+
+.column2 {
+	width: 450px;
+	margin-left: 20px;
+}
+
+.email {
+	display: block;
+	text-align: center;
+	color: #333;
+	margin: 10px 0;
+}
+
+.mainPhoto {
+	text-align: center;
+}
+.mainPhoto img{
+	border: 5px solid var(--purple);
+    border-radius: 10px;
+}
+
+.photos {
+}
+
+.form {
+}

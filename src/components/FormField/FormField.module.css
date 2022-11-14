@@ -1,0 +1,15 @@
+.input {
+   font-weight: bold;
+}
+
+input[type=checkbox].input {
+    width: 30px;
+}
+
+.note {
+	margin-left: 10px;
+	color: var(--grey);
+	font-size: 12px;
+	font-style: italic;
+}
+

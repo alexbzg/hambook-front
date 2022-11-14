@@ -25,6 +25,9 @@ export const useAuthForm = ({ initialFormState, getAction, getActionArgs }) => {
   }
 
   const handleInputChange = (label, value) => {
+    if (value === "") {
+      value = null
+    }
     validateInput(label, value)
     setForm((form) => ({ ...form, [label]: value }))
   }

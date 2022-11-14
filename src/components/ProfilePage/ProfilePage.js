@@ -1,9 +1,10 @@
 import React from "react"
 import { connect } from "react-redux"
 
+import styles from './Profile.module.css'
+
 import {
 	AuthPageWrapper,
-	AuthForm,
 	AuthPageSubmit,
 	AuthPageResponseError,
 	AuthPageResponseOK,
@@ -17,8 +18,11 @@ function ProfilePage({ updateUserProfile }) {
   const { user, error, isLoading } = useAuthenticatedUser()
   const getAction = () => updateUserProfile
   const getActionArgs = ({form}) => form
+  const { created_at, updated_at, user_id, ...initialFormState } = user.profile
   const { AuthFormFields, hasSubmitted, handleSubmit } = useAuthForm({
-      initialFormState: { ...user.profile }, getAction, getActionArgs 
+      initialFormState, 
+      getAction, 
+      getActionArgs
   })
 
   const authErrorList = extractErrorMessages(error)
@@ -33,51 +37,75 @@ function ProfilePage({ updateUserProfile }) {
             <AuthPageResponseError>{FormErrors}</AuthPageResponseError>}
         {!error && !isLoading && hasSubmitted &&
             <AuthPageResponseOK>Your profile was updated succefully.</AuthPageResponseOK>}
-        <AuthForm onSubmit={handleSubmit}>
-            {AuthFormFields([
-                {
-                    name: 'full_name',
-                    defaultValue: user.profile.full_name,
-                    title: "Your full name",
-                    type: "text",
-                },
-                {
-                    name: 'address',
-                    defaultValue: user.profile.address,
-                    title: "Your home address",
-                    type: "textarea",
-                },
-                {
-                    name: 'current_callsign',
-                    defaultValue: user.profile.current_callsign,
-                    title: "Your current callsign",
-                    type: "text",
-                },
-                {
-                    name: 'prev_callsigns',
-                    defaultValue: user.profile.prev_callsigns,
-                    title: "Your previous callsigns",
-                    type: "textarea",
-                },
-                {
-                    name: 'birthdate',
-                    defaultValue: user.profile.birthdate,
-                    title: "Date of your birth",
-                    type: "date",
-                },
-                {
-                    name: 'bio',
-                    defaultValue: user.profile.bio,
-                    title: "Please tell about yourself",
-                    type: "textarea",
-                }
-            ])}
+        <form
+            className={styles.form}
+            onSubmit={handleSubmit}>
+            <div className={styles.columnsWrapper}>
+                <div className={styles.column1}>
+                    <div className={styles.mainPhoto}>
+                        <img
+                            src="/static/media/user.f1aa36f6a626a24cfd4b.jpg"
+                            alt="Avatar"
+                        />
+                    </div>
+                    <span className={styles.email}>{user.email}</span>
+                    {AuthFormFields([
+                        {
+                            name: 'phone',
+                            defaultValue: user.profile.phone,
+                            title: "phone",
+                            note: '(format: +12345678901)',
+                            type: "text",
+                        },
+                        {
+                            name: 'address',
+                            defaultValue: user.profile.address,
+                            title: "home address",
+                            type: "textarea",
+                        }
+                    ])}
+                </div>
+                <div className={styles.column2}>
+                    {AuthFormFields([
+                        {
+                            name: 'current_callsign',
+                            defaultValue: user.profile.current_callsign,
+                            inputClass: 'callsign',
+                            title: "callsign",
+                            type: "text",
+                        },
+                        {
+                            name: 'prev_callsigns',
+                            defaultValue: user.profile.prev_callsigns,
+                            title: "ex-callsigns",
+                            type: "textarea",
+                        },
+                        {
+                            name: 'full_name',
+                            defaultValue: user.profile.full_name,
+                            title: "Your full name",
+                            type: "text",
+                        }
+                    ])}
+                    <div className={styles.photos}>
+                        <span>img</span><span>img</span><span>img</span><span>+ Add img</span>
+                    </div>
+                    {AuthFormFields([
+                        {
+                            name: 'bio',
+                            defaultValue: user.profile.bio,
+                            title: "About yourself",
+                            type: "textarea",
+                        }
+                    ])}
+                </div>
+            </div>
             <AuthPageSubmit
                 type="submit"
                 name="submit"
                 disabled={isLoading}
                 value="Save changes"/>
-        </AuthForm>
+        </form>
     </AuthPageWrapper>
     )
 }

@@ -1,45 +1,36 @@
 import React from "react"
-import styled from "styled-components"
 
-const FormFieldNote = styled.span`
-	margin-left: 10px;
-	color: var(--grey);
-	font-size: 12px;
-	font-style: italic;
-`
-const FormFieldWrapper = styled.div`
-    & input:not([type=checkbox]), textarea {
-    	width: 100%;
-	    font-weight: bold;
-    }
-    & input[type=checkbox] {
-        width: 30px;
-    }
-`
+import styles from './FormField.module.css'
 
 export default function FormField({...props}) {
   const InputElement = props.type === `textarea` ? `textarea` : `input`
   const classInvalid = props.isValid(props.name) ? '' : 'invalid'
   const onChange = (e) => 
     props.onChange(props.name, props.type === 'checkbox' ? e.target.checked : e.target.value)
+  const { 
+      preInputContent, 
+      title, 
+      note, 
+      postInputContent, 
+      inputClass, 
+      isValid,
+      ...inputProps } = props
   return (
-    <FormFieldWrapper>
+    <div>
         {props.preInputContent}
         { (props.title || props.note) && (
             <>
-                {props.title}
-                <FormFieldNote>{props.note}</FormFieldNote>
+                {title}
+                <span className={styles.note}>{note}</span>
                 <br/>
             </>
         )}
         <InputElement
-            type={props.type} 
-            name={props.name}
-            defaultValue={props.defaultValue}
-			className={`${classInvalid}`}
+            {...inputProps}
+			className={`${styles.input} ${classInvalid} ${inputClass ? inputClass : ''}`}
             onChange={onChange}/>
         {props.postInputContent}
-    </FormFieldWrapper>
+    </div>
   )
 }
 

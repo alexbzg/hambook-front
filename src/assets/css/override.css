@@ -65,7 +65,16 @@ input.invalid {
     background-color: var(--pink);
 }
 textarea{
+	padding: 5px 10px;
+	margin-bottom: 20px;
+	background-color: #fff;
+	border-radius: 5px;
+	border: 1px solid #ddd;
+	font-size: 16px;
+	color: #333;
 	font-family: 'Nunito', sans-serif;
+	text-align: left;
+	outline: none;
 }
 .win{
 	padding: 10px 15px 5px 15px;

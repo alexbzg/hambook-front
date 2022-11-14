@@ -23,11 +23,16 @@ export function validateCallsign(text) {
   return /^[a-zA-Z]{1,4}\d{1,3}[a-zA-Z]{1,4}$/.test(text)
 }
 
+export function validatePhone(text) {
+  return /^\+\d{11}$/.test(text) 
+}
+
 export default {
   email: validateEmail,
   password: validatePassword,
   confirmUserAgreement: value => value,
-  current_callsign: value => value === null || validateCallsign(value)
+  current_callsign: value => value === null || value.length === 0 || validateCallsign(value),
+  phone: value => value === null || value.length === 0 || validatePhone(value)
 }
 
 
