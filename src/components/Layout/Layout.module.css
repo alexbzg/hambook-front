@@ -1,0 +1,24 @@
+.layout {
+}
+
+.main {
+  text-align: center;
+  padding-top: 20px;
+  //display: flex;
+  //flex-direction: column;
+}
+
+.leftColumn {
+  width: 830px;
+  display: inline-block;
+  padding-right: 20px;
+  vertical-align: top;
+}
+
+.rightColumn { 
+  width: 250px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+

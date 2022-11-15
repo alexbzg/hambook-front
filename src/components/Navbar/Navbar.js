@@ -1,37 +1,35 @@
 import React from "react"
-import styled from "styled-components"
+
+import styles from "./Navbar.module.css"
+import logo from "../../assets/img/hambook_logo.svg"
+
 import UserMenu from "./UserMenu/UserMenu"
-import MainMenu from "./MainMenu/MainMenu"
 
-const StyledNavbar = styled.div`
-  height: 80px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  background-color: #fff;
-  padding: 5px 0 0 0;
-  position: relative;
-  z-index: 0;
-  box-shadow: 0 3px 5px rgba(0,0,0,0.2);
-`
-
-const BgLine = styled.div`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 30px;
-  width: 100%;
-  background-color: var(--purple);
-  z-index: 1;
-`
+const mainMenu = [
+	"MYBOOK",
+	"WORLDBOOK",
+	"LOGBOOK",
+	"PHOTOBOOK"
+]
+const MainMenuItems = mainMenu.map((entry, index) =>
+	<span key={index}>{entry}</span>
+)
 
 export default function Navbar({ ...props }) {
   return (
-	<StyledNavbar>
-	  <BgLine/>
-	  <MainMenu/>
+	<div className={styles.navbar}>
+	  <div className={styles.bgLine}/>
+	  <div className={styles.mainMenu}>
+        <a href="/">
+	      <img className={styles.logoImg} src={logo} alt="Hambook logo"/>
+		  <span className={styles.logoText}>HAMBOOK</span>
+        </a>
+		<div className={styles.mainMenuOptions}>
+		  {MainMenuItems}
+		</div>
+	  </div>
       <UserMenu/>
-	</StyledNavbar>
+	</div>
   )
 }
 
