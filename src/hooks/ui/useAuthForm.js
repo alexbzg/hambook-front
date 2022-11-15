@@ -1,7 +1,15 @@
 import { useState } from "react"
+
 import { useAuthenticatedUser } from "../../hooks/auth/useAuthenticatedUser"
 import { FormField } from "../../components"
 import validation from "../../utils/validation"
+
+import styles from "./AuthBlock.module.css"
+
+export const AuthBlock = (props) => <div {...props} className={styles.authBlock}></div>
+
+export const AuthBlockTitle = ({ inactive, ...props }) => 
+    <span {...props} className={`${styles.title} ${inactive ? styles.inactive : ''}`}></span>
 
 export const useAuthForm = ({ initialFormState, getAction, getActionArgs }) => {
   const { user, error, isLoading, isAuthenticated } = useAuthenticatedUser()
@@ -60,6 +68,23 @@ export const useAuthForm = ({ initialFormState, getAction, getActionArgs }) => {
         onChange={handleInputChange}
     /> )
 
+  const AuthFormSubmit = (props) =>
+        <input 
+            {...props}
+            type="submit"
+            name="submit"
+            disabled={isLoading}/>
+
+  const AuthResultDisplay = (successMessage) => requestResult ? (
+		  <div className={`${styles.response} ${styles.OK}`}>
+            {successMessage}
+		  </div>
+        ) : ( requestResult === false ? (
+		  <div className={styles.response}>
+			{requestErrors.map((error, index) => <span key={index}>{error}<br/></span>)}
+		  </div>
+	    ) : null )
+
   return {
 	user, 
 	error,
@@ -71,6 +96,8 @@ export const useAuthForm = ({ initialFormState, getAction, getActionArgs }) => {
 	setErrors,
     isFieldValid,
     AuthFormFields,
+    AuthFormSubmit,
+    AuthResultDisplay,
 	submitRequested,
 	setSubmitRequested,
     hasSubmitted,

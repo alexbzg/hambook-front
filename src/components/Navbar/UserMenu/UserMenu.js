@@ -16,7 +16,7 @@ function UserMenu({ user, logUserOut, ...props }) {
       {user?.email ?
         (<div className={styles.icons}>
             <Link to="/profile">
-                <img className={styles.avatar} alt="Your avatar" src={userImg} title="Your profile"/>
+                <img id={styles.avatar} alt="Your avatar" src={userImg} title="Your profile"/>
             </Link>
             <Link to="/profile">
                 <img src={userIcon} title="Your profile" alt="Your profile"/>

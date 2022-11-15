@@ -1,31 +1,35 @@
 .columnsWrapper {
+	width: 100%;
 	display: flex;
 	flex-direction: row;
 }
-.column1 input, .column1 textarea {
-	text-align: left;
-	font-weight: normal;
-	width: 228px;
-}
-.column2 input, .column2 textarea {
-	text-align: left;
-	font-weight: normal;
-	width: 438px;
-}
 
 .column1, .column2{
-	width: 250px;
+	width: 500px;
 	padding: 0;
 	margin: 0;
 	text-align: left;
 	font-size: 12px;
 	line-height: 12px;
 	color: #aaa;
+	border: 1px dashed green;
+}
+.column2 {
+	width: 250px;
+	text-align: center;
+	border: 1px dashed blue;
 }
 
-.column2 {
-	width: 450px;
-	margin-left: 20px;
+.column1 input, .column1 textarea {
+	text-align: left;
+	font-weight: normal;
+	width: 95%;
+}
+.column2 input, .column2 textarea {  }
+
+.column1 input.callsign {
+	font-size: 24px;
+	font-weight: bold;
 }
 
 .email {
@@ -39,11 +43,30 @@
 	text-align: center;
 }
 .mainPhoto img{
+	width: 120px;
 	border: 5px solid var(--purple);
     border-radius: 10px;
 }
 
 .photos {
+}
+.photos span{
+	display: inline-block;
+	width: 80px;
+	height: 80px;
+	border: 1px solid var(--purple);
+	padding: 1px;
+	margin: 10px;
+	line-height: 0;
+	cursor: pointer;
+	vertical-align: middle;
+}
+.photos img{
+	width: 100%;
+}
+.photos span.addImage{
+	border-color: #ccc;
+	padding: 30px;
 }
 
 .form {

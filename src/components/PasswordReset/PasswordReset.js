@@ -2,14 +2,7 @@ import React from "react"
 import { connect } from "react-redux"
 import { useLocation } from "react-router-dom"
 
-import { 
-	AuthPageWrapper, 
-	AuthPageTitle, 
-	AuthForm, 
-	AuthPageSubmit,
-	AuthPageResponseOK,
-	AuthPageResponseError } from "../../components"
-import { useAuthForm } from "../../hooks/ui/useAuthForm"
+import { useAuthForm, AuthBlock, AuthBlockTitle } from "../../hooks/ui/useAuthForm"
 import { extractErrorMessages } from "../../utils/errors"
 import { Actions as authActions, REQUEST_PASSWORD_RESET_SUCCESS } from "../../redux/auth"
 
@@ -32,39 +25,30 @@ function PasswordResetRequest({ requestPasswordReset }) {
   })
   const {
     AuthFormFields,
-	requestResult,
-	requestErrors,
-    isLoading,
+    AuthFormSubmit,
+    AuthResultDisplay,
+    requestResult,
 	handleSubmit
   } = useAuthForm({ initialFormState: {password: ""}, getAction, getActionArgs })
 
   return (
-    <AuthPageWrapper>
-      <AuthPageTitle>Password recovery</AuthPageTitle><br/>
-      {requestResult === true && (
-		  <AuthPageResponseOK>
-            Your password was changed. Now you can login with your new password.
-		  </AuthPageResponseOK>)}
-	  {requestResult === false && (
-		  <AuthPageResponseError>
-			{requestErrors.map((error, index) => <span key={index}>{error}<br/></span>)}
-		  </AuthPageResponseError>
-	  )}
+    <AuthBlock>
+      <AuthBlockTitle>Password recovery</AuthBlockTitle><br/>
+      {AuthResultDisplay(
+        ` Your password was changed. Now you can login with your new password.`
+      )}
       {requestResult !== true && (
-          <AuthForm onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit}>
             {AuthFormFields([{
                 title: "Your new password",
                 type: "password",
                 name: "password",
 			    note: "(8-20 symbols)"
             }])}
-            <AuthPageSubmit
-                type="submit"
-                name="submit"
-                disabled={isLoading}
+            <AuthFormSubmit
                 value="Send"/>
-          </AuthForm> )}
-    </AuthPageWrapper>
+          </form> )}
+    </AuthBlock>
   )
 }
 

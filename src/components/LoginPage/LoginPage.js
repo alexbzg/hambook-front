@@ -4,16 +4,12 @@ import { Link } from "react-router-dom"
 import { connect } from "react-redux"
 import { useNavigate } from "react-router-dom"
 
-import {
-	AuthPageWrapper,
-	AuthPageTitle,
-	AuthForm,
-	AuthPageSubmit,
-	AuthPageResponseError } from "../../components"
-import { useAuthForm } from "../../hooks/ui/useAuthForm"
+import { useAuthForm, AuthBlock, AuthBlockTitle, AuthForm } from "../../hooks/ui/useAuthForm"
 import { extractErrorMessages } from "../../utils/errors"
 import { Actions as authActions } from "../../redux/auth"
 import errorIconImage from "../../assets/img/icons/icon_error.gif"
+
+import styles from "../../hooks/ui/AuthBlock.module.css"
 
 const PasswordResetLink = styled(Link)`
 	margin-top: 30px;
@@ -44,12 +40,14 @@ function LoginPage({ requestUserLogin, registerNewUser }) {
 	errors,
     setForm,
     setErrors,
+    //AuthForm,
     AuthFormFields,
+    AuthFormSubmit,
     setHasSubmitted,
     isLoading,
     setSubmitRequested,
     hasSubmitted,
-	handleSubmit
+	handleSubmit,
   } = useAuthForm({ initialFormState: {email: "", password: ""}, getAction, getActionArgs })
 
   React.useEffect(() => {
@@ -79,18 +77,6 @@ function LoginPage({ requestUserLogin, registerNewUser }) {
 	<span key={index}>{entry}<br/></span>
   )
 
-  const Fields = AuthFormFields([{
-      title: "Email",
-      note: register && "(requires confirmation)",
-      type: "text",
-      name: "email"
-    }, {
-      title: "Password",
-      note: register && "(8-20 symbols)",
-      type: "password",
-      name: "password",
-    }])
-
   const UserAgreementErrorIcon = register && errors.confirmUserAgreement &&
         <img src={errorIconImage} alt="Please confirm user agreement"/>
   const UserAgreement = register && (
@@ -109,34 +95,42 @@ function LoginPage({ requestUserLogin, registerNewUser }) {
   )
 
   return (
-    <AuthPageWrapper>
-		<AuthPageTitle
+    <AuthBlock>
+		<AuthBlockTitle
 			inactive={register}
 			onClick={() => setRegister(false)}
 			>
 			Login
-		</AuthPageTitle>
-		<AuthPageTitle
+		</AuthBlockTitle>
+		<AuthBlockTitle
 			inactive={!register}
 			onClick={() => setRegister(true)}>
 			Register
-		</AuthPageTitle>
+		</AuthBlockTitle>
         {error && hasSubmitted &&
-            <AuthPageResponseError>{FormErrors}</AuthPageResponseError>}
-        <AuthForm onSubmit={handleSubmit}>
-            {Fields}
+            <div className="response">{FormErrors}</div>}
+        <form onSubmit={handleSubmit}>
+            {AuthFormFields([{
+                    title: "Email",
+                    note: register && "(requires confirmation)",
+                    type: "text",
+                    name: "email"
+                }, {
+                    title: "Password",
+                    note: register && "(8-20 symbols)",
+                    type: "password",
+                    name: "password",
+                }])
+            }
             {UserAgreement}
-            <AuthPageSubmit
-                type="submit"
-                name="submit"
-                disabled={isLoading}
+            <AuthFormSubmit
                 value={register ? "Create new account" : "Login"}/>
-        </AuthForm>
+        </form>
 
         <PasswordResetLink to="/password_reset/request">
             Forgot your password? Let's recover it! ;)
         </PasswordResetLink>
-    </AuthPageWrapper>
+    </AuthBlock>
   )
 }
 

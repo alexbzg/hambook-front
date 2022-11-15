@@ -1,6 +1,4 @@
-import styled from "styled-components"
-
-export const AuthPageWrapper = styled.div`
+.authBlock {
 	padding: 30px 50px 30px 50px;
 	text-align: center;
 	background-color: #fff;
@@ -8,8 +6,9 @@ export const AuthPageWrapper = styled.div`
 	border-radius: 5px;
 	position: relative;
 	margin-top: 70px;
-`
-export const AuthPageTitle = styled.span`
+}
+
+.authBlock span.title {
 	display: inline-block;
 	padding: 5px 20px;
 	margin: 0 10px 30px 10px;
@@ -17,15 +16,15 @@ export const AuthPageTitle = styled.span`
 	font-weight: bold;
 	line-height: 18px;
 	color: var(--purple);
+}
+.authBlock span.title.inactive {
+    cursor: pointer;
+    font-weight: normal;
+    text-decoration: underline;
+    color: var(--grey);
+}
 
-    ${({ inactive }) => inactive && `
-		cursor: pointer;
-		font-weight: normal;
-		text-decoration: underline;
-		color: var(--grey);
-    `}
-`
-export const AuthPageSubmit = styled.input`
+.authBlock input[type=submit] {
 	display: block;
 	width: auto;
     margin: 20px auto;
@@ -33,27 +32,25 @@ export const AuthPageSubmit = styled.input`
     color: var(--black);
     cursor: pointer;
     font-weight: bold;
-`
-export const AuthForm = styled.form`
+}
+
+.authBlock form {
 	width: 350px;
 	margin: 0 auto;
 	text-align: left;
-`
+}
 
-export const AuthPageResponseError = styled.div`
+.authBlock .response {
     padding: 15px;
     text-align: center;
     background-color: var(--yellow-lite);
     border: 1px solid var(--orange);
     border-radius: 5px;
     margin-bottom: 20px;
-`
-export const AuthPageResponseOK = styled.div`
+}
+
+.authBlock .response.OK {
 	background-color: var(--green-lite);
     border: 1px solid var(--green);
-    padding: 15px;
-    text-align: center;
-    border-radius: 5px;
-    margin-bottom: 20px;
-`
+}
 
