@@ -15,7 +15,6 @@ function ProfilePage({ updateUserProfile }) {
   const getActionArgs = ({form}) => form
   const { created_at, updated_at, user_id, ...initialFormState } = user.profile
   const { 
-      AuthForm, 
       AuthFormFields, 
       AuthFormSubmit, 
       AuthResultDisplay, 
@@ -35,14 +34,14 @@ function ProfilePage({ updateUserProfile }) {
     <AuthBlock>
         <EmailVerification/>
         {AuthResultDisplay(`Your profile was updated succefully.`)}
-        <AuthForm className={styles.form}>
+        <form className={styles.form} onSubmit={handleSubmit}>
             <div className={styles.columnsWrapper}>
                 <div className={styles.column1}>
                     {AuthFormFields([
                         {
                             name: 'current_callsign',
                             defaultValue: user.profile.current_callsign,
-                            inputClass: 'callsign',
+                            inputClass: styles.callsign,
                             title: "callsign",
                             type: "text",
                         },
@@ -100,7 +99,7 @@ function ProfilePage({ updateUserProfile }) {
             </div>
             <AuthFormSubmit
                 value="Save changes"/>
-        </AuthForm>
+        </form>
     </AuthBlock>
     )
 }

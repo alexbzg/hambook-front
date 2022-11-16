@@ -11,7 +11,6 @@ function EmailVerification({ isLoading, requestEmailVerification }) {
       setRequestErrors(res.error ? ['There was an unexpected error. Please contact support.'] : [])
     }
   const {
-    AuthForm,
     AuthFormSubmit,
     AuthResultDisplay,
   } = useAuthForm({ initialFormState: {email: ""}, getAction, getActionArgs })
@@ -25,10 +24,10 @@ function EmailVerification({ isLoading, requestEmailVerification }) {
                 If you don't see it in your inbox, please check your spam folder.
             </span><br/>
             {AuthResultDisplay(`Repeat message was sent successfully. Please check your inbox.`)}
-            <AuthForm>
+            <form>
                 <AuthFormSubmit
                     value="Send the message once more"/>
-            </AuthForm>
+            </form>
         </AuthBlock>
     )
 }

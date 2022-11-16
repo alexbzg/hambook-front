@@ -43,9 +43,13 @@ function LoginPage({ requestUserLogin, registerNewUser }) {
     //AuthForm,
     AuthFormFields,
     AuthFormSubmit,
+    AuthResultDisplay,
     setHasSubmitted,
     isLoading,
+    submitRequested,
     setSubmitRequested,
+    setRequestResult,
+    setRequestErrors,
     hasSubmitted,
 	handleSubmit,
   } = useAuthForm({ initialFormState: {email: "", password: ""}, getAction, getActionArgs })
@@ -70,12 +74,11 @@ function LoginPage({ requestUserLogin, registerNewUser }) {
     if (user?.email && isAuthenticated) {
       navigate("/")
     }
+    if (hasSubmitted && !isLoading && error) {
+      setRequestResult(false)
+      setRequestErrors(extractErrorMessages(error))
+    }
   }, [user, navigate, isAuthenticated])
-
-  const authErrorList = extractErrorMessages(error)
-  const FormErrors = authErrorList.map((entry, index) =>
-	<span key={index}>{entry}<br/></span>
-  )
 
   const UserAgreementErrorIcon = register && errors.confirmUserAgreement &&
         <img src={errorIconImage} alt="Please confirm user agreement"/>
@@ -107,8 +110,7 @@ function LoginPage({ requestUserLogin, registerNewUser }) {
 			onClick={() => setRegister(true)}>
 			Register
 		</AuthBlockTitle>
-        {error && hasSubmitted &&
-            <div className="response">{FormErrors}</div>}
+        <AuthResultDisplay/>
         <form onSubmit={handleSubmit}>
             {AuthFormFields([{
                     title: "Email",
