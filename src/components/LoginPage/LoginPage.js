@@ -1,32 +1,14 @@
 import React from "react"
-import styled from "styled-components"
 import { Link } from "react-router-dom"
 import { connect } from "react-redux"
 import { useNavigate } from "react-router-dom"
 
-import { useAuthForm, AuthBlock, AuthBlockTitle, AuthForm } from "../../hooks/ui/useAuthForm"
+import { useAuthForm, AuthBlock, AuthBlockTitle } from "../../hooks/ui/useAuthForm"
 import { extractErrorMessages } from "../../utils/errors"
 import { Actions as authActions } from "../../redux/auth"
 import errorIconImage from "../../assets/img/icons/icon_error.gif"
 
-import styles from "../../hooks/ui/AuthBlock.module.css"
-
-const PasswordResetLink = styled(Link)`
-	margin-top: 30px;
-	color: var(--grey);
-	font-style: italic;
-	font-size: 14px;
-	text-decoration: underline;
-	cursor: pointer;
-
-    &:hover{
-	    color: var(--purple);
-    }
-`
-const LoginFormUserAgreementWrapper = styled.div`
-    padding-left: 0px;
-    text-align: center;
-`
+import styles from "./LoginPage.module.css"
 
 function LoginPage({ requestUserLogin, registerNewUser }) {
   const [register, setRegister] = React.useState(false)
@@ -46,7 +28,6 @@ function LoginPage({ requestUserLogin, registerNewUser }) {
     AuthResultDisplay,
     setHasSubmitted,
     isLoading,
-    submitRequested,
     setSubmitRequested,
     setRequestResult,
     setRequestErrors,
@@ -78,12 +59,12 @@ function LoginPage({ requestUserLogin, registerNewUser }) {
       setRequestResult(false)
       setRequestErrors(extractErrorMessages(error))
     }
-  }, [user, navigate, isAuthenticated])
+  }, [user, navigate, isAuthenticated, isLoading, hasSubmitted, error])
 
   const UserAgreementErrorIcon = register && errors.confirmUserAgreement &&
         <img src={errorIconImage} alt="Please confirm user agreement"/>
   const UserAgreement = register && (
-        <LoginFormUserAgreementWrapper>
+        <div className={styles.userAgreement}>
             {AuthFormFields([{
                 preInputContent: UserAgreementErrorIcon,
                 type: "checkbox",
@@ -94,7 +75,7 @@ function LoginPage({ requestUserLogin, registerNewUser }) {
                     </>
                 )
             }])}
-        </LoginFormUserAgreementWrapper>
+        </div>
   )
 
   return (
@@ -129,9 +110,9 @@ function LoginPage({ requestUserLogin, registerNewUser }) {
                 value={register ? "Create new account" : "Login"}/>
         </form>
 
-        <PasswordResetLink to="/password_reset/request">
+        <Link to="/password_reset/request" className={styles.passwordReset}>
             Forgot your password? Let's recover it! ;)
-        </PasswordResetLink>
+        </Link>
     </AuthBlock>
   )
 }

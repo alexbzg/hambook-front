@@ -1,0 +1,19 @@
+.passwordReset {
+	margin-top: 30px;
+	color: var(--grey);
+	font-style: italic;
+	font-size: 14px;
+	text-decoration: underline;
+	cursor: pointer;
+
+}
+
+.passwordReset:hover{
+	color: var(--purple);
+}
+
+.userAgreement {
+    padding-left: 0px;
+    text-align: center;
+}
+

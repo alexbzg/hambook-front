@@ -18,17 +18,23 @@ function ProfilePage({ updateUserProfile }) {
       AuthFormFields, 
       AuthFormSubmit, 
       AuthResultDisplay, 
-      hasSubmitted, 
+      setRequestResult,
+      setRequestErrors,
+      hasSubmitted,
       handleSubmit } = useAuthForm({
       initialFormState,
       getAction,
       getActionArgs
   })
 
-  const authErrorList = extractErrorMessages(error)
-  const FormErrors = authErrorList.map((entry, index) =>
-	<span key={index}>{entry}<br/></span>
-  )
+  React.useEffect(() => {
+    if (hasSubmitted && !isLoading) {
+      setRequestResult(!Boolean(error))
+      if (error) {
+        setRequestErrors(extractErrorMessages(error))
+      }
+    }
+  }, [isLoading, hasSubmitted, error])
 
   return (
     <AuthBlock>
@@ -92,7 +98,7 @@ function ProfilePage({ updateUserProfile }) {
                         <span><img src="/static/media/user.f1aa36f6a626a24cfd4b.jpg" /></span>
                         <span><img src="/static/media/user.f1aa36f6a626a24cfd4b.jpg" /></span>
                         <span><img src="/static/media/user.f1aa36f6a626a24cfd4b.jpg" /></span>
-                        <span class="addImage">add image</span>
+                        <span className="addImage">add image</span>
                     </div>
                 </div>
 
