@@ -12,8 +12,12 @@ function EmailVerification({ isLoading, requestEmailVerification }) {
     }
   const {
     AuthFormSubmit,
-    AuthResultDisplay,
-  } = useAuthForm({ initialFormState: {email: ""}, getAction, getActionArgs })
+  } = useAuthForm({ 
+      initialFormState: {email: ""}, 
+      getAction, 
+      getActionArgs,
+      successMessage: `Repeat message was sent successfully. Please check your inbox.`
+  })
 
     return (
         <AuthBlock>
@@ -23,8 +27,7 @@ function EmailVerification({ isLoading, requestEmailVerification }) {
                 Use the link in the message to verify your email.<br/>
                 If you don't see it in your inbox, please check your spam folder.
             </span><br/>
-            {AuthResultDisplay(`Repeat message was sent successfully. Please check your inbox.`)}
-            <form>
+              <form>
                 <AuthFormSubmit
                     value="Send the message once more"/>
             </form>

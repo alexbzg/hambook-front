@@ -17,10 +17,13 @@ function PasswordResetRequestMessage({ requestPasswordResetMessage }) {
   const {
     AuthFormFields,
     AuthFormSubmit,
-    AuthResultDisplay,
-	requestResult,
+    requestResult,
 	handleSubmit
-  } = useAuthForm({ initialFormState: {email: ""}, getAction, getActionArgs })
+  } = useAuthForm({ 
+      initialFormState: {email: ""}, 
+      getAction, 
+      getActionArgs, 
+      successMessage: `The message was sent successfully. Please check your inbox.` })
 
   return (
     <AuthBlock>
@@ -30,7 +33,6 @@ function PasswordResetRequestMessage({ requestPasswordResetMessage }) {
 		Use the link in the message to set your new password.<br/>
 		If you don't see the message in your inbox, please check your spam folder.
 	  </span><br/><br/>
-      {AuthResultDisplay(`The message was sent successfully. Please check your inbox.`)}
       {requestResult !== true && (
           <form onSubmit={handleSubmit}>
             {AuthFormFields([{

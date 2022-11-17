@@ -14,9 +14,10 @@ export default function FormField({...props}) {
       postInputContent, 
       inputClass, 
       isValid,
+      className,
       ...inputProps } = props
   return (
-    <div>
+    <div className={className}>
         {props.preInputContent}
         { (props.title || props.note) && (
             <>
@@ -27,7 +28,7 @@ export default function FormField({...props}) {
         )}
         <InputElement
             {...inputProps}
-			className={`${styles.input} ${classInvalid} ${inputClass ? inputClass : ''}`}
+			className={`${styles.input} ${classInvalid}`}
             onChange={onChange}/>
         {props.postInputContent}
     </div>

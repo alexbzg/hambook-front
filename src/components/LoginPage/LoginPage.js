@@ -22,10 +22,8 @@ function LoginPage({ requestUserLogin, registerNewUser }) {
 	errors,
     setForm,
     setErrors,
-    //AuthForm,
     AuthFormFields,
     AuthFormSubmit,
-    AuthResultDisplay,
     setHasSubmitted,
     isLoading,
     setSubmitRequested,
@@ -33,7 +31,11 @@ function LoginPage({ requestUserLogin, registerNewUser }) {
     setRequestErrors,
     hasSubmitted,
 	handleSubmit,
-  } = useAuthForm({ initialFormState: {email: "", password: ""}, getAction, getActionArgs })
+  } = useAuthForm({ 
+      initialFormState: {email: "", password: ""}, 
+      getAction, 
+      getActionArgs,
+  })
 
   React.useEffect(() => {
     setForm((form) => {
@@ -48,7 +50,6 @@ function LoginPage({ requestUserLogin, registerNewUser }) {
     setHasSubmitted(false)
     setSubmitRequested(false)
   }, [register])
-
 
   const navigate = useNavigate()
   React.useEffect(() => {
@@ -91,8 +92,7 @@ function LoginPage({ requestUserLogin, registerNewUser }) {
 			onClick={() => setRegister(true)}>
 			Register
 		</AuthBlockTitle>
-        <AuthResultDisplay/>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className={styles.loginForm}>
             {AuthFormFields([{
                     title: "Email",
                     note: register && "(requires confirmation)",

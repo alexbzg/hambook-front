@@ -26,17 +26,18 @@ function PasswordResetRequest({ requestPasswordReset }) {
   const {
     AuthFormFields,
     AuthFormSubmit,
-    AuthResultDisplay,
     requestResult,
-	handleSubmit
-  } = useAuthForm({ initialFormState: {password: ""}, getAction, getActionArgs })
+	handleSubmit,
+  } = useAuthForm({ 
+      initialFormState: {password: ""}, 
+      getAction, 
+      getActionArgs,
+      successMessage: ` Your password was changed. Now you can login with your new password.`
+  })
 
   return (
     <AuthBlock>
       <AuthBlockTitle>Password recovery</AuthBlockTitle><br/>
-      {AuthResultDisplay(
-        ` Your password was changed. Now you can login with your new password.`
-      )}
       {requestResult !== true && (
           <form onSubmit={handleSubmit}>
             {AuthFormFields([{

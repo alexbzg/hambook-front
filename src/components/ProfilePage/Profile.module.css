@@ -1,3 +1,13 @@
+.userPage {
+	width: 1000px;
+	padding: 30px 30px 50px 50px;
+	text-align: center;
+	background-color: #fff;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	position: relative;
+	margin: 0 auto;
+}
 .columnsWrapper {
 	width: 100%;
 	display: flex;
@@ -5,32 +15,50 @@
 }
 
 .column1, .column2{
-	width: 500px;
+	width: 70%;
 	padding: 0;
 	margin: 0;
 	text-align: left;
 	font-size: 12px;
 	line-height: 12px;
-	color: #aaa;
-	border: 1px dashed green;
+	color: #777;
 }
 .column2 {
-	width: 250px;
+	width: 30%;
 	text-align: center;
-	border: 1px dashed blue;
+	margin-left: 50px;
 }
 
 .column1 input, .column1 textarea {
 	text-align: left;
 	font-weight: normal;
 	width: 95%;
+	color: #000;
 }
-.column2 input, .column2 textarea {  }
 
-.column1 input.callsign {
-	font-size: 24px;
+.column1 .callsign input{
+	font-size: 36px;
 	font-weight: bold;
+	text-transform: uppercase;
+	padding: 0 10px;
+	margin-bottom: 0;
 }
+.column1 input.checkboxEx{
+	width: 13px;
+	margin-bottom: 0;
+}
+
+.column1 .fullName{	margin-top: 30px;}
+.column1 .prevCallsigns{	margin-bottom: 0;}
+.userPage input[type=submit] {
+	margin-top: 20px;
+	background-color: var(--orange);
+	cursor: pointer;
+}
+
+
+
+
 
 .email {
 	display: block;
@@ -46,14 +74,15 @@
 	width: 120px;
 	border: 5px solid var(--purple);
     border-radius: 10px;
+    cursor: pointer;
 }
 
 .photos {
 }
 .photos span{
 	display: inline-block;
-	width: 80px;
-	height: 80px;
+	width: 70px;
+	height: 70px;
 	border: 1px solid var(--purple);
 	padding: 1px;
 	margin: 10px;
@@ -66,7 +95,8 @@
 }
 .photos span.addImage{
 	border-color: #ccc;
-	padding: 30px;
+	height: 35px;
+	padding-top: 35px;
 }
 
 .form {

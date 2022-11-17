@@ -17,3 +17,13 @@
     text-align: center;
 }
 
+.input{
+	width: 100%;
+}
+
+.loginForm{
+	width: 350px;
+}
+.loginForm input{
+	width: 100%;
+}
