@@ -33,7 +33,7 @@ input{
   --yellow-lite: #fffdcc;
   --green-lite: #ddfbe0;
   --green: #53bd5e;
-  --pink: #FFC0CB;
+  --pink: #ffdfe5;
 }
 a{	color: var(--purple); }
 a:hover{	color: var(--orange); }

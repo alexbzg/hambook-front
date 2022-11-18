@@ -45,7 +45,7 @@ export const useAuthForm = ({ initialFormState, getAction, getActionArgs, succes
           {
             hideProgressBar: true,
             className: `${layoutStyles.response} ${requestResult ? layoutStyles.OK : ''}`,
-            autoClose: requestResult
+            autoClose: requestResult ? 20000 : false
       } )
     }
   }, [requestResult])

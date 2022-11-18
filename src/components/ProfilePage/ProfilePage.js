@@ -8,6 +8,7 @@ import { useAuthenticatedUser } from "../../hooks/auth/useAuthenticatedUser"
 import { useAuthForm } from "../../hooks/ui/useAuthForm"
 import { extractErrorMessages } from "../../utils/errors"
 import { Actions as authActions } from "../../redux/auth"
+import defaultAvatarImage from "../../assets/img/default_avatar.jpg"
 
 function ProfilePage({ updateUserProfile }) {
   const { user, error, isLoading } = useAuthenticatedUser()
@@ -99,7 +100,7 @@ function ProfilePage({ updateUserProfile }) {
                 <div className={styles.column2}>
                     <div className={styles.mainPhoto}>
                         <img
-                            src="/static/media/user.f1aa36f6a626a24cfd4b.jpg"
+                            src={user.profile.avatar_url || defaultAvatarImage}
                             alt="Avatar"
                         />
                     </div>

@@ -8,6 +8,7 @@ import { Actions as authActions } from "../../../redux/auth"
 import userIcon from "../../../assets/img/icons/user.svg"
 import userImg from "../../../assets/img/user.jpg"
 import logoutImg from "../../../assets/img/icons/logout.svg"
+import defaultAvatarImage from "../../../assets/img/default_avatar.jpg"
 
 
 function UserMenu({ user, logUserOut, ...props }) {
@@ -16,7 +17,7 @@ function UserMenu({ user, logUserOut, ...props }) {
       {user?.email ?
         (<div className={styles.icons}>
             <Link to="/profile">
-                <img id={styles.avatar} alt="Your avatar" src={userImg} title="Your profile"/>
+                <img id={styles.avatar} alt="Your avatar" src={user.profile.avatar_url || defaultAvatarImage} title="Your profile"/>
             </Link>
             <Link to="/profile">
                 <img src={userIcon} title="Your profile" alt="Your profile"/>
