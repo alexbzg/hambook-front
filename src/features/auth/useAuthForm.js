@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react"
 import { useDispatch } from "react-redux"
-import { toast } from "react-toastify"
+import { extractErrorMessages } from "../../utils/errors"
+import { showToast } from "../toasts/toasts"
 
-import { useAuthenticatedUser } from "../../hooks/auth/useAuthenticatedUser"
+import { useAuthenticatedUser } from "./useAuthenticatedUser"
 import { FormField } from "../../components"
 import validation from "../../utils/validation"
 
 import styles from "./AuthBlock.module.css"
-import layoutStyles from "../../components/Layout/Layout.module.css"
 
 export const AuthBlock = (props) => <div {...props} className={styles.authBlock}></div>
 
@@ -37,22 +37,6 @@ export const useAuthForm = ({ initialFormState, getAction, getActionArgs, succes
     setErrors((errors) => ({ ...errors, [label]: !isValid(label, value) }))
   }
 
-  useEffect(() => {
-    if ((requestResult && successMessage) || requestResult === false) {
-      const content = <>
-            {requestResult ? 
-            successMessage :  
-			requestErrors.map((error, index) => <span key={index}>{error}<br/></span>)}
-        </>            
-        toast( content, 
-          {
-            hideProgressBar: true,
-            className: `${layoutStyles.response} ${requestResult ? layoutStyles.OK : ''}`,
-            autoClose: requestResult ? 20000 : false
-      } )
-    }
-  }, [requestResult])
-
   const handleInputChange = (label, value) => {
     if (value === "") {
       value = null
@@ -61,10 +45,17 @@ export const useAuthForm = ({ initialFormState, getAction, getActionArgs, succes
     setForm((form) => ({ ...form, [label]: value }))
   }
 
+  useEffect(() => {
+    if (requestErrors) {
+        showToast(<span>{requestErrors}</span>, 'error')
+    }
+  }, [requestErrors])
+
   const handleSubmit = async (e) => {
     e.preventDefault()
 	setSubmitRequested(true)
     setRequestResult(null)
+    setRequestErrors(null)
     const newErrors = {}
     let formIsValid = true
     Object.keys(form).forEach((label) => {
@@ -77,7 +68,10 @@ export const useAuthForm = ({ initialFormState, getAction, getActionArgs, succes
     if (!formIsValid)
       return
     setHasSubmitted(true)
-    await dispatch(getAction()(getActionArgs({form, setRequestResult, setRequestErrors})))
+    const _result = await dispatch(getAction()(getActionArgs({form, setRequestResult, setRequestErrors})))
+    if (_result.error) {
+      setRequestErrors(_result.payload)
+    }
   }
 
   const isFieldValid = (label) => !submitRequested || !Boolean(errors[label])
@@ -97,16 +91,6 @@ export const useAuthForm = ({ initialFormState, getAction, getActionArgs, succes
             name="submit"
             disabled={isLoading}/>
 
-  const AuthResultDisplay = (successMessage) => requestResult ? (
-		  <div className={`${styles.response} ${styles.OK}`}>
-            {successMessage}
-		  </div>
-        ) : ( requestResult === false ? (
-		  <div className={styles.response}>
-			{requestErrors.map((error, index) => <span key={index}>{error}<br/></span>)}
-		  </div>
-	    ) : null )
-
   return {
 	user,
 	error,
@@ -119,7 +103,6 @@ export const useAuthForm = ({ initialFormState, getAction, getActionArgs, succes
     isFieldValid,
     AuthFormFields,
     AuthFormSubmit,
-    AuthResultDisplay,
 	submitRequested,
 	setSubmitRequested,
     hasSubmitted,

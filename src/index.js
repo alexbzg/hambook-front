@@ -1,10 +1,9 @@
 import React from "react"
 import { createRoot } from 'react-dom/client'
 import { Provider } from "react-redux"
-import { App } from "./components"
+import App from "./App/App"
 
-import configureReduxStore from "./redux/store"
-const store = configureReduxStore()
+import store from "./App/store"
 
 const root = createRoot(document.getElementById("root"))
 root.render(

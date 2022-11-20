@@ -2,9 +2,9 @@ import React from "react"
 import { Link } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
 
-import { useAuthForm, AuthBlock, AuthBlockTitle } from "../../hooks/ui/useAuthForm"
+import { useAuthForm, AuthBlock, AuthBlockTitle } from "./useAuthForm"
 import { extractErrorMessages } from "../../utils/errors"
-import { userLogin } from "../../redux/authSlice"
+import { userLogin } from "./authSlice"
 import errorIconImage from "../../assets/img/icons/icon_error.gif"
 
 import styles from "./LoginPage.module.css"

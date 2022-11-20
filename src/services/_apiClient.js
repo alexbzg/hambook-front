@@ -1,7 +1,4 @@
 import axios from "axios"
-
-import { extractErrorMessages } from "../utils/errors"
-import { showToast } from "../features/toasts/toasts"
 import { formatURL } from "../utils/urls"
 
 const client = async ({
@@ -12,7 +9,6 @@ const client = async ({
 	params, 
     headers,
     getState,
-    successMessage,
     rejectWithValue }) => {
     try {
       // get user data from store
@@ -30,20 +26,13 @@ const client = async ({
         headers,
 		url: urlPath, 
 		data: args })
-      if (successMessage) {
-        showToast(successMessage, 'success')
-      }
       return data
     } catch (error) {
 	  let rejectValue = error.message
-      if (error.response?.data?.detail) {
-        rejectValue = error.response.data.detail
+      if (error.response && error.response.data.message) {
+        rejectValue = error.response.data.message
       } 
-     /* showToast( 
-		extractErrorMessages(rejectValue).map(
-            (error, index) => <span key={index}>{error}<br/></span>),
-          'error')*/
-      throw rejectValue
+      return rejectWithValue(rejectValue)
     }
   }    
 
