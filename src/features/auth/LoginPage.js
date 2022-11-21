@@ -3,7 +3,6 @@ import { Link } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
 
 import { useAuthForm, AuthBlock, AuthBlockTitle } from "./useAuthForm"
-import { extractErrorMessages } from "../../utils/errors"
 import { userLogin } from "./authSlice"
 import errorIconImage from "../../assets/img/icons/icon_error.gif"
 
@@ -13,10 +12,7 @@ export default function LoginPage({ ...props }) {
   const [register, setRegister] = React.useState(false)
 
   const getAction = () => register ? null : userLogin
-  const getActionArgs = ({form}) => ({ email: form.email, password: form.password })
   const {
-    user,
-    error,
     isAuthenticated,
 	errors,
     setForm,
@@ -24,16 +20,11 @@ export default function LoginPage({ ...props }) {
     AuthFormFields,
     AuthFormSubmit,
     setHasSubmitted,
-    isLoading,
     setSubmitRequested,
-    setRequestResult,
-    setRequestErrors,
-    hasSubmitted,
 	handleSubmit,
   } = useAuthForm({ 
       initialFormState: {email: "", password: ""}, 
       getAction, 
-      getActionArgs,
   })
 
   React.useEffect(() => {
@@ -52,14 +43,10 @@ export default function LoginPage({ ...props }) {
 
   const navigate = useNavigate()
   React.useEffect(() => {
-    if (user?.email && isAuthenticated) {
+    if (isAuthenticated) {
       navigate("/")
     }
-    if (hasSubmitted && !isLoading && error) {
-      setRequestResult(false)
-      setRequestErrors(extractErrorMessages(error))
-    }
-  }, [user, navigate, isAuthenticated, isLoading, hasSubmitted, error])
+  }, [navigate, isAuthenticated])
 
   const UserAgreementErrorIcon = register && errors.confirmUserAgreement &&
         <img src={errorIconImage} alt="Please confirm user agreement"/>

@@ -7,8 +7,7 @@ export const useAuthenticatedUser = () => {
   const error = useSelector((state) => state.auth.error)
   const isLoading = useSelector((state) => state.auth.loading === 'loading')
   const userLoaded = useSelector((state) => Boolean(state.auth.user))
-  const isAuthenticated = useSelector((state) => Boolean(state.auth.token) 
-      && state.auth.token === state.auth.user?.token)
+  const isAuthenticated = useSelector((state) => Boolean(state.auth.user?.id))
   const user = useSelector((state) => state.auth.user, shallowEqual)
 
   const userLogout = () => dispatch(userLogoutAction())

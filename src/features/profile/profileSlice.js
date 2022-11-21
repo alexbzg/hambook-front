@@ -11,7 +11,7 @@ export const profileUpdate = createAsyncThunk(
                 method: 'PUT', 
                 args: { profile_update },
 				getState, 
-				rejectWithValue,
+                successMessage: `Your profile was updated succefully.`
             })
         }
 )
@@ -52,8 +52,10 @@ export default profileSlice.reducer
 export const { setProfile } = profileSlice.actions
 
 export const useProfile = () => {
-    const profile = useSelector((state) => state.profile)
+    const profile = useSelector((state) => state.profile.profile)
+    const error = useSelector((state) => state.profile.error)
+    const isLoading = useSelector((state) => state.profile.loading === 'loading')
 
-    return { profile }
+    return { profile, error, isLoading }
 }
 

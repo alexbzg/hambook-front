@@ -31,18 +31,19 @@ const client = async ({
 		url: urlPath, 
 		data: args })
       if (successMessage) {
-        showToast(successMessage, 'success')
+        showToast( <>{successMessage}</>, 'success' )
       }
       return data
     } catch (error) {
+      console.log(error)
 	  let rejectValue = error.message
       if (error.response?.data?.detail) {
         rejectValue = error.response.data.detail
       } 
-     /* showToast( 
-		extractErrorMessages(rejectValue).map(
-            (error, index) => <span key={index}>{error}<br/></span>),
-          'error')*/
+      const userMessage = extractErrorMessages(rejectValue)
+      if (userMessage) {
+        showToast( <>{userMessage}</>, 'error' )
+      }
       throw rejectValue
     }
   }    

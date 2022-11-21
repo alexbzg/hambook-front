@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 import client from '../../services/apiClient.js'
-import setProfile from '../profile/profileSlice.js'
+import { setProfile } from '../profile/profileSlice.js'
 
 export const userLogin = createAsyncThunk(
 	'auth/login', 
@@ -31,22 +31,29 @@ export const userLogin = createAsyncThunk(
 
 export const fetchUserFromToken = createAsyncThunk(
 	'auth/fetchUserFromToken', 
-    ( token, { rejectWithValue, getState, dispatch } ) => {
-        return client({
+    async ( token, { rejectWithValue, getState, dispatch } ) => {
+        if (!token) {
+            const { auth } = getState()
+            if (!auth.token) {
+                return rejectWithValue('No token found')
+            }
+        }
+        try {
+            const data = await client({
          		url: `/users/me`,
                 method: 'GET', 
 				token,
                 args: null,
 				getState, 
-				rejectWithValue,
             })
-            .then( (data) => {
-                if (data?.profile) {
-				    dispatch(setProfile(data.profile))
-                }
-
-            })
+            if (data?.profile) {
+                dispatch(setProfile(data.profile))
+            }
+            return data
+        } catch (e) {
+            return rejectWithValue(e)
         }
+    }
 )
 
 const initializeState = (state) => {

@@ -1,7 +1,5 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useDispatch } from "react-redux"
-import { extractErrorMessages } from "../../utils/errors"
-import { showToast } from "../toasts/toasts"
 
 import { useAuthenticatedUser } from "./useAuthenticatedUser"
 import { FormField } from "../../components"
@@ -14,7 +12,7 @@ export const AuthBlock = (props) => <div {...props} className={styles.authBlock}
 export const AuthBlockTitle = ({ inactive, ...props }) =>
     <span {...props} className={`${styles.title} ${inactive ? styles.inactive : ''}`}></span>
 
-export const useAuthForm = ({ initialFormState, getAction, getActionArgs, successMessage }) => {
+export const useAuthForm = ({ initialFormState, getAction }) => {
   const dispatch = useDispatch()
 
   const { user, error, isLoading, isAuthenticated } = useAuthenticatedUser()
@@ -45,12 +43,6 @@ export const useAuthForm = ({ initialFormState, getAction, getActionArgs, succes
     setForm((form) => ({ ...form, [label]: value }))
   }
 
-  useEffect(() => {
-    if (requestErrors) {
-        showToast(<span>{requestErrors}</span>, 'error')
-    }
-  }, [requestErrors])
-
   const handleSubmit = async (e) => {
     e.preventDefault()
 	setSubmitRequested(true)
@@ -68,10 +60,7 @@ export const useAuthForm = ({ initialFormState, getAction, getActionArgs, succes
     if (!formIsValid)
       return
     setHasSubmitted(true)
-    const _result = await dispatch(getAction()(getActionArgs({form, setRequestResult, setRequestErrors})))
-    if (_result.error) {
-      setRequestErrors(_result.payload)
-    }
+    dispatch(getAction()(form))
   }
 
   const isFieldValid = (label) => !submitRequested || !Boolean(errors[label])

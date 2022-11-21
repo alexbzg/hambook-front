@@ -1,7 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit'
 
-import authReducer from '../features/auth/authSlice'
+import { default as authReducer, fetchUserFromToken } from '../features/auth/authSlice'
 import profileReducer from '../features/profile/profileSlice'
+
 
 const store = configureStore({
   reducer: {
@@ -9,5 +10,8 @@ const store = configureStore({
     profile: profileReducer
   }
 })
+
+store.dispatch(fetchUserFromToken())
+
 export default store
 

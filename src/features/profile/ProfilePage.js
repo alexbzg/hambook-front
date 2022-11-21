@@ -1,44 +1,27 @@
 import React from "react"
-import { connect } from "react-redux"
 
 import styles from './Profile.module.css'
 
-import { EmailVerification } from "../../components"
-import { useAuthenticatedUser } from "../../hooks/auth/useAuthenticatedUser"
-import { useAuthForm } from "../../hooks/ui/useAuthForm"
-import { extractErrorMessages } from "../../utils/errors"
-import { Actions as authActions } from "../../redux/auth"
+import EmailVerification from "../auth/EmailVerification"
+import useAuthenticatedUser from "../auth/useAuthenticatedUser"
+import { useAuthForm } from "../auth/useAuthForm"
+import { profileUpdate, useProfile } from "./profileSlice"
 import defaultAvatarImage from "../../assets/img/default_avatar.jpg"
 
-function ProfilePage({ updateUserProfile }) {
-  const { user, error, isLoading } = useAuthenticatedUser()
-  const getAction = () => updateUserProfile
-  const getActionArgs = ({form}) => form
-  const { created_at, updated_at, user_id, ...initialFormState } = user.profile
+export default function ProfilePage({ ...props }) {
+  const { user } = useAuthenticatedUser()
+  const { profile, isLoading } = useProfile()
+  const { created_at, updated_at, user_id, ...initialFormState } = profile
   const {
       AuthFormFields,
       AuthFormSubmit,
-      setRequestResult,
-      setRequestErrors,
-      hasSubmitted,
       handleSubmit } = useAuthForm({
       initialFormState,
-      getAction,
-      getActionArgs,
-      successMessage: `Your profile was updated succefully.`
+      getAction: () => profileUpdate
   })
 
   const [showPrevCallsigns, setShowPrevCallsigns] =
-        React.useState(Boolean(user.profile.prevCallsigns))
-
-  React.useEffect(() => {
-    if (hasSubmitted && !isLoading) {
-      setRequestResult(!Boolean(error))
-      if (error) {
-        setRequestErrors(extractErrorMessages(error))
-      }
-    }
-  }, [isLoading, hasSubmitted, error])
+        React.useState(Boolean(profile.prevCallsigns))
 
   return (
     <div className={styles.userPage}>
@@ -49,7 +32,7 @@ function ProfilePage({ updateUserProfile }) {
                     {AuthFormFields([
                         {
                             name: 'current_callsign',
-                            defaultValue: user.profile.current_callsign,
+                            defaultValue: profile.current_callsign,
                             className: styles.callsign,
                             title: "callsign",
                             type: "text",
@@ -63,34 +46,34 @@ function ProfilePage({ updateUserProfile }) {
                     {showPrevCallsigns && AuthFormFields([
                         {
                             name: 'prev_callsigns',
-                            defaultValue: user.profile.prev_callsigns,
+                            defaultValue: profile.prev_callsigns,
                             type: "textarea",
                             className: styles.prevCallsigns
                         }])}
                     {AuthFormFields([
                         {
                             name: 'full_name',
-                            defaultValue: user.profile.full_name,
+                            defaultValue: profile.full_name,
                             title: "full name",
                             type: "text",
                             className: styles.fullName
                         },
                         {
                             name: 'phone',
-                            defaultValue: user.profile.phone,
+                            defaultValue: profile.phone,
                             title: "phone (format: +12345678901)",
                             type: "tel",
                             pattern: "\\+\\d{11}"
                         },
                         {
                             name: 'address',
-                            defaultValue: user.profile.address,
+                            defaultValue: profile.address,
                             title: "home address",
                             type: "textarea",
                         },
                         {
                             name: 'bio',
-                            defaultValue: user.profile.bio,
+                            defaultValue: profile.bio,
                             title: "About yourself",
                             type: "textarea",
                         }
@@ -100,7 +83,7 @@ function ProfilePage({ updateUserProfile }) {
                 <div className={styles.column2}>
                     <div className={styles.mainPhoto}>
                         <img
-                            src={user.profile.avatar_url || defaultAvatarImage}
+                            src={profile.avatar_url || defaultAvatarImage}
                             alt="Avatar"
                         />
                     </div>
@@ -116,11 +99,9 @@ function ProfilePage({ updateUserProfile }) {
 
             </div>
             <AuthFormSubmit
+                disabled={isLoading}
                 value="Save profile data"/>
         </form>
     </div>
     )
 }
-export default connect(null, {
-    updateUserProfile: authActions.updateUserProfile
-})(ProfilePage)
