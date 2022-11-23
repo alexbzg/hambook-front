@@ -14,8 +14,16 @@ export default function App() {
       <Layout>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/password_reset/request" element={<PasswordResetRequest />} />
-          <Route path="/password_reset" element={<PasswordReset />} />
+          <Route path="/password_reset/request" 
+            element={<ProtectedRoute 
+                        component={PasswordResetRequest} 
+                        requireNotAuthenticated/>} 
+          />
+          <Route path="/password_reset" 
+            element={<ProtectedRoute 
+                        component={PasswordReset} 
+                        requireNotAuthenticated/>}
+            />
           <Route path="/profile" element={<ProtectedRoute component={ProfilePage} />} />
         </Routes>
       </Layout>

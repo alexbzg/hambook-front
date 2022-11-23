@@ -7,6 +7,9 @@ import useAuthenticatedUser from "../auth/useAuthenticatedUser"
 import { useAuthForm } from "../auth/useAuthForm"
 import { profileUpdate, useProfile } from "./profileSlice"
 import defaultAvatarImage from "../../assets/img/default_avatar.jpg"
+import deleteIcon from "../../assets/img/icons/icon_add20.png"
+import addIcon from "../../assets/img/icons/icon_delete20.png"
+import useConfirm from "../confirm/useConfirm.js"
 
 export default function ProfilePage({ ...props }) {
   const { user } = useAuthenticatedUser()
@@ -19,9 +22,22 @@ export default function ProfilePage({ ...props }) {
       initialFormState,
       getAction: () => profileUpdate
   })
+  const isConfirmed = useConfirm()
 
   const [showPrevCallsigns, setShowPrevCallsigns] =
         React.useState(Boolean(profile.prevCallsigns))
+
+
+
+  const uploadAvatar = async () => {
+	if (profile.avatar) {
+//		const userConfirm = await isConfirmed("Your current avatar will be replaced with the new one.")
+//		console.log(`confirm: ${userConfirm}`)
+	}
+  }
+    
+  const deleteAvatar = () => {
+  }
 
   return (
     <div className={styles.userPage}>
@@ -81,11 +97,20 @@ export default function ProfilePage({ ...props }) {
 
                 </div>
                 <div className={styles.column2}>
-                    <div className={styles.mainPhoto}>
+                    <div className={`${styles.mainPhoto} ${styles.controlsContainer}`}>
                         <img
-                            src={profile.avatar_url || defaultAvatarImage}
+                            src={profile.avatar?.url || defaultAvatarImage}
                             alt="Avatar"
                         />
+                        <img className={styles.control} 
+                            src={addIcon} 
+                            alt="Upload new avatar"
+                            onClick={uploadAvatar}/>
+                        {profile.avatar &&
+                            <img className={styles.control} 
+                                src={deleteIcon} 
+                                alt="Delete avatar"
+                                onClick={deleteAvatar}/>}
                     </div>
                     <span className={styles.email}>{user.email}</span>
                     <div className={styles.photos}>
@@ -96,6 +121,7 @@ export default function ProfilePage({ ...props }) {
                         <span className={styles.addImage}>add image</span>
                     </div>
                 </div>
+                
 
             </div>
             <AuthFormSubmit

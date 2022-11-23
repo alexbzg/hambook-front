@@ -1,44 +1,55 @@
-import React from "react"
-import { connect } from "react-redux"
+import { useState, useMemo } from "react"
+import { createAsyncThunk } from '@reduxjs/toolkit'
 import { useLocation } from "react-router-dom"
 
-import { useAuthForm, AuthBlock, AuthBlockTitle } from "../../hooks/ui/useAuthForm"
-import { extractErrorMessages } from "../../utils/errors"
-import { Actions as authActions, REQUEST_PASSWORD_RESET_SUCCESS } from "../../redux/auth"
+import { useAuthForm, AuthBlock, AuthBlockTitle } from "./useAuthForm"
+import client from "../../services/apiClient.js"
+
+const sendRequest = (setLoading) => createAsyncThunk(
+	'auth/passwordReset', 
+    async ( password_reset, { rejectWithValue } ) => {
+        setLoading('pending')
+        try {
+            const data = await client({
+                url: `/users/password_reset/`,
+                method: 'POST', 
+                token: 'skip',
+                args: { password_reset },
+                successMessage: 'Your password was reset successfully. You can login with your new password.'
+            })
+            setLoading('fulfilled')
+            return data
+        } catch (e) {
+            setLoading('rejected')
+            return rejectWithValue(e)
+        }
+    }
+)
 
 
-function PasswordResetRequest({ requestPasswordReset }) {
+export default function PasswordReset({ ...props }) {
+  const [loading, setLoading] = useState('idle')
+  const getAction = () => sendRequest(setLoading)
+
   const { search } = useLocation()
-  const token = React.useMemo(() => {
+  const token = useMemo(() => {
       const params = new URLSearchParams(search)
       return params.get('token')
   }, [search])
 
-  const getAction = () => requestPasswordReset
-  const getActionArgs = ({form, setRequestResult, setRequestErrors}) => ({
-	password: form.password,
-    token,
-    callback: (res) => {
-	  setRequestResult(res.type === REQUEST_PASSWORD_RESET_SUCCESS)
-      setRequestErrors(res.error ? extractErrorMessages(res.error.data) : [])
-    }
-  })
   const {
     AuthFormFields,
     AuthFormSubmit,
-    requestResult,
 	handleSubmit,
   } = useAuthForm({ 
-      initialFormState: {password: ""}, 
+      initialFormState: { password: "", token }, 
       getAction, 
-      getActionArgs,
-      successMessage: ` Your password was changed. Now you can login with your new password.`
   })
 
   return (
     <AuthBlock>
       <AuthBlockTitle>Password recovery</AuthBlockTitle><br/>
-      {requestResult !== true && (
+      {loading !== 'fulfilled' && (
           <form onSubmit={handleSubmit}>
             {AuthFormFields([{
                 title: "Your new password",
@@ -53,6 +64,3 @@ function PasswordResetRequest({ requestPasswordReset }) {
   )
 }
 
-export default connect(null, {
-    requestPasswordReset: authActions.requestPasswordReset
-})(PasswordResetRequest)

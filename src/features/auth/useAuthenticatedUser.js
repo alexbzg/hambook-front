@@ -1,6 +1,6 @@
 import { useDispatch, useSelector, shallowEqual } from "react-redux"
 
-import { userLogout as userLogoutAction } from "../../redux/authSlice"
+import { userLogout as userLogoutAction } from "./authSlice"
 
 export const useAuthenticatedUser = () => {
   const dispatch = useDispatch()

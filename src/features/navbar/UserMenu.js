@@ -23,7 +23,7 @@ export default function UserMenu({ user, logUserOut, ...props }) {
       {isAuthenticated ?
         (<div className={styles.icons}>
             <Link to="/profile">
-                <img id={styles.avatar} alt="Your avatar" src={profile.avatar_url || defaultAvatarImage} title="Your profile"/>
+                <img id={styles.avatar} alt="Your avatar" src={profile.avatar?.url || defaultAvatarImage} title="Your profile"/>
             </Link>
             <Link to="/profile">
                 <img src={userIcon} title="Your profile" alt="Your profile"/>

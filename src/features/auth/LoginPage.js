@@ -1,9 +1,8 @@
 import React from "react"
-import { Link } from "react-router-dom"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 import { useAuthForm, AuthBlock, AuthBlockTitle } from "./useAuthForm"
-import { userLogin } from "./authSlice"
+import { userLogin, userSignUp } from "./authSlice"
 import errorIconImage from "../../assets/img/icons/icon_error.gif"
 
 import styles from "./LoginPage.module.css"
@@ -11,7 +10,7 @@ import styles from "./LoginPage.module.css"
 export default function LoginPage({ ...props }) {
   const [register, setRegister] = React.useState(false)
 
-  const getAction = () => register ? null : userLogin
+  const getAction = () => register ? userSignUp : userLogin
   const {
     isAuthenticated,
 	errors,

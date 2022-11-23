@@ -16,11 +16,32 @@ export const userLogin = createAsyncThunk(
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded",
                 }, 
+                token: 'SKIP',
                 args: formData,
-                getState, 
             })
             if (data?.access_token) {
                 dispatch(fetchUserFromToken(data.access_token))
+            }
+            return data
+        } catch (e) {
+            return rejectWithValue(e)
+        }
+    }
+)
+
+export const userSignUp = createAsyncThunk(
+	'auth/register', 
+    async ( { email, password }, { rejectWithValue, getState, dispatch } ) => {
+        try {
+            const data = await client({
+                url: `/users/`,
+                method: 'POST', 
+                token: 'SKIP',
+                args: {new_user: { email, password } },
+            })
+            if (data?.access_token) {
+                const { profile } = data
+                dispatch(setProfile(profile))
             }
             return data
         } catch (e) {
@@ -73,7 +94,7 @@ const userSlice = createSlice({
     userLogout: (state) => {
         localStorage.removeItem('access_token')
         initializeState(state, null)
-    }
+    },
   },
   extraReducers: {
     // login user
@@ -105,10 +126,26 @@ const userSlice = createSlice({
 		state.user = null
         state.error = payload
         state.user = {}
-     }
-    // register user reducer...
+    },
+    // register user 
+    [userSignUp.pending]: (state) => {
+      state.loading = 'loading'
+      state.error = null
+    },
+    [userSignUp.fulfilled]: (state, { payload }) => {
+      state.loading = 'succeeded'
+      const { access_token, ...user } = payload
+      state.token = access_token?.access_token
+      state.user = user
+      localStorage.setItem("access_token", state.token)
+    },
+    [userSignUp.rejected]: (state, { payload }) => {
+      state.loading = 'failed'
+      state.error = payload
+    },
+
   },
 })
 export default userSlice.reducer
 
-export const { userLogout } = userSlice.actions
+export const { userLogout, userRegistered } = userSlice.actions

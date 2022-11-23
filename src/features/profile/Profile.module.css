@@ -76,6 +76,15 @@
     cursor: pointer;
 }
 
+.controlsContainer .control{
+    display: none
+}
+.controlsContainer:hover .control{
+    display: inline
+}
+
+
+
 .photos {
 }
 .photos span{

@@ -12,7 +12,7 @@
     border: 1px solid var(--orange);
 }
 
-.toastContainer .toast.OK {
+.toastContainer .toast.success {
 	background-color: var(--green-lite);
     border: 1px solid var(--green);
 }

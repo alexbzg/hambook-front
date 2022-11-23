@@ -16,13 +16,14 @@ const client = async ({
     rejectWithValue }) => {
     try {
       // get user data from store
-      const { auth } = getState()
       const urlPath = formatURL(url, params)
 
       // configure authorization header with user's token
-      token = token || auth.token
-      if (token) {
-        headers = { Authorization: `Bearer ${token}`, ...headers }
+      if (token !== 'skip') {
+        token = token || getState()?.auth?.token
+        if (token) {
+            headers = { Authorization: `Bearer ${token}`, ...headers }
+        }
       }
 
       const { data } = await axios({

@@ -1,25 +1,44 @@
-import React from "react"
-import { connect } from "react-redux"
+import { useState } from "react"
+import { createAsyncThunk } from '@reduxjs/toolkit'
 
-import { Actions as authActions, REQUEST_EMAIL_VERIFICATION_SUCCESS } from "../../redux/auth"
-import { useAuthForm, AuthBlock, AuthBlockTitle } from "../../hooks/ui/useAuthForm"
+import { useAuthForm, AuthBlock, AuthBlockTitle } from "./useAuthForm"
+import client from "../../services/apiClient.js"
 
-function EmailVerification({ isLoading, requestEmailVerification }) {
-  const getAction = () => requestEmailVerification
-  const getActionArgs = ({ setRequestResult, setRequestErrors }) => (res) => {
-	  setRequestResult(res.type === REQUEST_EMAIL_VERIFICATION_SUCCESS)
-      setRequestErrors(res.error ? ['There was an unexpected error. Please contact support.'] : [])
+const sendRequest = (setLoading) => createAsyncThunk(
+	'auth/emailVerificationRequest', 
+    async ( password_reset, { getState, rejectWithValue } ) => {
+        setLoading('pending')
+        try {
+            const data = await client({
+                url: `/users/email_verification/request`,
+                method: 'GET', 
+                getState,
+                successMessage: 'The was sent again. Please check your inbox.'
+            })
+            setLoading('fulfilled')
+            return data
+        } catch (e) {
+            setLoading('rejected')
+            return rejectWithValue(e)
+        }
     }
-  const {
-    AuthFormSubmit,
-  } = useAuthForm({ 
-      initialFormState: {email: ""}, 
-      getAction, 
-      getActionArgs,
-      successMessage: `Repeat message was sent successfully. Please check your inbox.`
-  })
+)
 
-    return (
+export default function EmailVerification({ ...props }) {
+  const [loading, setLoading] = useState('idle')
+  const getAction = () => sendRequest(setLoading)
+
+  const {
+    user,
+    AuthFormSubmit,
+    handleSubmit
+  } = useAuthForm({ 
+      initialFormState: {}, 
+      getAction, 
+  })
+  if (user.email_verified) return null
+
+  return (
         <AuthBlock>
             <AuthBlockTitle>Email verification</AuthBlockTitle><br/>
             <span>
@@ -27,27 +46,11 @@ function EmailVerification({ isLoading, requestEmailVerification }) {
                 Use the link in the message to verify your email.<br/>
                 If you don't see it in your inbox, please check your spam folder.
             </span><br/>
-              <form>
-                <AuthFormSubmit
+              <form onSubmit={handleSubmit}>
+                <AuthFormSubmit disabled={loading === 'pending'}
                     value="Send the message once more"/>
             </form>
         </AuthBlock>
-    )
+  )
 }
 
-const mapStateToProps = (state) => ({
-  user: state.auth.user,
-})
-const mapDispatchToProps = (dispatch) => ({
-  requestEmailVerification: (callback) => dispatch(authActions.requestEmailVerification(callback))
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(  
-    ({user, requestEmailVerification}) => {
-        if (user.email_verified) {
-            return ''
-        }
-        else {
-            return EmailVerification({requestEmailVerification})
-        }
-    })
