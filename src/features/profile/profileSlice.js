@@ -4,6 +4,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import client from '../../services/apiClient.js'
 import { MEDIA_TYPE } from '../../enums.js'
 
+export const PROFILE_MEDIA_LIMIT = 9
+
 export const profileUpdate = createAsyncThunk(
 	'profile/update', 
     async ( profile_update, { rejectWithValue, getState } ) => {
@@ -27,20 +29,16 @@ export const mediaUpload = createAsyncThunk(
     async ( { mediaType, file }, { rejectWithValue, dispatch, getState } ) => {
    		const formData = new FormData()
     	formData.append('media_type', mediaType);
-    	formData.append('file', file.file);
-    	formData.append('fileName', file.name);
+    	formData.append('file', file);
         try {
             const data = await client({
          		url: `/media`,
                 method: 'POST', 
                 args: formData,
-				headers: {
-					'content-type': 'multipart/form-data',
-				},
 				getState, 
             })
 		    if (mediaType === MEDIA_TYPE.avatar) {
-                dispatch(setAvatar(data.url))
+                dispatch(setAvatar(data))
             } else if (mediaType === MEDIA_TYPE.profileImage) {
                 dispatch(addProfileImage(data))
             }
@@ -53,18 +51,17 @@ export const mediaUpload = createAsyncThunk(
 
 export const mediaDelete = createAsyncThunk(
 	'profile/mediaDelete', 
-    async ( { mediaType, mediaId }, { rejectWithValue, dispatch, getState } ) => {
+    async ( { mediaType, media_id }, { rejectWithValue, dispatch, getState } ) => {
         try {
             const data = await client({
-         		url: `/media`,
+         		url: `/media/${media_id}`,
                 method: 'DELETE', 
-                args: mediaId,
 				getState, 
             })
 		    if (mediaType === MEDIA_TYPE.avatar) {
                 dispatch(setAvatar(null))
             } else if (mediaType === MEDIA_TYPE.profileImage) {
-                dispatch(deleteProfileImage(mediaId))
+                dispatch(deleteProfileImage(media_id))
             }
             return data
         } catch (e) {
@@ -93,10 +90,10 @@ const profileSlice = createSlice({
         state.profile.avatar = payload
     },
     deleteProfileImage: (state, { payload }) => {
-        state.profile.images = state.profile.images.filter( ({ id }) => id !== payload )
+        state.profile.media = state.profile.media.filter( ({ id }) => id !== payload )
     },
     addProfileImage: (state, { payload }) => {
-        state.profile.images.push(payload)
+        state.profile.media.push(payload)
     }
   },
   extraReducers: {

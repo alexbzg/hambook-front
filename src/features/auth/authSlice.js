@@ -13,9 +13,6 @@ export const userLogin = createAsyncThunk(
             const data = await client({
                 url: `/users/login/token`,
                 method: 'POST', 
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                }, 
                 token: 'SKIP',
                 args: formData,
             })

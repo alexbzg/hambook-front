@@ -9,10 +9,11 @@ export const useAuthenticatedUser = () => {
   const userLoaded = useSelector((state) => Boolean(state.auth.user))
   const isAuthenticated = useSelector((state) => Boolean(state.auth.user?.id))
   const user = useSelector((state) => state.auth.user, shallowEqual)
+  const token = useSelector((state) => state.auth.token)
 
   const userLogout = () => dispatch(userLogoutAction())
 
-  return { userLoaded, isLoading, error, isAuthenticated, user, userLogout }
+  return { userLoaded, isLoading, error, isAuthenticated, user, userLogout, token }
 }
 
 export default useAuthenticatedUser

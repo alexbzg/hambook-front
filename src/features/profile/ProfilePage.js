@@ -1,17 +1,21 @@
-import React from "react"
+import { useState } from "react"
+import { useDispatch } from "react-redux"
 
 import styles from './Profile.module.css'
 
 import EmailVerification from "../auth/EmailVerification"
 import useAuthenticatedUser from "../auth/useAuthenticatedUser"
 import { useAuthForm } from "../auth/useAuthForm"
-import { profileUpdate, useProfile } from "./profileSlice"
+import { profileUpdate, mediaUpload, mediaDelete, useProfile, PROFILE_MEDIA_LIMIT } from "./profileSlice"
+import { MEDIA_TYPE } from '../../enums.js'
 import defaultAvatarImage from "../../assets/img/default_avatar.jpg"
-import deleteIcon from "../../assets/img/icons/icon_add20.png"
-import addIcon from "../../assets/img/icons/icon_delete20.png"
-import useConfirm from "../confirm/useConfirm.js"
+import addIcon from "../../assets/img/icons/add.svg"
+import deleteIcon from "../../assets/img/icons/delete.svg"
+import useModal from "../modal/useModal.js"
+
 
 export default function ProfilePage({ ...props }) {
+  const dispatch = useDispatch()
   const { user } = useAuthenticatedUser()
   const { profile, isLoading } = useProfile()
   const { created_at, updated_at, user_id, ...initialFormState } = profile
@@ -22,22 +26,42 @@ export default function ProfilePage({ ...props }) {
       initialFormState,
       getAction: () => profileUpdate
   })
-  const isConfirmed = useConfirm()
+  const confirmModal = useModal()
 
-  const [showPrevCallsigns, setShowPrevCallsigns] =
-        React.useState(Boolean(profile.prevCallsigns))
+  const [showPrevCallsigns, setShowPrevCallsigns] = useState(Boolean(profile.prevCallsigns))
 
-
-
-  const uploadAvatar = async () => {
-	if (profile.avatar) {
-//		const userConfirm = await isConfirmed("Your current avatar will be replaced with the new one.")
-//		console.log(`confirm: ${userConfirm}`)
+  const uploadAvatar = async (file) => {
+    if (!profile.avatar ||
+        (await confirmModal({message: "Your current avatar will be replaced with the new one."}))) {
+      await dispatch(mediaUpload({ mediaType: MEDIA_TYPE.avatar, file: file.files[0] }))
+      file.value = null
 	}
   }
-    
-  const deleteAvatar = () => {
+
+  const deleteAvatar = async () => {
+    if (await confirmModal({message: "Your current avatar will be deleted."})) {
+       dispatch(mediaDelete({
+           mediaType: MEDIA_TYPE.avatar,
+           media_id: profile.avatar.id
+       }))
+    }
   }
+
+  const uploadMedia = async (file) => {
+      await dispatch(mediaUpload({ mediaType: MEDIA_TYPE.profileImage, file: file.files[0] }))
+      file.value = null
+  }
+
+  const deleteMedia = async (media_id) => {
+    if (await confirmModal({message: "This image will be deleted."})) {
+       dispatch(mediaDelete({
+           mediaType: MEDIA_TYPE.profileImage,
+           media_id
+       }))
+    }
+  }
+
+
 
   return (
     <div className={styles.userPage}>
@@ -102,26 +126,51 @@ export default function ProfilePage({ ...props }) {
                             src={profile.avatar?.url || defaultAvatarImage}
                             alt="Avatar"
                         />
-                        <img className={styles.control} 
-                            src={addIcon} 
-                            alt="Upload new avatar"
-                            onClick={uploadAvatar}/>
+                        <label htmlFor="avatarFile">
+                            <img className={styles.controlUpload}
+                                src={addIcon}
+                                alt="Upload new avatar"/>
+                        </label>
+                        <input type="file"
+                            id="avatarFile"
+                            style={{display: 'none'}}
+                            onChange={(e) => uploadAvatar(e.target)}
+                        />
                         {profile.avatar &&
-                            <img className={styles.control} 
-                                src={deleteIcon} 
+                            <img className={styles.controlDelete}
+                                src={deleteIcon}
                                 alt="Delete avatar"
                                 onClick={deleteAvatar}/>}
                     </div>
                     <span className={styles.email}>{user.email}</span>
                     <div className={styles.photos}>
-                        <span><img src="/static/media/user.f1aa36f6a626a24cfd4b.jpg" alt=""/></span>
-                        <span><img src="/static/media/user.f1aa36f6a626a24cfd4b.jpg" alt=""/></span>
-                        <span><img src="/static/media/user.f1aa36f6a626a24cfd4b.jpg" alt=""/></span>
-                        <span><img src="/static/media/user.f1aa36f6a626a24cfd4b.jpg" alt=""/></span>
-                        <span className={styles.addImage}>add image</span>
+                        {profile.media.map( (item)  =>
+                            <span className={styles.controlsContainer} 
+                                key={item.id}>
+                                <img src={item.url} alt="uploaded by you"/>
+                                <img className={styles.controlDelete}
+                                    src={deleteIcon}
+                                    alt="Delete"
+                                    onClick={() => deleteMedia(item.id)}/>
+                            </span>)}
+                        {profile.media.length < PROFILE_MEDIA_LIMIT && (<>
+                            <label htmlFor="mediaFile">
+                                <span className={styles.addImage}>
+                                    <img
+                                        src={addIcon}
+                                        alt="Add"/><br/>add image
+                                </span>
+                            </label>
+                            <input type="file"
+                                id="mediaFile"
+                                style={{display: 'none'}}
+                                onChange={(e) => uploadMedia(e.target)}
+                            />
+                            </>)
+                        }
                     </div>
                 </div>
-                
+
 
             </div>
             <AuthFormSubmit

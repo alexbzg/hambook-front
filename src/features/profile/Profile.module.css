@@ -68,6 +68,7 @@
 
 .mainPhoto {
 	text-align: center;
+	position: relative;
 }
 .mainPhoto img{
 	width: 120px;
@@ -75,13 +76,24 @@
     border-radius: 10px;
     cursor: pointer;
 }
+.mainPhoto .controlUpload, .mainPhoto .controlDelete{
+	border: none;
+    border-radius: 0;
+    position: absolute;
+}
+.mainPhoto .controlUpload{
+	width: 34px;
+	left:  68px;
+	top: -14px;
+}
+.mainPhoto .controlDelete{
+	width: 30px;
+	right: 70px;
+	top: -15px;
+}
 
-.controlsContainer .control{
-    display: none
-}
-.controlsContainer:hover .control{
-    display: inline
-}
+.controlsContainer .controlUpload, .controlsContainer .controlDelete {    display: none; }
+.controlsContainer:hover .controlUpload, .controlsContainer:hover .controlDelete{    display: inline; }
 
 
 
@@ -97,15 +109,35 @@
 	line-height: 0;
 	cursor: pointer;
 	vertical-align: middle;
+	position: relative;
 }
 .photos img{
-	width: 100%;
+	object-fit: cover;
+    width: 100%;
+    height: 100%;
 }
 .photos span.addImage{
 	border-color: #ccc;
-	height: 35px;
-	padding-top: 35px;
+	height: 50px;
+	padding-top: 20px;
+	line-height: 12px;
 }
+.photos span.addImage img{
+	width: 20px;
+	height: 20px;
+}
+
+.photos .controlDelete{
+	width: 20px;
+	height: 20px;
+	border: none;
+    border-radius: 0;
+    position: absolute;
+	right: -10px;
+	top: -10px;
+}
+
+
 
 .form {
 }

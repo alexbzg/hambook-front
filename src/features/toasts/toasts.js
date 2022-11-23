@@ -7,8 +7,8 @@ export const Toasts = (props) => <ToastContainer {...props} className={styles.to
 
 export const showToast = (content, toastType) => toast( content, 
           {
-            hideProgressBar: true,
+           // hideProgressBar: false,
             className: `${styles.toast} ${styles[toastType]}`,
-            autoClose: toastType === 'success' ? 20000 : false
+            autoClose: toastType === 'success' ? 10000 : false
       } )
 
