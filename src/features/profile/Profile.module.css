@@ -48,6 +48,7 @@
 }
 
 .column1 .fullName{	margin-top: 30px;}
+.column1 .fullName input{	font-weight: bold;}
 .column1 .prevCallsigns{	margin-bottom: 0;}
 .userPage input[type=submit] {
 	margin-top: 20px;
@@ -99,7 +100,7 @@
 
 .photos {
 }
-.photos span{
+.photos a, .photos span{
 	display: inline-block;
 	width: 70px;
 	height: 70px;

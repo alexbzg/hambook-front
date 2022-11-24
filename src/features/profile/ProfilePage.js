@@ -1,6 +1,11 @@
 import { useState } from "react"
 import { useDispatch } from "react-redux"
 
+import LightGallery from 'lightgallery/react'
+import lgZoom from 'lightgallery/plugins/zoom'
+import '../../assets/lightgallery/css/lightgallery.css';
+import '../../assets/lightgallery/css/lg-zoom.css'
+
 import styles from './Profile.module.css'
 
 import EmailVerification from "../auth/EmailVerification"
@@ -52,7 +57,9 @@ export default function ProfilePage({ ...props }) {
       file.value = null
   }
 
-  const deleteMedia = async (media_id) => {
+  const deleteMedia = async (media_id, e) => {
+    e.preventDefault()
+    e.nativeEvent.stopImmediatePropagation()
     if (await confirmModal({message: "This image will be deleted."})) {
        dispatch(mediaDelete({
            mediaType: MEDIA_TYPE.profileImage,
@@ -144,15 +151,17 @@ export default function ProfilePage({ ...props }) {
                     </div>
                     <span className={styles.email}>{user.email}</span>
                     <div className={styles.photos}>
-                        {profile.media.map( (item)  =>
-                            <span className={styles.controlsContainer} 
-                                key={item.id}>
-                                <img src={item.url} alt="uploaded by you"/>
-                                <img className={styles.controlDelete}
-                                    src={deleteIcon}
-                                    alt="Delete"
-                                    onClick={() => deleteMedia(item.id)}/>
-                            </span>)}
+                        <LightGallery plugins={[lgZoom]} mode="lg-fade">
+                            {profile.media.map( (item)  =>
+                                <a className={styles.controlsContainer} 
+                                    key={item.id} href={item.url}>
+                                    <img src={item.url} alt=""/>
+                                    <img className={styles.controlDelete}
+                                        src={deleteIcon}
+                                        alt="Delete"
+                                        onClickCapture={(e) => deleteMedia(item.id, e)}/>
+                                </a>)}
+                        </LightGallery>
                         {profile.media.length < PROFILE_MEDIA_LIMIT && (<>
                             <label htmlFor="mediaFile">
                                 <span className={styles.addImage}>
