@@ -12,8 +12,7 @@ const client = async ({
 	params, 
     headers,
     getState,
-    successMessage,
-    rejectWithValue }) => {
+    successMessage }) => {
     try {
       // get user data from store
       const urlPath = formatURL(url, params)

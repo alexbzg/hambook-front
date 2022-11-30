@@ -7,6 +7,7 @@ import LoginPage from '../features/auth/LoginPage'
 import PasswordResetRequest from '../features/auth/PasswordResetRequest'
 import PasswordReset from '../features/auth/PasswordReset'
 import ProfilePage from '../features/profile/ProfilePage'
+import LogsList from '../features/logbook/LogsList'
 
 export default function App() {
   return (
@@ -25,6 +26,7 @@ export default function App() {
                         requireNotAuthenticated/>}
             />
           <Route path="/profile" element={<ProtectedRoute component={ProfilePage} />} />
+          <Route path="/logbook" element={<ProtectedRoute component={LogsList} />} />
         </Routes>
       </Layout>
     </BrowserRouter>

@@ -4,7 +4,7 @@ import { CSSTransition } from "react-transition-group";
 
 import styles from "./Modal.module.css"
 
-export default function ({modalResult, title, message, confirmLabel, cancelLabel}) {
+export default function ({modalResult, title, body, confirmLabel, cancelLabel}) {
 
   const [show, setShow] = useState(true)
   const nodeRef = useRef(null)
@@ -38,7 +38,7 @@ export default function ({modalResult, title, message, confirmLabel, cancelLabel
                     }
 
                     <div className={styles.modalBody}>
-                        {message}
+                        {body}
                     </div>
 
                     <div className={styles.modalFooter}>

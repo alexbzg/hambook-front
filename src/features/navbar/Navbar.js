@@ -1,4 +1,5 @@
 import React from "react"
+import { Link } from "react-router-dom"
 
 import styles from "./Navbar.module.css"
 import logo from "../../assets/img/hambook_logo.svg"
@@ -12,7 +13,7 @@ const mainMenu = [
 	"PHOTOBOOK"
 ]
 const MainMenuItems = mainMenu.map((entry, index) =>
-	<span key={index}>{entry}</span>
+	<Link to={entry.toLowerCase()} key={index}>{entry}</Link>
 )
 
 export default function Navbar({ ...props }) {
