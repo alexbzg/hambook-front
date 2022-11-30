@@ -8,6 +8,7 @@ import useModal from "../modal/useModal"
 import client from "../../services/apiClient"
 
 import LogsListItem from "./LogsListItem"
+import { FormField } from "../../components"
 
 const ListItemWrapper = (props) => <div {...props} className={styles.logsListItem}/>
 
@@ -16,6 +17,7 @@ export default function LogsList({ ...props }) {
   const confirmModal = useModal()
 
   const [qsoLogs, setQsoLogs] = useState([])
+  const [editLog, setEditLog] = useState()
 
   useEffect( () => {
     async function fetchLogs() {
@@ -23,7 +25,8 @@ export default function LogsList({ ...props }) {
         const userLogs = await client({
          		url: `/qso/logs/${user.id}`,
                 method: 'GET', 
-                token
+                token,
+                suppressErrorMessage: true
             })
         setQsoLogs(userLogs)
       } catch {
@@ -32,11 +35,49 @@ export default function LogsList({ ...props }) {
     fetchLogs()  
   }, [])
 
+  const handleInputChange = (label, value) => {
+      setEditLog( (editLog) => ({ ...editLog, [label]: value }) )
+  }
+
   const handleEditItem = (item) => {
+      setEditLog( item ? {...item} : {callsign: '', description: ''} )
+  }
+
+  const handleSubmit = async () => {
+        try {
+            const update = editLog.id ? 
+                await client({
+         		    url: `/qso/logs/${editLog.id}`,
+                    method: 'PUT', 
+                    token,
+                    args: {log_update: editLog}
+                }) :
+                await client({
+         		    url: `/qso/logs/`,
+                    method: 'POST', 
+                    token,
+                    args: {new_log: editLog}
+                }) 
+            editLog.id ? 
+                setQsoLogs( (qsoLogs) => {
+                    const newLogs = [...qsoLogs]
+                    const idx = newLogs.findIndex( log => log.id === editLog.id )
+                    newLogs[idx] = update
+                    return newLogs
+                }) :
+                setQsoLogs( (qsoLogs) => {
+                    const newLogs = [...qsoLogs]
+                    newLogs.push(update)
+                    return newLogs
+                })
+        } finally {
+            setEditLog(null)
+        }
+
   }
   
   const handleDeleteItem = async (item) => {
-     if (await confirmModal({body: "This log will be deleted with all contents. Recovery is impossible."})) {
+     if (await confirmModal({body: "This log will be deleted with all its contents. Recovery is impossible."})) {
        try {
          await client({
          		url: `/qso/logs/${item.id}`,
@@ -50,10 +91,9 @@ export default function LogsList({ ...props }) {
   }
 
   const QsoLogs = qsoLogs.map( (item) => (
-      <ListItemWrapper>
+      <ListItemWrapper key={item.id}>
         <LogsListItem 
             {...item}
-            key={item.id}
             onDelete={() => handleDeleteItem(item)}
             onEdit={() => handleEditItem(item)}/>
       </ListItemWrapper>)
@@ -66,6 +106,33 @@ export default function LogsList({ ...props }) {
             onClick={() => handleEditItem(null)}>
             Start new log.
         </ListItemWrapper>
+        {Boolean(editLog) &&
+          <div className="editLog">
+            <FormField
+                name="callsign"
+                isValid={() => true}
+                defaultValue={editLog.callsign}
+                title="Callsign"
+                onChange={handleInputChange}/>
+            <FormField
+                name="description"
+                isValid={() => true}
+                defaultValue={editLog.description}
+                title="Description"
+                onChange={handleInputChange}/>
+            <input 
+                className={styles.editButtonCancel}
+                type="button"
+                onClick={() => setEditLog(null)}
+                value="Cancel"/>
+            <input 
+                className={styles.editButtonOK}
+                type="button"
+                onClick={handleSubmit}
+                value="Save"/>
+         </div>
+        }
+        
     </div>
     )
 }

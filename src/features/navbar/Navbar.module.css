@@ -52,13 +52,15 @@
 	z-index: 3;
 }
 
-.mainMenuOptions span {
+.mainMenuOptions a {
 	display: inline-block;
 	width: 120px;
 	cursor: pointer;
+	color: #fff;
+	text-decoration: none;
 }
 
-.mainMenuOptions span:hover {
-	color: var(--orange);		
+.mainMenuOptions a:hover {
+	color: var(--orange);
 }
 

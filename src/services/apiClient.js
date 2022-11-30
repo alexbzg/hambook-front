@@ -12,7 +12,9 @@ const client = async ({
 	params, 
     headers,
     getState,
-    successMessage }) => {
+    successMessage,
+    suppressErrorMessage
+    }) => {
     try {
       // get user data from store
       const urlPath = formatURL(url, params)
@@ -40,9 +42,11 @@ const client = async ({
       if (error.response?.data?.detail) {
         rejectValue = error.response.data.detail
       } 
-      const userMessage = extractErrorMessages(rejectValue)
-      if (userMessage) {
-        showToast( <>{userMessage}</>, 'error' )
+      if (!suppressErrorMessage) {
+        const userMessage = extractErrorMessages(rejectValue)
+        if (userMessage) {
+            showToast( <>{userMessage}</>, 'error' )
+        }
       }
       throw rejectValue
     }
