@@ -1,7 +1,8 @@
 export const errorFieldToMessageMapping = {
   email: "Please enter a valid email.",
   username: "Please enter a username consisting of only letters, numbers, underscores, and dashes.",
-  password: "Please choose a password with at least 7 characters."
+  password: "Please choose a password with at least 7 characters.",
+  callsign: "Please enter a valid callsign"
 }
 
 export const parseErrorDetail = (errorDetail) => {
@@ -40,8 +41,8 @@ export const extractErrorMessages = (error) => {
 
   // in the case that there's a validation error in the request body, path parameters, or query parameters
   // we'll get an array of error issues here:
-  if (Array.isArray(error?.detail)) {
-    error.detail.forEach((errorDetail) => {
+  if (Array.isArray(error)) {
+    error.forEach((errorDetail) => {
       const errorMessage = parseErrorDetail(errorDetail)
       errorList.push(errorMessage)
     })

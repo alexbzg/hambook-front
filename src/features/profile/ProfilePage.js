@@ -16,7 +16,7 @@ import { MEDIA_TYPE } from '../../enums.js'
 import defaultAvatarImage from "../../assets/img/default_avatar.jpg"
 import addIcon from "../../assets/img/icons/add.svg"
 import deleteIcon from "../../assets/img/icons/delete.svg"
-import useModal from "../modal/useModal.js"
+import useModal from "../../components/Modal/useModal.js"
 
 
 export default function ProfilePage({ ...props }) {
@@ -37,14 +37,14 @@ export default function ProfilePage({ ...props }) {
 
   const uploadAvatar = async (file) => {
     if (!profile.avatar ||
-        (await confirmModal({body: "Your current avatar will be replaced with the new one."}))) {
+        (await confirmModal({children: "Your current avatar will be replaced with the new one."}))) {
       await dispatch(mediaUpload({ mediaType: MEDIA_TYPE.avatar, file: file.files[0] }))
       file.value = null
 	}
   }
 
   const deleteAvatar = async () => {
-    if (await confirmModal({body: "Your current avatar will be deleted."})) {
+    if (await confirmModal({children: "Your current avatar will be deleted."})) {
        dispatch(mediaDelete({
            mediaType: MEDIA_TYPE.avatar,
            media_id: profile.avatar.id
@@ -60,7 +60,7 @@ export default function ProfilePage({ ...props }) {
   const deleteMedia = async (media_id, e) => {
     e.preventDefault()
     e.nativeEvent.stopImmediatePropagation()
-    if (await confirmModal({body: "This image will be deleted."})) {
+    if (await confirmModal({children: "This image will be deleted."})) {
        dispatch(mediaDelete({
            mediaType: MEDIA_TYPE.profileImage,
            media_id

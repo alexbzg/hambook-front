@@ -1,7 +1,7 @@
 import { useState } from "react"
 
 import styles from './LogsList.module.css'
-
+import threeDots from "../../assets/img/icons/three_dots.svg"
 
 export default function LogsList({ ...props }) {
   const [menuExpanded, setMenuExpanded] = useState(false)
@@ -13,7 +13,7 @@ export default function LogsList({ ...props }) {
   const expandMenu = () => {
       setMenuExpanded(true)
   }
-  
+
   const deleteClick = () => {
       closeMenu()
       props.onDelete()
@@ -26,30 +26,34 @@ export default function LogsList({ ...props }) {
 
   return (
     <>
-        <div 
-            className={styles.menuButton} 
-            tabIndex={0} 
-            onFocus={() => expandMenu()} 
-            onBlur={() => closeMenu()}>...
+
+        <div className={styles.logCallsign}>
+            {props.callsign}
+        </div>
+        <div className={styles.logDescription}>
+            {props.description}
+        </div>
+        <div
+            className={styles.menuButton}
+            tabIndex={0}
+            onFocus={() => expandMenu()}
+            onBlur={() => closeMenu()}>
+            <img className={styles.controlDelete}
+              src={threeDots}
+              alt="Submenu"/>
             {menuExpanded &&
                 <div className={styles.menuWrapper}>
                     <div className={styles.menuItem}
                         onClick={() => editClick()}>
-                        Edit
+                        Log settings
                     </div>
                     <div className={styles.menuItem}
                         onClick={() => deleteClick()}>
-                        Delete
+                        Delete log
                     </div>
                 </div>
             }
         </div>
-        <div className={styles.logCallsign}>
-            {props.callsign}
-        </div>
-        <div className={styles.logDesctiption}>
-            {props.description}
-        </div>
-      </>
+    </>
   )
 }
