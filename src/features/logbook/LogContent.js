@@ -8,7 +8,8 @@ import useModal from "../../components/Modal/useModal"
 
 import client from "../../services/apiClient"
 
-import { FormField } from "../../components"
+import NewQsoForm from "./NewQsoForm"
+import Qso from "./Qso"
 
 export default function LogContent({ ...props }) {
   const { user, token } = useAuthenticatedUser()
@@ -46,7 +47,6 @@ export default function LogContent({ ...props }) {
        } catch {
        }
      }
-  }
  
   const postQsoUpdate = async ({qso_id, qso_update}) => {
        try {
@@ -65,23 +65,22 @@ export default function LogContent({ ...props }) {
        } catch {
        }
      }
-  }
 
   const Qsos = qsos.map( (qso) => (
       <Qso 
         data={qso}
         isEdited={editQsoId == qso.id}
-        onEdit={() => setEditQsoId(qs.id)}
-        postQsoUpdate={postQsoUpdate}
+        onEdit={() => setEditQsoId(qso.id)}
+        onQsoUpdate={postQsoUpdate}
       />
-  )
+  ))
 
   return (
     <div className={styles.LogContent}>
         <NewQsoForm onSubmit={postNewQso}/>
-        <table className={styles.qsoList}>
+        <div className={styles.logWindow}>
             {Qsos}
-        </table>
+        </div>
     </div>
     )
 }

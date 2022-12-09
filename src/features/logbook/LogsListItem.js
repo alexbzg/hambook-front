@@ -1,9 +1,11 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 import styles from './LogsList.module.css'
 import threeDots from "../../assets/img/icons/three_dots.svg"
 
 export default function LogsList({ ...props }) {
+  const navigate = useNavigate()
   const [menuExpanded, setMenuExpanded] = useState(false)
 
   const closeMenu = () => {
@@ -15,14 +17,17 @@ export default function LogsList({ ...props }) {
   }
 
   const deleteClick = () => {
-      closeMenu()
       props.onDelete()
   }
 
   const editClick = () => {
-      closeMenu()
       props.onEdit()
   }
+
+  const openClick = () => {
+      navigate(`/logbook/${props.id}`)
+  }
+
 
   return (
     <>
@@ -47,6 +52,10 @@ export default function LogsList({ ...props }) {
               alt="Submenu"/>
             {menuExpanded &&
                 <div className={styles.menuWrapper}>
+                    <div className={styles.menuItem}
+                        onClick={() => openClick()}>
+                            Open
+                    </div>
                     <div className={styles.menuItem}
                         onClick={() => editClick()}>
                         Log settings

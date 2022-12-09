@@ -9,7 +9,6 @@ import client from "../../services/apiClient"
 
 import LogsListItem from "./LogsListItem"
 import LogSettings from "./LogSettings"
-import { FormField } from "../../components"
 
 const ListItemWrapper = (props) => <div {...props} className={styles.logsListItem}/>
 
@@ -42,12 +41,13 @@ export default function LogsList({ ...props }) {
   }
 
   const handleEditItem = (item) => {
-      setEditLog( item ? {...item} : {callsign: '', description: ''} )
+      setEditLog( item ? {id: item.id, callsign: item.callsign, description: item.description} : 
+          {callsign: '', description: ''} )
   }
 
   const logSettingsModalResult = async (result) => {
-        if (result) {
-          try {
+        try {
+          if (result) {
             const update = 
                 await client( editLog.id ? {
          		    url: `/qso/logs/${editLog.id}`,
@@ -70,9 +70,9 @@ export default function LogsList({ ...props }) {
                 }
                 return newLogs
             })
-          } finally {
+          } 
+        } finally {
             setEditLog(null)
-          }
         }
 
   }
