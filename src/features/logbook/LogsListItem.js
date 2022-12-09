@@ -33,6 +33,10 @@ export default function LogsList({ ...props }) {
         <div className={styles.logDescription}>
             {props.description}
         </div>
+       <div className={styles.logQso}>
+            {props.qso_count} QSO
+        </div>
+
         <div
             className={styles.menuButton}
             tabIndex={0}
