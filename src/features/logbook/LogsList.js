@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react"
+import { useDispatch } from "react-redux"
 
 import styles from './LogsList.module.css'
 
-import useAuthenticatedUser from "../auth/useAuthenticatedUser"
+import { useLogs, logsFetch, logUpdate, logCreate, logDelete } from "./logsSlice"
 import useModal from "../../components/Modal/useModal"
 
-import client from "../../services/apiClient"
 
 import LogsListItem from "./LogsListItem"
 import LogSettings from "./LogSettings"
@@ -13,27 +13,14 @@ import LogSettings from "./LogSettings"
 const ListItemWrapper = (props) => <div {...props} className={styles.logsListItem}/>
 
 export default function LogsList({ ...props }) {
-  const { user, token } = useAuthenticatedUser()
+  const dispatch = useDispatch()
+  const { logs, error, loading } = useLogs()
   const confirmModal = useModal()
 
-  const [qsoLogs, setQsoLogs] = useState([])
   const [editLog, setEditLog] = useState()
 
   useEffect( () => {
-    async function fetchLogs() {
-      try {
-        const userLogs = await client({
-         		url: `/qso/logs/`,
-                method: 'GET',
-                params: {user_id: user.id},
-                token,
-                suppressErrorMessage: true
-            })
-        setQsoLogs(userLogs)
-      } catch {
-      }
-    }
-    fetchLogs()
+    dispatch(logsFetch())
   }, [])
 
   const handleInputChange = (label, value) => {
@@ -46,52 +33,22 @@ export default function LogsList({ ...props }) {
   }
 
   const logSettingsModalResult = async (result) => {
-        try {
-          if (result) {
-            const update = 
-                await client( editLog.id ? {
-         		    url: `/qso/logs/${editLog.id}`,
-                    method: 'PUT',
-                    token,
-                    args: {log_update: editLog}
-                } : {
-         		    url: `/qso/logs/`,
-                    method: 'POST',
-                    token,
-                    args: {new_log: editLog}
-                })
-            setQsoLogs( (qsoLogs) => {
-                const newLogs = [...qsoLogs]
-                if (editLog.id) {
-                    const idx = newLogs.findIndex( log => log.id === editLog.id )
-                    newLogs[idx] = update
-                } else {
-                    newLogs.push(update)
-                }
-                return newLogs
-            })
-          } 
-        } finally {
-            setEditLog(null)
-        }
-
+        if (result) {
+          dispatch( editLog.id ? 
+            logUpdate({ log_id: editLog.id, log_update: editLog }) :
+            logCreate( editLog )
+          )
+        } 
+        setEditLog(null)
   }
 
   const handleDeleteItem = async (item) => {
      if (await confirmModal({children: "This log will be deleted with all its contents. Recovery is impossible."})) {
-       try {
-         await client({
-         		url: `/qso/logs/${item.id}`,
-                method: 'DELETE',
-                token
-            })
-         setQsoLogs((qsoLogs) => qsoLogs.filter( (log) => log !== item ))
-       } catch {
-       }
+       dispatch(logDelete(item.id))
      }
   }
 
-  const QsoLogs = qsoLogs.map( (item) => (
+  const QsoLogs = logs.map( (item) => (
       <ListItemWrapper key={item.id}>
         <LogsListItem
             {...item}

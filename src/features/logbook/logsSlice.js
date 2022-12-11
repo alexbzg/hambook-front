@@ -1,0 +1,137 @@
+import { useSelector } from 'react-redux'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+
+import client from '../../services/apiClient.js'
+
+
+export const logsFetch = createAsyncThunk(
+	'logs/fetch', 
+    async ( _, { rejectWithValue, getState } ) => {
+        const { user, token } = getState().auth
+        try {
+            const data = await client({
+         		url: `/qso/logs/`,
+                method: 'GET',
+                params: {user_id: user.id},
+                token,
+                suppressErrorMessage: true
+            })
+            return data
+        } catch (e) {
+            return rejectWithValue(e)
+        }
+    }
+)
+
+export const logUpdate = createAsyncThunk(
+	'logs/update', 
+    async ( { log_id, log_update }, { rejectWithValue, getState } ) => {
+        try {
+            const  data = await client({
+                url: `/qso/logs/${log_id}`,
+                method: 'PUT',
+                getState,
+                args: { log_update }
+            })
+            return data
+        } catch (e) {
+            return rejectWithValue(e)
+        }
+    }
+)
+
+export const logCreate = createAsyncThunk(
+	'logs/update', 
+    async ( new_log, { rejectWithValue, getState } ) => {
+        try {
+            const data = await client({
+                url: `/qso/logs/`,
+                method: 'POST',
+                getState,
+                args: { new_log }
+            })
+            return data
+        } catch (e) {
+            return rejectWithValue(e)
+        }
+    }
+)
+
+export const logDelete = createAsyncThunk(
+	'logs/delete', 
+    async ( log_id, { rejectWithValue, getState } ) => {
+        try {
+            await client({
+          		url: `/qso/logs/${log_id}`,
+                method: 'DELETE',
+                getState
+            })
+            return log_id
+        } catch (e) {
+            return rejectWithValue(e)
+        }
+    }
+)
+
+const extraReducerRejected = (state, { payload }) => {
+  state.loading = 'failed'
+  state.error = payload
+}
+
+const extraReducerPending = (state) => {
+  state.mediaIsLoading = 'loading'
+  state.error = null
+}
+
+const logsSlice = createSlice({
+  name: 'logs',
+  initialState: {
+    loading: 'idle',
+    error: null,
+    logs: []
+  },
+  reducers: {},
+  extraReducers: {
+    // fetch user's logs
+    [logsFetch.pending]: extraReducerPending,
+    [logsFetch.fulfilled]: (state, { payload }) => {
+      state.loading = 'succeeded'
+      state.logs = payload
+    },
+    [logsFetch.rejected]: extraReducerRejected,
+    //update log
+    [logUpdate.pending]: extraReducerPending,
+    [logUpdate.fulfilled]: (state, { payload }) => {
+      state.isLoading = 'succeeded'
+      const idx = state.logs.findIndex( log => log.id === payload.id )
+      state.logs[idx] = payload
+    },
+    [logUpdate.rejected]: extraReducerRejected,
+    //create log
+    [logCreate.pending]: extraReducerPending,
+    [logCreate.fulfilled]: (state, { payload }) => {
+      state.isLoading = 'succeeded'
+      state.logs.push(payload)
+    },
+    [logCreate.rejected]: extraReducerRejected,
+    //delete log
+    [logDelete.pending]: extraReducerPending,
+    [logDelete.fulfilled]: (state, { payload }) => {
+      state.logs = state.logs.filter( log => log.id !== payload )
+      state.isLoading = 'succeeded'
+    },
+    [logDelete.rejected]: extraReducerRejected
+   
+  },
+})
+export default logsSlice.reducer
+
+export const useLogs = () => {
+    const logs = useSelector((state) => state.logs.logs)
+    const error = useSelector((state) => state.logs.error)
+    const isLoading = useSelector((state) => state.logs.loading === 'loading')
+    const loading = useSelector((state) => state.logs.loading )
+
+    return { logs, error, isLoading, loading }
+}
+
