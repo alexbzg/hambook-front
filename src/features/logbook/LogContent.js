@@ -14,7 +14,7 @@ import Qso from "./Qso"
 export default function LogContent({ ...props }) {
   const { user, token } = useAuthenticatedUser()
   const confirmModal = useModal()
-  const { log_id } = useParams()
+  const { logId } = useParams()
 
   const [qsos, setQsos] = useState([])
   const [editQsoId, setEditQsoId] = useState()
@@ -23,7 +23,7 @@ export default function LogContent({ ...props }) {
     async function fetchQsos() {
       try {
         const qsos = await client({
-         		url: `/qso/logs/${log_id}/qso`,
+         		url: `/qso/logs/${logId}/qso`,
                 method: 'GET',
                 token,
                 suppressErrorMessage: true
@@ -38,7 +38,7 @@ export default function LogContent({ ...props }) {
   const postNewQso = async (new_qso) => {
        try {
          const createdQso = await client({
-         		url: `/qso/logs/${log_id}`,
+         		url: `/qso/logs/${logId}`,
                 method: 'POST',
                 token,
                 args: { new_qso }
@@ -68,6 +68,7 @@ export default function LogContent({ ...props }) {
 
   const Qsos = qsos.map( (qso) => (
       <Qso 
+        key={qso.id}
         data={qso}
         isEdited={editQsoId == qso.id}
         onEdit={() => setEditQsoId(qso.id)}
@@ -77,7 +78,7 @@ export default function LogContent({ ...props }) {
 
   return (
     <div className={styles.LogContent}>
-        <NewQsoForm onSubmit={postNewQso}/>
+        <NewQsoForm onSubmit={postNewQso} logId={logId}/>
         <div className={styles.logWindow}>
             {Qsos}
         </div>

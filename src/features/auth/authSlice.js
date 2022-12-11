@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 import client from '../../services/apiClient.js'
 import { setProfile } from '../profile/profileSlice.js'
+import { logsFetch } from '../logbook/logsSlice'
 
 export const userLogin = createAsyncThunk(
 	'auth/login', 
@@ -66,6 +67,9 @@ export const fetchUserFromToken = createAsyncThunk(
             })
             if (data?.profile) {
                 dispatch(setProfile(data.profile))
+            } 
+            if (data?.id) {
+                dispatch(logsFetch(data.id))
             }
             return data
         } catch (e) {

@@ -15,6 +15,7 @@ export default function FormField({...props}) {
       inputClass, 
       isValid,
       className,
+      inputRef,
       ...inputProps } = props
   return (
     <div className={className}>
@@ -28,6 +29,7 @@ export default function FormField({...props}) {
         )}
         <InputElement
             {...inputProps}
+            ref={inputRef}
 			className={`${styles.input} ${classInvalid}`}
             onChange={onChange}/>
         {props.postInputContent}

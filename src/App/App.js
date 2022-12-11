@@ -28,7 +28,7 @@ export default function App() {
             />
           <Route path="/profile" element={<ProtectedRoute component={ProfilePage} />} />
           <Route path="/logbook" element={<ProtectedRoute component={LogsList} />} />
-          <Route path="/logbook/:log_id" element={<ProtectedRoute component={LogContent} />} />
+          <Route path="/logbook/:logId" element={<ProtectedRoute component={LogContent} />} />
         </Routes>
       </Layout>
     </BrowserRouter>

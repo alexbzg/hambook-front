@@ -19,10 +19,6 @@ export default function LogsList({ ...props }) {
 
   const [editLog, setEditLog] = useState()
 
-  useEffect( () => {
-    dispatch(logsFetch())
-  }, [])
-
   const handleInputChange = (label, value) => {
       setEditLog( (editLog) => ({ ...editLog, [label]: value }) )
   }

@@ -6,19 +6,21 @@ import client from '../../services/apiClient.js'
 
 export const logsFetch = createAsyncThunk(
 	'logs/fetch', 
-    async ( _, { rejectWithValue, getState } ) => {
-        const { user, token } = getState().auth
-        try {
-            const data = await client({
-         		url: `/qso/logs/`,
-                method: 'GET',
-                params: {user_id: user.id},
-                token,
-                suppressErrorMessage: true
-            })
-            return data
-        } catch (e) {
-            return rejectWithValue(e)
+    async ( user_id, { rejectWithValue, getState } ) => {
+        user_id = user_id || getState().auth.user?.id
+        if (user_id) {
+            try {
+                const data = await client({
+                    url: `/qso/logs/`,
+                    method: 'GET',
+                    params: { user_id },
+                    getState,
+                    suppressErrorMessage: true
+                })
+                return data
+            } catch (e) {
+                return rejectWithValue(e)
+            }
         }
     }
 )
