@@ -1,32 +1,29 @@
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
 
 import styles from './LogsList.module.css'
 import threeDots from "../../assets/img/icons/three_dots.svg"
 
 export default function LogsList({ ...props }) {
-  const navigate = useNavigate()
   const [menuExpanded, setMenuExpanded] = useState(false)
 
   const closeMenu = () => {
       setMenuExpanded(false)
   }
 
-  const expandMenu = () => {
+  const expandMenu = (e) => {
+      e.preventDefault()
+      //`:w
+      e.nativeEvent.stopImmediatePropagation()
+
       setMenuExpanded(true)
   }
 
-  const deleteClick = () => {
-      props.onDelete()
+  const suppressClick = (e) => {
+      e.preventDefault()
+      //`:w
+      e.nativeEvent.stopImmediatePropagation()
   }
 
-  const editClick = () => {
-      props.onEdit()
-  }
-
-  const openClick = () => {
-      navigate(`/logbook/${props.id}`)
-  }
 
 
   return (
@@ -45,7 +42,8 @@ export default function LogsList({ ...props }) {
         <div
             className={styles.menuButton}
             tabIndex={0}
-            onFocus={() => expandMenu()}
+            onClickCapture={(e) => suppressClick(e)}
+            onFocus={(e) => expandMenu(e)}
             onBlur={() => closeMenu()}>
             <img className={styles.controlDelete}
               src={threeDots}
@@ -53,15 +51,15 @@ export default function LogsList({ ...props }) {
             {menuExpanded &&
                 <div className={styles.menuWrapper}>
                     <div className={styles.menuItem}
-                        onClick={() => openClick()}>
+                        onClickCapture={props.onOpen}>
                             Open
                     </div>
                     <div className={styles.menuItem}
-                        onClick={() => editClick()}>
+                        onClickCapture={props.onEdit}>
                         Log settings
                     </div>
                     <div className={styles.menuItem}
-                        onClick={() => deleteClick()}>
+                        onClickCapture={props.onDelete}>
                         Delete log
                     </div>
                 </div>

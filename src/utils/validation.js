@@ -27,12 +27,20 @@ export function validatePhone(text) {
   return /^\+\d{11}$/.test(text) 
 }
 
+export function validateFullCallsign(text) {
+  return /^([A-Za-z\d]{1,3}\/){0,3}[a-zA-Z]{1,4}\d{1,3}[a-zA-Z]{1,4}(\/[A-Za-z\d]{1,3}){0,3}$/.test(text)
+}
+
+const optional = (validation) => (value) => (value !== 0 &&  !Boolean(value)) || validation(value)
+
 export default {
   email: validateEmail,
   password: validatePassword,
   confirmUserAgreement: value => value,
-  current_callsign: value => value === null || value.length === 0 || validateCallsign(value),
-  phone: value => value === null || value.length === 0 || validatePhone(value)
+  current_callsign: optional(validateCallsign),
+  phone: optional(validatePhone),
+  callsign: validateFullCallsign,
+  station_callsign: validateFullCallsign
 }
 
 

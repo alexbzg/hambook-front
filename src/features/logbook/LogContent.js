@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
 
-import styles from './LogsList.module.css'
+import styles from './LogContent.module.css'
 
 import useAuthenticatedUser from "../auth/useAuthenticatedUser"
 import useModal from "../../components/Modal/useModal"
@@ -43,7 +43,7 @@ export default function LogContent({ ...props }) {
                 token,
                 args: { new_qso }
             })
-         setQsos((qsos) => [ ...qsos, createdQso ])
+         setQsos((qsos) => [ createdQso, ...qsos ])
        } catch {
        }
      }

@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react"
+import { useState, useCallback } from "react"
 import { useDispatch } from "react-redux"
+import { useNavigate } from "react-router-dom"
 
 import styles from './LogsList.module.css'
 
@@ -14,19 +15,20 @@ const ListItemWrapper = (props) => <div {...props} className={styles.logsListIte
 
 export default function LogsList({ ...props }) {
   const dispatch = useDispatch()
-  const { logs, error, loading } = useLogs()
+  const navigate = useNavigate()
+  const { logs } = useLogs()
   const confirmModal = useModal()
 
   const [editLog, setEditLog] = useState()
 
-  const handleInputChange = (label, value) => {
+  const handleInputChange = useCallback((label, value) => {
       setEditLog( (editLog) => ({ ...editLog, [label]: value }) )
-  }
+  }, [])
 
-  const handleEditItem = (item) => {
+  const handleEditItem = useCallback((item) => {
       setEditLog( item ? {id: item.id, callsign: item.callsign, description: item.description} : 
           {callsign: '', description: ''} )
-  }
+  }, [])
 
   const logSettingsModalResult = async (result) => {
         if (result) {
@@ -44,10 +46,17 @@ export default function LogsList({ ...props }) {
      }
   }
 
+  const handleOpenItem = useCallback((item) => {
+      navigate(`/logbook/${item.id}`)
+  }, [])
+
   const QsoLogs = logs.map( (item) => (
-      <ListItemWrapper key={item.id}>
+      <ListItemWrapper 
+        key={item.id}
+        onClick={() => handleOpenItem(item)}>
         <LogsListItem
             {...item}
+            onOpen={() => handleOpenItem(item)}
             onDelete={() => handleDeleteItem(item)}
             onEdit={() => handleEditItem(item)}/>
       </ListItemWrapper>)

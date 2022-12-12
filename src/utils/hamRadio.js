@@ -10,7 +10,7 @@ export const BANDS = Object.freeze({
     '10M': 1
 })
 
-export const QSO_MODE = Object.freeze({
+export const QSO_MODES = Object.freeze({
     'CW': 1,
     'SSB': 1,
     'FT4': 1,
