@@ -56,11 +56,11 @@ const useForm = ({ initialFormState, onSubmit }) => {
 
   const FormFields = (items) => items.map( (item, index) =>
     <FormField
-        {...item}
         key={index}
         isValid={isFieldValid}
         defaultValue={initialFormState[item.name]}
         onChange={handleInputChange}
+        {...item}
     /> )
 
   return {

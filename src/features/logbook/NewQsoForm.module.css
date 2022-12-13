@@ -1,34 +1,73 @@
 .newQso {
+	width: 900px;
+	padding: 30px;
+	background-color: #fff;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	text-align: center;
+	vertical-align: top;
 }
-
-#callsign {
+.newQso form{
+	display: flex;
+	flex-direction: column;
 }
-
-#stationCallsign {
-}
-
-#stationCallsign {
-}
-
-#flexContainer {
-}
-
 .flexRow {
+	display: flex;
+	flex-direction: row;
+}
+.flexRow div{
+	margin: 0 10px;
+}
+.flexRow div span{
+	color: var(--grey);
+    font-size: 12px;
+    font-style: italic;
+}
+.flexRow input, .flexRow select{
+	width: 90%;
+}
+.flexRow select{
+	padding: 5px 10px;
+    margin-bottom: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    color: #333;
+    text-align: center;
+    font-family: 'Nunito', sans-serif;
+    outline: none;
 }
 
 #time {
+	flex-grow: 1;
 }
 
 #date {
+	flex-grow: 2;
 }
 
 #band {
+	flex-grow: 2;
 }
 
 #freq {
+	flex-grow: 2;
 }
 
 #mode {
+	flex-grow: 1;
+}
+
+#callsign {
+	width: 100%;
+}
+#callsign input{
+	background-color: var(--yellow-lite);
+	width: 100%;
+	padding: 5px 0;
+	font-size: 24px;
+	font-weight: bold;
 }
 
 #rstr {
@@ -41,4 +80,12 @@
 }
 
 #qth {
+}
+
+
+
+
+#stationCallsign {
+
+	display: none;
 }

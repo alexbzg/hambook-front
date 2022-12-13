@@ -5,6 +5,7 @@ import styles from './NewQsoForm.module.css'
 import { useLogs } from "./logsSlice"
 
 import { useForm } from "../../components"
+import useInterval from "../../hooks/useInterval"
 import { BANDS, QSO_MODES } from "../../utils/hamRadio"
 
 const currentDateTime = () => {
@@ -28,58 +29,39 @@ export default function NewQsoForm({ onSubmit, logId, ...props }) {
       rst_r: 599,
       name: '',
       qth: '',
-      comments: ''
+      comment: ''
   }
   const { handleInputChange, handleSubmit, FormFields } = useForm({ initialFormState, onSubmit })
 
-
   const timeInputRef = useRef()
   const dateInputRef = useRef()
-  
-  const [cancelDateTimeDefaults, setCancelDateTimeDefaults] = useState()
-
-  const updateDateTime = useCallback(() => handleInputChange("qso_datetime", 
+  const [realDateTime, setRealDateTime] = useState([true, true])
+  const updateDateTime = useCallback(() => handleInputChange("qso_datetime",
             `${dateInputRef.current.value} ${timeInputRef.current.value}`), [])
-
-  useEffect( () => {
-      const timer = setInterval(() => {
-          if (timeInputRef.current) {
-            const dtStr = (new Date()).toISOString()
-            timeInputRef.current.value = dtStr.substring(11,16)
-            dateInputRef.current.value = dtStr.substring(0,10)
-            updateDateTime()
-          }
-      }, 1000)
-      const cleanup = () => {
-        clearTimeout(timer)
-      }
-      setCancelDateTimeDefaults(() => cleanup)
-      return cleanup
-  }, [updateDateTime])
-
-  const handleDateTimeInputChange = (name, value) => {
-    cancelDateTimeDefaults()
+  const setDateTimeToReal = useCallback(() => {
+    const dtStr = (new Date()).toISOString()
+    if (realDateTime[1]) {
+        timeInputRef.current.value = dtStr.substring(11,16)
+    }
+    if (realDateTime[0]) {
+        dateInputRef.current.value = dtStr.substring(0,10)
+    }
     updateDateTime()
-  }
+  }, [realDateTime])
+  useEffect( setDateTimeToReal, [setDateTimeToReal] )
+  useInterval( setDateTimeToReal, 
+      realDateTime[0] || realDateTime[1] ? 1000 : null )
+
+  const handleDateTimeInputChange = useCallback((name, value) => {
+    setRealDateTime( state => name === "date" ? [false, state[1]] : [state[0], false] )
+    updateDateTime()
+  }, [])
 
   return (
       <div className={styles.newQso}>
-      {log && 
+      {log &&
         <form onSubmit={handleSubmit}>
             <input type="submit" hidden/>
-            {FormFields([
-                {
-                    id: styles.callsign,
-                    name: "callsign",
-                    type: "text"
-                },
-                {
-                    id: styles.stationCallsign,
-                    name: "station_callsign",
-                    type: "text"
-                },
-            ])}
-            <div id={styles.flexContainer}>
                 <div className={styles.flexRow}>
                     <div id={styles.time}>
                         <span className={styles.note}>UTC</span><br/>
@@ -89,6 +71,14 @@ export default function NewQsoForm({ onSubmit, logId, ...props }) {
                             onChange={(e) => handleDateTimeInputChange("time", e.target.value)}
                             defaultValue={currentDateTime()[1]}
                         />
+                        <span className={styles.realDateTime}>
+                            <input 
+                                type="checkbox"
+                                checked={realDateTime[1]}
+                                onChange={() => setRealDateTime( state => [state[0], !state[1]])}
+                            />
+                            real time
+                        </span>
                     </div>
                     <div id={styles.date}>
                         <span className={styles.note}>Date</span><br/>
@@ -98,23 +88,31 @@ export default function NewQsoForm({ onSubmit, logId, ...props }) {
                             onChange={(e) => handleDateTimeInputChange("date", e.target.value)}
                             defaultValue={currentDateTime()[0]}
                         />
+                        <span className={styles.realDateTime}>
+                            <input 
+                                type="checkbox"
+                                checked={realDateTime[0]}
+                                onChange={() => setRealDateTime( state => [!state[0], state[1]])}
+                            />
+                            real date
+                        </span>
                     </div>
                     <div id={styles.band}>
                         <span className={styles.note}>Band</span><br/>
-                        <select 
+                        <select
                             name="band"
                             onChange={handleInputChange}
                             defaultValue={initialFormState.band}>
-                            {Object.keys(BANDS).map( (band, index) => 
-                                <option 
-                                    key={band} 
+                            {Object.keys(BANDS).map( (band, index) =>
+                                <option
+                                    key={band}
                                     value={band}
                                 >{band}</option>)}
                         </select>
                     </div>
                     {FormFields([{
                         id: styles.freq,
-                        note: "Freq",
+                        note: "Frequency",
                         noteClass: styles.note,
                         name: "freq",
                         type: "number",
@@ -122,36 +120,49 @@ export default function NewQsoForm({ onSubmit, logId, ...props }) {
                     }])}
                     <div id={styles.mode}>
                         <span className={styles.note}>Mode</span><br/>
-                        <select 
+                        <select
                             name="qso_mode"
                             onChange={handleInputChange}
                             defaultValue={initialFormState.qso_mode}>
-                            {Object.keys(QSO_MODES).map( (mode, index) => 
-                                <option 
-                                    key={mode} 
+                            {Object.keys(QSO_MODES).map( (mode, index) =>
+                                <option
+                                    key={mode}
                                     value={mode}
                                 >{mode}</option>)}
                         </select>
                     </div>
                 </div>
+                {FormFields([
+                  {
+                      id: styles.callsign,
+                      name: "callsign",
+                      type: "text"
+                  },
+                  {
+                      id: styles.stationCallsign,
+                      name: "station_callsign",
+                      type: "text"
+                  },
+                ])}
                 <div className={styles.flexRow}>
                      {FormFields([
                          {
                             id: styles.rsts,
-                            note: "RST S",
+                            note: "RST Sent",
                             noteClass: styles.note,
                             name: "rst_s",
                             type: "number"
                         },
                         {
                             id: styles.rstr,
-                            note: "RST R",
+                            note: "RST Received",
                             noteClass: styles.note,
                             name: "rst_r",
                             type: "number"
                         },
                         {
                             id: styles.name,
+                            note: "Correspondent Name",
                             name: "name",
                             noteClass: styles.note,
                             type: "text"
@@ -159,12 +170,19 @@ export default function NewQsoForm({ onSubmit, logId, ...props }) {
                         {
                             id: styles.qth,
                             name: "qth",
+                            note: "Correspondent QTH",
+                            noteClass: styles.note,
+                            type: "text"
+                        },
+                        {
+                            id: styles.comment,
+                            name: "comment",
+                            note: "Comment",
                             noteClass: styles.note,
                             type: "text"
                         }
                      ])}
                 </div>
-            </div>  
         </form>
       }
       </div>
