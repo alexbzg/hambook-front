@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react"
 
 import { FormField } from "../../components"
-import validation from "../../utils/validation"
 
 const useForm = ({ initialFormState, onSubmit }) => {
   const [form, setForm] = useState(initialFormState)
@@ -10,24 +9,7 @@ const useForm = ({ initialFormState, onSubmit }) => {
   const [requestResult, setRequestResult] = useState(null)
   const [requestErrors, setRequestErrors] = useState([])
 
-  // grab validation function and run it on input if it exists
-  // if it doesn't exists, just assume the input is valid
-  const isValid = (label, value) => validation?.[label] ? validation?.[label]?.(value) : true
-  const initialErrorsState = {}
-  for (const label in initialFormState) {
-    initialErrorsState[label] = !isValid(label, initialFormState[label])
-  }
-  const [errors, setErrors] = useState(initialErrorsState)
-  const validateInput = useCallback((label, value) => {
-   // set an error if the validation function did NOT return true
-    setErrors((errors) => ({ ...errors, [label]: !isValid(label, value) }))
-  }, [])
-
   const handleInputChange = useCallback((label, value) => {
-    if (value === "") {
-      value = null
-    }
-    validateInput(label, value)
     setForm((form) => ({ ...form, [label]: value }))
   }, [])
 
@@ -35,29 +17,13 @@ const useForm = ({ initialFormState, onSubmit }) => {
     e.preventDefault()
 	setSubmitRequested(true)
     setRequestResult(null)
-    setRequestErrors(null)
-    const newErrors = {}
-    let formIsValid = true
-    Object.keys(form).forEach((label) => {
-        const fieldIsValid = isValid(label, form[label])
-        newErrors[label] = !fieldIsValid
-        if (!fieldIsValid)
-            formIsValid = false
-    })
-    setErrors(newErrors)
-    if (!formIsValid)
-      return
     setHasSubmitted(true)
     onSubmit(form)
   }
 
-  const isFieldValid = useCallback((label) => !submitRequested || !Boolean(errors[label]), 
-      [submitRequested, errors])
-
   const FormFields = (items) => items.map( (item, index) =>
     <FormField
         key={index}
-        isValid={isFieldValid}
         defaultValue={initialFormState[item.name]}
         onChange={handleInputChange}
         {...item}
@@ -66,9 +32,6 @@ const useForm = ({ initialFormState, onSubmit }) => {
   return {
     form,
     setForm,
-	errors,
-	setErrors,
-    isFieldValid,
     FormFields,
 	submitRequested,
 	setSubmitRequested,
@@ -79,7 +42,6 @@ const useForm = ({ initialFormState, onSubmit }) => {
 	requestErrors,
 	setRequestErrors,
     handleInputChange,
-    validateInput,
 	handleSubmit,
   }
 }

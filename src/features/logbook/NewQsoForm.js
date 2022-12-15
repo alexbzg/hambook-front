@@ -7,6 +7,8 @@ import { useLogs } from "./logsSlice"
 import { useForm } from "../../components"
 import useInterval from "../../hooks/useInterval"
 import { BANDS, QSO_MODES } from "../../utils/hamRadio"
+import buttonClear from "../../assets/img/icons/clear.svg"
+import { RE_STR_CALLSIGN_FULL } from "../../utils/validation"
 
 const currentDateTime = () => {
    const dtStr = (new Date()).toISOString()
@@ -14,7 +16,7 @@ const currentDateTime = () => {
 }
 
 
-export default function NewQsoForm({ onSubmit, logId, ...props }) {
+export default function NewQsoForm({ logId, ...props }) {
 
   const { logs } = useLogs()
   const log = logs.find( item => item.id === logId )
@@ -31,74 +33,94 @@ export default function NewQsoForm({ onSubmit, logId, ...props }) {
       qth: '',
       comment: ''
   }
-  const { handleInputChange, handleSubmit, FormFields } = useForm({ initialFormState, onSubmit })
+
+  const callsignInputRef = useRef()
+  const stationCallsignInputRef = useRef()
+
+  const onSubmit = async (data) => {
+    if (await props.onSubmit(data)) {
+      callsignInputRef.current.value = null
+    }
+  }
+  const { handleInputChange, setForm, handleSubmit, FormFields } = useForm({ initialFormState, onSubmit })
+
+  useEffect(() => {
+    if (stationCallsignInputRef.current && !stationCallsignInputRef.current.value) {
+      stationCallsignInputRef.current.value = log?.callsign
+    }
+    setForm( state => ({ ...state, station_callsign: log?.callsign }) )
+      
+  }, [stationCallsignInputRef, log?.callsign])
 
   const timeInputRef = useRef()
   const dateInputRef = useRef()
-  const [realDateTime, setRealDateTime] = useState([true, true])
+  const [realDateTime, setRealDateTime] = useState(true)
   const updateDateTime = useCallback(() => handleInputChange("qso_datetime",
             `${dateInputRef.current.value} ${timeInputRef.current.value}`), [])
   const setDateTimeToReal = useCallback(() => {
-    const dtStr = (new Date()).toISOString()
-    if (realDateTime[1]) {
+    if (realDateTime && timeInputRef.current?.value) {
+        const dtStr = (new Date()).toISOString()
         timeInputRef.current.value = dtStr.substring(11,16)
-    }
-    if (realDateTime[0]) {
         dateInputRef.current.value = dtStr.substring(0,10)
+        updateDateTime()
     }
-    updateDateTime()
   }, [realDateTime])
   useEffect( setDateTimeToReal, [setDateTimeToReal] )
-  useInterval( setDateTimeToReal, 
+  useInterval( setDateTimeToReal,
       realDateTime[0] || realDateTime[1] ? 1000 : null )
 
   const handleDateTimeInputChange = useCallback((name, value) => {
-    setRealDateTime( state => name === "date" ? [false, state[1]] : [state[0], false] )
+    setRealDateTime( false )
     updateDateTime()
   }, [])
 
   return (
       <div className={styles.newQso}>
       {log &&
-        <form onSubmit={handleSubmit}>
+        <form id="qsoForm" onSubmit={handleSubmit}>
             <input type="submit" hidden/>
                 <div className={styles.flexRow}>
+                    <div id={styles.realtime}>
+                        <span className={styles.realDateTime}>
+                             <input
+                                type="checkbox"
+                                checked={!realDateTime}
+                                onChange={() => setRealDateTime( state => !state )}
+                            />
+                            <span>manual<br/>time/date</span>
+                        </span>
+                    </div>
                     <div id={styles.time}>
-                        <span className={styles.note}>UTC</span><br/>
+                        <span className={styles.note}>utc</span><br/>
                         <input
+                            required
                             type="time"
                             ref={timeInputRef}
                             onChange={(e) => handleDateTimeInputChange("time", e.target.value)}
                             defaultValue={currentDateTime()[1]}
                         />
-                        <span className={styles.realDateTime}>
-                            <input 
-                                type="checkbox"
-                                checked={realDateTime[1]}
-                                onChange={() => setRealDateTime( state => [state[0], !state[1]])}
-                            />
-                            real time
-                        </span>
                     </div>
                     <div id={styles.date}>
-                        <span className={styles.note}>Date</span><br/>
+                        <span className={styles.note}>date</span><br/>
                         <input
+                            required
                             type="date"
                             ref={dateInputRef}
                             onChange={(e) => handleDateTimeInputChange("date", e.target.value)}
                             defaultValue={currentDateTime()[0]}
                         />
-                        <span className={styles.realDateTime}>
-                            <input 
-                                type="checkbox"
-                                checked={realDateTime[0]}
-                                onChange={() => setRealDateTime( state => [!state[0], state[1]])}
-                            />
-                            real date
-                        </span>
                     </div>
+                    {FormFields([{
+                        required: true,
+                        id: styles.freq,
+                        note: "frequency",
+                        noteClass: styles.note,
+                        name: "freq",
+                        type: "number",
+                        step: 0.1
+                    }])}
                     <div id={styles.band}>
-                        <span className={styles.note}>Band</span><br/>
+                        <span className={styles.note}>band</span><br/>
                         <select
                             name="band"
                             onChange={handleInputChange}
@@ -110,16 +132,8 @@ export default function NewQsoForm({ onSubmit, logId, ...props }) {
                                 >{band}</option>)}
                         </select>
                     </div>
-                    {FormFields([{
-                        id: styles.freq,
-                        note: "Frequency",
-                        noteClass: styles.note,
-                        name: "freq",
-                        type: "number",
-                        step: 0.1
-                    }])}
                     <div id={styles.mode}>
-                        <span className={styles.note}>Mode</span><br/>
+                        <span className={styles.note}>mode</span><br/>
                         <select
                             name="qso_mode"
                             onChange={handleInputChange}
@@ -132,37 +146,52 @@ export default function NewQsoForm({ onSubmit, logId, ...props }) {
                         </select>
                     </div>
                 </div>
-                {FormFields([
-                  {
-                      id: styles.callsign,
-                      name: "callsign",
-                      type: "text"
-                  },
-                  {
-                      id: styles.stationCallsign,
-                      name: "station_callsign",
-                      type: "text"
-                  },
-                ])}
+                <div className={styles.flexRow}>
+                  <div id={styles.buttonClear}>
+                    <img
+                        src={buttonClear}
+                        onClick={() => callsignInputRef.current.value = null}
+                        alt="Clear callsign"
+                        title="Clear callsign"/>
+                  </div>
+                  {FormFields([
+                    {
+                        required: true,
+                        invalidMessage: 'Enter valid callsign.',
+                        pattern: RE_STR_CALLSIGN_FULL,
+                        ref: callsignInputRef,
+                        id: styles.callsign,
+                        name: "callsign",
+                        type: "text"
+                    }
+                  ])}
+                  <div 
+                    id={styles.buttonOk}
+                    onClick={() => document.forms.qsoForm.requestSubmit()}>
+                    OK
+                  </div>
+                </div>
                 <div className={styles.flexRow}>
                      {FormFields([
                          {
+                            required: true,
                             id: styles.rsts,
-                            note: "RST Sent",
+                            note: "rst sent",
                             noteClass: styles.note,
                             name: "rst_s",
                             type: "number"
                         },
                         {
+                            required: true,
                             id: styles.rstr,
-                            note: "RST Received",
+                            note: "rst received",
                             noteClass: styles.note,
                             name: "rst_r",
                             type: "number"
                         },
                         {
                             id: styles.name,
-                            note: "Correspondent Name",
+                            note: "corr name",
                             name: "name",
                             noteClass: styles.note,
                             type: "text"
@@ -170,18 +199,28 @@ export default function NewQsoForm({ onSubmit, logId, ...props }) {
                         {
                             id: styles.qth,
                             name: "qth",
-                            note: "Correspondent QTH",
+                            note: "corr qth",
                             noteClass: styles.note,
                             type: "text"
                         },
                         {
                             id: styles.comment,
                             name: "comment",
-                            note: "Comment",
+                            note: "comment",
                             noteClass: styles.note,
                             type: "text"
                         }
                      ])}
+                </div>
+                <div>
+                  {FormFields([
+                  {
+                      ref: stationCallsignInputRef,
+                      id: styles.stationCallsign,
+                      name: "station_callsign",
+                      type: "text"
+                  }
+                ])}
                 </div>
         </form>
       }

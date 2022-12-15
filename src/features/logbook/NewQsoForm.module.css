@@ -1,6 +1,7 @@
 .newQso {
 	width: 900px;
-	padding: 30px;
+	padding: 20px 50px;
+	margin-bottom: 20px;
 	background-color: #fff;
 	border: 1px solid #ddd;
 	border-radius: 5px;
@@ -16,51 +17,79 @@
 	flex-direction: row;
 }
 .flexRow div{
-	margin: 0 10px;
+	padding: 0;
+	line-height: 12px;
 }
 .flexRow div span{
 	color: var(--grey);
     font-size: 12px;
     font-style: italic;
 }
-.flexRow input, .flexRow select{
-	width: 90%;
+
+.flexRow input{
+	padding: 3px 10px;
+	font-weight: bold;
 }
+
 .flexRow select{
-	padding: 5px 10px;
+	padding: 3px 10px;
     margin-bottom: 20px;
     background-color: #fff;
     border-radius: 5px;
     border: 1px solid #ddd;
     font-size: 16px;
+	font-weight: bold;
     color: #333;
     text-align: center;
     font-family: 'Nunito', sans-serif;
     outline: none;
+    line-height: 18px;
 }
 
-#time {
-	flex-grow: 1;
+#realtime {
+	padding-top: 15px;
+	line-height: 12px;
+	margin-right: 10px;
+	width: 100px;
+	text-align: left;
+}
+#realtime span{
+	display: inline-block;
+	text-align: left;
+	margin-left: 5px;
+}
+#realtime input{
+	vertical-align: 5px;
 }
 
-#date {
-	flex-grow: 2;
-}
+#time {	margin-right: 15px;}
+#time input{	width: 100px;}
 
-#band {
-	flex-grow: 2;
-}
+#date {	margin-right: 15px;}
+#date input{	width: 180px; }
 
-#freq {
-	flex-grow: 2;
-}
+#freq {	margin-right: 15px;}
+#freq input{	width: 180px; padding: 4px 10px;}
 
-#mode {
-	flex-grow: 1;
-}
+#band {	margin-right: 15px;}
+#band select{	width: 100px; }
 
+#mode {}
+
+#mode select{	width: 100px; }
+
+
+
+#buttonClear{
+	width: 30px;
+	cursor: pointer;
+}
+#buttonClear img{
+	width: 30px;
+}
 #callsign {
-	width: 100%;
+	width: 85%;
+	margin: 0 auto;
 }
 #callsign input{
 	background-color: var(--yellow-lite);
@@ -68,19 +97,29 @@
 	padding: 5px 0;
 	font-size: 24px;
 	font-weight: bold;
+	border-color: var(--purple);
+}
+#buttonOk{
+	width: 30px;
+	font-size: 20px;
+	color: var(--grey);
+	cursor: pointer;
 }
 
-#rstr {
-}
 
-#rsts {
-}
 
-#name {
-}
 
-#qth {
-}
+#rstr {	margin-right: 15px;}
+#rstr input{	width: 70px;}
+
+#rsts {	margin-right: 15px;}
+#rsts input{	width: 70px;}
+
+#name {	margin-right: 15px;}
+
+#qth {	margin-right: 15px;}
+
+#comment {	}
 
 
 
@@ -89,3 +128,4 @@
 
 	display: none;
 }
+

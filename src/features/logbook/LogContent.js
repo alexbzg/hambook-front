@@ -44,7 +44,9 @@ export default function LogContent({ ...props }) {
                 args: { new_qso }
             })
          setQsos((qsos) => [ createdQso, ...qsos ])
+         return true
        } catch {
+         return false
        }
      }
  

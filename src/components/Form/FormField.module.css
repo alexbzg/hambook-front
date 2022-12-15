@@ -7,7 +7,6 @@ input[type=checkbox].input {
 }
 
 .note {
-	margin-left: 10px;
 	color: var(--grey);
 	font-size: 12px;
 	font-style: italic;

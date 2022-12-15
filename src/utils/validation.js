@@ -27,8 +27,12 @@ export function validatePhone(text) {
   return /^\+\d{11}$/.test(text) 
 }
 
+export const RE_STR_CALLSIGN_FULL = 
+    "^([A-Za-z\\d]{1,3}/){0,3}[a-zA-Z]{1,4}\\d{1,3}[a-zA-Z]{1,4}(/[A-Za-z\\d]{1,3}){0,3}$"
+export const RE_CALLSIGN_FULL = new RegExp(RE_STR_CALLSIGN_FULL) 
+
 export function validateFullCallsign(text) {
-  return /^([A-Za-z\d]{1,3}\/){0,3}[a-zA-Z]{1,4}\d{1,3}[a-zA-Z]{1,4}(\/[A-Za-z\d]{1,3}){0,3}$/.test(text)
+  return RE_CALLSIGN_FULL.test(text)
 }
 
 const optional = (validation) => (value) => (value !== 0 &&  !Boolean(value)) || validation(value)

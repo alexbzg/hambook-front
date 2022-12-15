@@ -2,11 +2,13 @@ import React from "react"
 
 import styles from './FormField.module.css'
 
-export default function FormField({...props}) {
+const FormField = React.forwardRef((props, ref) => {
   const InputElement = props.type === `textarea` ? `textarea` : `input`
-  const classInvalid = props.isValid(props.name) ? '' : 'invalid'
-  const onChange = (e) => 
+  const classInvalid = !props.isValid || props.isValid(props.name) ? '' : 'invalid'
+  const onChange = (e) => {
+    e.target.setCustomValidity('')
     props.onChange(props.name, props.type === 'checkbox' ? e.target.checked : e.target.value)
+  }
   const { 
       preInputContent, 
       title, 
@@ -15,6 +17,7 @@ export default function FormField({...props}) {
       noteClass,
       inputClass, 
       isValid,
+      invalidMessage,
       className,
       id,
       ...inputProps } = props
@@ -29,12 +32,15 @@ export default function FormField({...props}) {
             </>
         )}
         <InputElement
+            ref={ref}
             {...inputProps}
+            onInvalid={e => invalidMessage && e.target.setCustomValidity(invalidMessage)}
 			className={`${styles.input} ${classInvalid}`}
             onChange={onChange}/>
         {props.postInputContent}
     </div>
   )
-}
+})
 
-
+export default FormField
+                    
