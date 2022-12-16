@@ -4,7 +4,7 @@ import styles from './NewQsoForm.module.css'
 
 import { useLogs } from "./logsSlice"
 
-import { useForm } from "../../components"
+import { useForm, SelectFromObject } from "../../components"
 import useInterval from "../../hooks/useInterval"
 import { BANDS, QSO_MODES } from "../../utils/hamRadio"
 import buttonClear from "../../assets/img/icons/clear.svg"
@@ -42,7 +42,10 @@ export default function NewQsoForm({ logId, ...props }) {
       callsignInputRef.current.value = null
     }
   }
-  const { handleInputChange, setForm, handleSubmit, FormFields } = useForm({ initialFormState, onSubmit })
+  const { handleInputChange, setForm, handleSubmit, FormFields } = 
+        useForm({ initialFormState, onSubmit })
+  const _handleInputChange = useCallback((e) => 
+      handleInputChange(e.target.name, e.target.value), [])
 
   useEffect(() => {
     if (stationCallsignInputRef.current && !stationCallsignInputRef.current.value) {
@@ -66,10 +69,9 @@ export default function NewQsoForm({ logId, ...props }) {
     }
   }, [realDateTime])
   useEffect( setDateTimeToReal, [setDateTimeToReal] )
-  useInterval( setDateTimeToReal,
-      realDateTime[0] || realDateTime[1] ? 1000 : null )
+  useInterval( setDateTimeToReal, realDateTime ? 1000 : null )
 
-  const handleDateTimeInputChange = useCallback((name, value) => {
+  const handleDateTimeInputChange = useCallback(() => {
     setRealDateTime( false )
     updateDateTime()
   }, [])
@@ -96,7 +98,7 @@ export default function NewQsoForm({ logId, ...props }) {
                             required
                             type="time"
                             ref={timeInputRef}
-                            onChange={(e) => handleDateTimeInputChange("time", e.target.value)}
+                            onChange={handleDateTimeInputChange}
                             defaultValue={currentDateTime()[1]}
                         />
                     </div>
@@ -106,7 +108,7 @@ export default function NewQsoForm({ logId, ...props }) {
                             required
                             type="date"
                             ref={dateInputRef}
-                            onChange={(e) => handleDateTimeInputChange("date", e.target.value)}
+                            onChange={handleDateTimeInputChange}
                             defaultValue={currentDateTime()[0]}
                         />
                     </div>
@@ -121,29 +123,19 @@ export default function NewQsoForm({ logId, ...props }) {
                     }])}
                     <div id={styles.band}>
                         <span className={styles.note}>band</span><br/>
-                        <select
+                        <SelectFromObject
                             name="band"
-                            onChange={handleInputChange}
-                            defaultValue={initialFormState.band}>
-                            {Object.keys(BANDS).map( (band, index) =>
-                                <option
-                                    key={band}
-                                    value={band}
-                                >{band}</option>)}
-                        </select>
+                            onChange={_handleInputChange}
+                            defaultValue={initialFormState.band}
+                            options={BANDS}/>
                     </div>
                     <div id={styles.mode}>
                         <span className={styles.note}>mode</span><br/>
-                        <select
+                        <SelectFromObject
                             name="qso_mode"
-                            onChange={handleInputChange}
-                            defaultValue={initialFormState.qso_mode}>
-                            {Object.keys(QSO_MODES).map( (mode, index) =>
-                                <option
-                                    key={mode}
-                                    value={mode}
-                                >{mode}</option>)}
-                        </select>
+                            onChange={_handleInputChange}
+                            defaultValue={initialFormState.qso_mode}
+                            options={QSO_MODES}/>
                     </div>
                 </div>
                 <div className={styles.flexRow}>
