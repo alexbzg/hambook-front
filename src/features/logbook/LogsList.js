@@ -41,7 +41,10 @@ export default function LogsList({ ...props }) {
   }
 
   const handleDeleteItem = async (item) => {
-     if (await confirmModal({children: "This log will be deleted with all its contents. Recovery is impossible."})) {
+     if (await confirmModal({
+         children: "This log will be deleted with all its contents. Recovery is impossible.",
+         confirmCheckbox: true
+     })) {
        dispatch(logDelete(item.id))
      }
   }

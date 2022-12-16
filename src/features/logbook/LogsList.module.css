@@ -28,7 +28,7 @@
 	display: inline-block;
 	padding-top: 25px;
 }
-
+/*
 .menuButton {
 	text-align: right;
 	font-weight: bold;
@@ -60,7 +60,7 @@
 .menuItem:hover {
 	background-color: var(--orange);
 }
-
+*/
 .logCallsign {
 	padding: 10px 10px 0px 10px;
 	font-size: 20px;

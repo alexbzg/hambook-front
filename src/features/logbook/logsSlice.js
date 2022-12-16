@@ -92,7 +92,17 @@ const logsSlice = createSlice({
     error: null,
     logs: []
   },
-  reducers: {},
+  reducers: {
+    modifyQsoCount: ( state, { payload }) => {
+      const logs = [...state.logs]
+      const affectedLogIndex = logs.findIndex( item => item.id === payload.logId )
+      logs[affectedLogIndex] = { 
+          ...logs[affectedLogIndex], 
+          qso_count: logs[affectedLogIndex].qso_count + payload.value
+      }
+      return { ...state, logs }
+    }
+  },
   extraReducers: {
     // fetch user's logs
     [logsFetch.pending]: extraReducerPending,
@@ -127,6 +137,8 @@ const logsSlice = createSlice({
   },
 })
 export default logsSlice.reducer
+
+export const { modifyQsoCount } = logsSlice.actions
 
 export const useLogs = () => {
     const logs = useSelector((state) => state.logs.logs)

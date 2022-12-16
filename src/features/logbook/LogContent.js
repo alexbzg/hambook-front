@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
+import { useDispatch } from "react-redux"
 
 import styles from './LogContent.module.css'
 
@@ -10,14 +11,17 @@ import client from "../../services/apiClient"
 
 import NewQsoForm from "./NewQsoForm"
 import Qso from "./Qso"
+import { modifyQsoCount } from "./logsSlice"
 
 export default function LogContent({ ...props }) {
+  const dispatch = useDispatch()
+
   const { user, token } = useAuthenticatedUser()
   const confirmModal = useModal()
   const { logId } = useParams()
 
   const [qsos, setQsos] = useState([])
-  const [editQsoId, setEditQsoId] = useState()
+  const [editQso, setEditQso] = useState()
 
   useEffect( () => {
     async function fetchQsos() {
@@ -68,13 +72,31 @@ export default function LogContent({ ...props }) {
        }
      }
 
+  const deleteQso = async (qsoId) => {
+     if (await confirmModal({
+         children: "This qso will be deleted. Recovery is impossible.",
+         confirmCheckbox: true
+     })) {
+        try {
+            await client({
+          		url: `/qso/${qsoId}`,
+                method: 'DELETE',
+                token
+            })
+            dispatch(modifyQsoCount({ logId, value: -1 }))
+            setQsos((qsos) => qsos.filter( qso => qso.id !== qsoId ))
+        } catch {
+        }
+    }
+  }
+
+
   const Qsos = qsos.map( (qso) => (
       <Qso 
         key={qso.id}
         data={qso}
-        isEdited={editQsoId == qso.id}
-        onEdit={() => setEditQsoId(qso.id)}
-        onQsoUpdate={postQsoUpdate}
+        onEdit={() => setEditQso(qso)}
+        onDelete={() => deleteQso(qso.id)}
       />
   ))
 

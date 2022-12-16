@@ -1,10 +1,10 @@
-import { useState } from "react"
+import React from "react"
 
 import styles from './LogsList.module.css'
 
-export default function Qso({ data, isEdited, onEdit, onQsoUpdate, ...props }) {
+import { DropDownMenu } from "../../components"
 
-  const [form, setForm] = useState({})
+export default function Qso({ data, onDelete, onEdit, ...props }) {
 
   return (
       <div className={styles.loqRow}>
@@ -32,6 +32,18 @@ export default function Qso({ data, isEdited, onEdit, onQsoUpdate, ...props }) {
         <div className={styles.qth}>
             {data.qth}
         </div>
+        <DropDownMenu 
+            items={[
+                {
+                    title: "Delete QSO",
+                    handler: onDelete
+                },
+                {
+                    title: "Edit QSO",
+                    handler: onEdit
+                }
+            ]}/>
+
       </div>
   )
 }
