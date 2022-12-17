@@ -1,27 +1,31 @@
 import React from "react"
 import styles from './LogsList.module.css'
 
-import { FormField, Modal } from "../../components"
-
+import { CallsignField, FormField, Modal } from "../../components"
+const FORM_ID = "logSettingsForm"
 
 export default function LogSettings({ modalResult, log, handleInputChange, ...props }) {
 
+    const requestSubmit = () => {
+      document.forms[FORM_ID].requestSubmit()
+      return document.forms[FORM_ID].checkValidity()
+    }
+
     return (
-        <Modal modalResult={modalResult}>
+        <Modal modalResult={modalResult} requestSubmit={requestSubmit}>
           <div className="logSettings">
-            <FormField
-                name="callsign"
-                isValid={() => true}
+            <form id={FORM_ID} onSubmit={(e) => e.preventDefault()}>
+              <CallsignField
                 defaultValue={log.callsign}
-                title="Callsign"
+                required
                 onChange={handleInputChange}/>
-            <FormField
+              <FormField
                 name="description"
-                isValid={() => true}
                 defaultValue={log.description}
                 title="Description"
                 onChange={handleInputChange}/>
-         </div>
+            </form>
+          </div>
         </Modal>
     )
 

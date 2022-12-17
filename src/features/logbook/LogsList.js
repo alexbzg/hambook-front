@@ -31,13 +31,13 @@ export default function LogsList({ ...props }) {
   }, [])
 
   const logSettingsModalResult = async (result) => {
-        if (result) {
-          dispatch( editLog.id ? 
-            logUpdate({ log_id: editLog.id, log_update: editLog }) :
-            logCreate( editLog )
-          )
-        } 
-        setEditLog(null)
+    if (result) {
+      dispatch( editLog.id ? 
+        logUpdate({ log_id: editLog.id, log_update: editLog }) :
+        logCreate( editLog )
+      )
+    } 
+    setEditLog(null)
   }
 
   const handleDeleteItem = async (item) => {

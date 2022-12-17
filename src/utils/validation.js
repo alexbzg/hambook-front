@@ -19,20 +19,24 @@ export function validatePassword(password, length = 8) {
   return password?.length >= length
 }
 
-export function validateCallsign(text) {
-  return /^[a-zA-Z]{1,4}\d{1,3}[a-zA-Z]{1,4}$/.test(text)
-}
-
 export function validatePhone(text) {
   return /^\+\d{11}$/.test(text) 
 }
 
 export const RE_STR_CALLSIGN_FULL = 
     "^([A-Za-z\\d]{1,3}/){0,3}[a-zA-Z]{1,4}\\d{1,3}[a-zA-Z]{1,4}(/[A-Za-z\\d]{1,3}){0,3}$"
-export const RE_CALLSIGN_FULL = new RegExp(RE_STR_CALLSIGN_FULL) 
+const RE_CALLSIGN_FULL = new RegExp(RE_STR_CALLSIGN_FULL) 
 
 export function validateFullCallsign(text) {
   return RE_CALLSIGN_FULL.test(text)
+}
+
+export const RE_STR_CALLSIGN = 
+    "^[a-zA-Z]{1,4}\\d{1,3}[a-zA-Z]{1,4}$"
+const RE_CALLSIGN = new RegExp(RE_STR_CALLSIGN) 
+
+export function validateCallsign(text) {
+  return RE_CALLSIGN.test(text)
 }
 
 const optional = (validation) => (value) => (value !== 0 &&  !Boolean(value)) || validation(value)

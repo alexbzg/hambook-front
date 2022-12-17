@@ -1,4 +1,5 @@
 .menuButton {
+	cursor: pointer;
 	text-align: right;
 	font-weight: bold;
 	color: var(--grey);

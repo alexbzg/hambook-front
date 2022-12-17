@@ -4,7 +4,7 @@ import styles from './NewQsoForm.module.css'
 
 import { useLogs } from "./logsSlice"
 
-import { useForm, SelectFromObject } from "../../components"
+import { useForm, SelectFromObject, CallsignField } from "../../components"
 import useInterval from "../../hooks/useInterval"
 import { BANDS, QSO_MODES } from "../../utils/hamRadio"
 import buttonClear from "../../assets/img/icons/clear.svg"
@@ -146,17 +146,12 @@ export default function NewQsoForm({ logId, ...props }) {
                         alt="Clear callsign"
                         title="Clear callsign"/>
                   </div>
-                  {FormFields([
-                    {
-                        required: true,
-                        invalidMessage: 'Enter valid callsign.',
-                        pattern: RE_STR_CALLSIGN_FULL,
-                        ref: callsignInputRef,
-                        id: styles.callsign,
-                        name: "callsign",
-                        type: "text"
-                    }
-                  ])}
+                  <CallsignField
+                        title={null}
+                        required
+                        ref={callsignInputRef}
+                        id={styles.callsign}
+                        onChange={handleInputChange}/>
                   <div 
                     id={styles.buttonOk}
                     onClick={() => document.forms.qsoForm.requestSubmit()}>
@@ -205,14 +200,12 @@ export default function NewQsoForm({ logId, ...props }) {
                      ])}
                 </div>
                 <div>
-                  {FormFields([
-                  {
-                      ref: stationCallsignInputRef,
-                      id: styles.stationCallsign,
-                      name: "station_callsign",
-                      type: "text"
-                  }
-                ])}
+                  <CallsignField
+                    ref={stationCallsignInputRef}
+                    id={styles.stationCallsign}
+                    title={null}
+                    name="station_callsign"
+                    required/>
                 </div>
         </form>
       }

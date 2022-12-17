@@ -48,6 +48,7 @@ export default function LogContent({ ...props }) {
                 args: { new_qso }
             })
          setQsos((qsos) => [ createdQso, ...qsos ])
+         dispatch(modifyQsoCount({ logId, value: 1 }))
          return true
        } catch {
          return false

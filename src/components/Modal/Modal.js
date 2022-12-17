@@ -4,13 +4,16 @@ import { CSSTransition } from "react-transition-group";
 
 import styles from "./Modal.module.css"
 
-export default function ({ modalResult, title, children, confirmLabel, cancelLabel, confirmCheckbox }) {
+export default function ({ modalResult, title, children, confirmLabel, cancelLabel, confirmCheckbox, requestSubmit }) {
 
   const [show, setShow] = useState(true)
   const [confirmChecked, setConfirmChecked] = useState(!confirmCheckbox)
   const nodeRef = useRef(null)
 
   const setResult = (result) => {
+    if (result && requestSubmit && !requestSubmit()) {
+        return
+    }
     setShow(false)
     modalResult(result)
   }
@@ -40,15 +43,15 @@ export default function ({ modalResult, title, children, confirmLabel, cancelLab
 
                     <div className={styles.modalBody}>
                         {children}
+                    </div>
+
+                    <div className={styles.modalFooter}>
                         {confirmCheckbox && (
-                            <div classname={styles.confirmCheckboxContainer}>
+                            <div classname={styles.modalConfirmCheckboxContainer}>
                                 <input type="checkbox" onChange={(e) => setConfirmChecked(e.target.checked)}/>
                                 I confirm this operation.
                             </div>
                         )}
-                    </div>
-
-                    <div className={styles.modalFooter}>
                         <button 
                             disabled={!confirmChecked}
                             className={styles.modalDefaultButton} 

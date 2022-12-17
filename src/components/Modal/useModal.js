@@ -13,6 +13,7 @@ const useModal = () => (props) =>
       root.unmount()
       rootElement.remove()
       resolve(result)
+      return true
     }
 
     root.render(

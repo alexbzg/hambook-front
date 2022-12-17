@@ -43,7 +43,7 @@ export const logUpdate = createAsyncThunk(
 )
 
 export const logCreate = createAsyncThunk(
-	'logs/update', 
+	'logs/create', 
     async ( new_log, { rejectWithValue, getState } ) => {
         try {
             const data = await client({
@@ -116,7 +116,8 @@ const logsSlice = createSlice({
     [logUpdate.fulfilled]: (state, { payload }) => {
       state.isLoading = 'succeeded'
       const idx = state.logs.findIndex( log => log.id === payload.id )
-      state.logs[idx] = payload
+      const { qso_count } = state.logs[idx]
+      state.logs[idx] = { ...payload, qso_count }
     },
     [logUpdate.rejected]: extraReducerRejected,
     //create log
