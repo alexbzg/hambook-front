@@ -1,14 +1,13 @@
-import { useState, useEffect, useRef, useCallback } from "react"
+import { useState, useEffect, useRef, useCallback, useId } from "react"
 
 import styles from './NewQsoForm.module.css'
 
 import { useLogs } from "./logsSlice"
 
-import { useForm, SelectFromObject, CallsignField } from "../../components"
+import { FormField, SelectFromObject, CallsignField } from "../../components"
 import useInterval from "../../hooks/useInterval"
 import { BANDS, QSO_MODES } from "../../utils/hamRadio"
 import buttonClear from "../../assets/img/icons/clear.svg"
-import { RE_STR_CALLSIGN_FULL } from "../../utils/validation"
 
 const currentDateTime = () => {
    const dtStr = (new Date()).toISOString()
@@ -17,74 +16,42 @@ const currentDateTime = () => {
 
 
 export default function NewQsoForm({ logId, ...props }) {
-
+  const ID = useId()
   const { logs } = useLogs()
   const log = logs.find( item => item.id === logId )
-  const initialFormState = {
-      station_callsign: log?.callsign,
-      callsign: null,
-      qso_datetime: new Date(),
-      band: Object.keys(BANDS)[0],
-      freq: 144508.5,
-      qso_mode: Object.keys(QSO_MODES)[0],
-      rst_s: 599,
-      rst_r: 599,
-      name: '',
-      qth: '',
-      comment: ''
-  }
 
   const callsignInputRef = useRef()
   const stationCallsignInputRef = useRef()
 
-  const onSubmit = async (data) => {
-    if (await props.onSubmit(data)) {
+  const onSubmit = async (e) => {
+    e.preventDefault()
+    if (await props.onSubmit(new FormData(document.forms[ID]))) {
       callsignInputRef.current.value = null
     }
   }
-  const { handleInputChange, setForm, handleSubmit, FormFields } = 
-        useForm({ initialFormState, onSubmit })
-  const _handleInputChange = useCallback((e) => 
-      handleInputChange(e.target.name, e.target.value), [])
-
-  useEffect(() => {
-    if (stationCallsignInputRef.current && !stationCallsignInputRef.current.value) {
-      stationCallsignInputRef.current.value = log?.callsign
-    }
-    setForm( state => ({ ...state, station_callsign: log?.callsign }) )
-      
-  }, [stationCallsignInputRef, log?.callsign])
 
   const timeInputRef = useRef()
   const dateInputRef = useRef()
   const [realDateTime, setRealDateTime] = useState(true)
-  const updateDateTime = useCallback(() => handleInputChange("qso_datetime",
-            `${dateInputRef.current.value} ${timeInputRef.current.value}`), [])
   const setDateTimeToReal = useCallback(() => {
     if (realDateTime && timeInputRef.current?.value) {
         const dtStr = (new Date()).toISOString()
         timeInputRef.current.value = dtStr.substring(11,16)
         dateInputRef.current.value = dtStr.substring(0,10)
-        updateDateTime()
     }
   }, [realDateTime])
   useEffect( setDateTimeToReal, [setDateTimeToReal] )
   useInterval( setDateTimeToReal, realDateTime ? 1000 : null )
 
-  const handleDateTimeInputChange = useCallback(() => {
-    setRealDateTime( false )
-    updateDateTime()
-  }, [])
-
   return (
       <div className={styles.newQso}>
       {log &&
-        <form id="qsoForm" onSubmit={handleSubmit}>
+        <form id={ID} onSubmit={onSubmit}>
             <input type="submit" hidden/>
                 <div className={styles.flexRow}>
                     <div id={styles.realtime}>
                         <span className={styles.realDateTime}>
-                             <input
+                            <input
                                 type="checkbox"
                                 checked={!realDateTime}
                                 onChange={() => setRealDateTime( state => !state )}
@@ -97,8 +64,8 @@ export default function NewQsoForm({ logId, ...props }) {
                         <input
                             required
                             type="time"
+                            name="time"
                             ref={timeInputRef}
-                            onChange={handleDateTimeInputChange}
                             defaultValue={currentDateTime()[1]}
                         />
                     </div>
@@ -107,34 +74,33 @@ export default function NewQsoForm({ logId, ...props }) {
                         <input
                             required
                             type="date"
+                            name="date"
                             ref={dateInputRef}
-                            onChange={handleDateTimeInputChange}
                             defaultValue={currentDateTime()[0]}
                         />
                     </div>
-                    {FormFields([{
-                        required: true,
-                        id: styles.freq,
-                        note: "frequency",
-                        noteClass: styles.note,
-                        name: "freq",
-                        type: "number",
-                        step: 0.1
-                    }])}
+                    <FormField
+                        required
+                        id={styles.freq}
+                        note="frequency"
+                        noteClass={styles.note}
+                        defaultValue="144000"
+                        name="freq"
+                        type="number"
+                        step="0.1"
+                    />
                     <div id={styles.band}>
                         <span className={styles.note}>band</span><br/>
                         <SelectFromObject
                             name="band"
-                            onChange={_handleInputChange}
-                            defaultValue={initialFormState.band}
+                            defaultValue={Object.keys(BANDS)[0]}
                             options={BANDS}/>
                     </div>
                     <div id={styles.mode}>
                         <span className={styles.note}>mode</span><br/>
                         <SelectFromObject
                             name="qso_mode"
-                            onChange={_handleInputChange}
-                            defaultValue={initialFormState.qso_mode}
+                            defaultValue={Object.keys(QSO_MODES)[0]}
                             options={QSO_MODES}/>
                     </div>
                 </div>
@@ -148,63 +114,60 @@ export default function NewQsoForm({ logId, ...props }) {
                   </div>
                   <CallsignField
                         title={null}
+                        name="callsign"
                         required
                         ref={callsignInputRef}
-                        id={styles.callsign}
-                        onChange={handleInputChange}/>
+                        id={styles.callsign}/>
                   <div 
                     id={styles.buttonOk}
-                    onClick={() => document.forms.qsoForm.requestSubmit()}>
+                    onClick={() => document.forms[ID].requestSubmit()}>
                     OK
                   </div>
                 </div>
                 <div className={styles.flexRow}>
-                     {FormFields([
-                         {
-                            required: true,
-                            id: styles.rsts,
-                            note: "rst sent",
-                            noteClass: styles.note,
-                            name: "rst_s",
-                            type: "number"
-                        },
-                        {
-                            required: true,
-                            id: styles.rstr,
-                            note: "rst received",
-                            noteClass: styles.note,
-                            name: "rst_r",
-                            type: "number"
-                        },
-                        {
-                            id: styles.name,
-                            note: "corr name",
-                            name: "name",
-                            noteClass: styles.note,
-                            type: "text"
-                        },
-                        {
-                            id: styles.qth,
-                            name: "qth",
-                            note: "corr qth",
-                            noteClass: styles.note,
-                            type: "text"
-                        },
-                        {
-                            id: styles.comment,
-                            name: "comment",
-                            note: "comment",
-                            noteClass: styles.note,
-                            type: "text"
-                        }
-                     ])}
+                     <FormField
+                        required
+                        id={styles.rsts}
+                        note="rst sent"
+                        noteClass={styles.note}
+                        defaultValue="599"
+                        name="rst_s"
+                        type="number"
+                    />
+                     <FormField
+                        required
+                        id={styles.rstr}
+                        note="rst sent"
+                        noteClass={styles.note}
+                        defaultValue="599"
+                        name="rst_r"
+                        type="number"
+                    />
+                     <FormField
+                        id={styles.name}
+                        note="corr name"
+                        noteClass={styles.note}
+                        name="name"
+                    />
+                     <FormField
+                        id={styles.qth}
+                        note="corr qth"
+                        noteClass={styles.note}
+                        name="qth"
+                    />
+                     <FormField
+                        id={styles.comment}
+                        note="comment"
+                        noteClass={styles.note}
+                        name="comment"
+                    />
                 </div>
                 <div>
                   <CallsignField
                     ref={stationCallsignInputRef}
                     id={styles.stationCallsign}
-                    title={null}
                     name="station_callsign"
+                    defaultValue={log.callsign}
                     required/>
                 </div>
         </form>

@@ -7,7 +7,9 @@ const FormField = React.forwardRef((props, ref) => {
   const classInvalid = !props.isValid || props.isValid(props.name) ? '' : 'invalid'
   const onChange = (e) => {
     e.target.setCustomValidity('')
-    props.onChange(props.name, props.type === 'checkbox' ? e.target.checked : e.target.value)
+    if (props.onChange) {
+      props.onChange(props.name, props.type === 'checkbox' ? e.target.checked : e.target.value)
+    }
   }
   const { 
       preInputContent, 

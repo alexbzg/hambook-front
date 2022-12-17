@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"
 
 import styles from './LogsList.module.css'
 
-import { useLogs, logsFetch, logUpdate, logCreate, logDelete } from "./logsSlice"
+import { useLogs, logUpdate, logCreate, logDelete } from "./logsSlice"
 import useModal from "../../components/Modal/useModal"
 
 
@@ -32,9 +32,10 @@ export default function LogsList({ ...props }) {
 
   const logSettingsModalResult = async (result) => {
     if (result) {
+      const data = Object.fromEntries(result.entries())
       dispatch( editLog.id ? 
-        logUpdate({ log_id: editLog.id, log_update: editLog }) :
-        logCreate( editLog )
+        logUpdate({ log_id: editLog.id, log_update: data }) :
+        logCreate( data )
       )
     } 
     setEditLog(null)

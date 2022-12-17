@@ -10,13 +10,20 @@ import useModal from "../../components/Modal/useModal"
 import client from "../../services/apiClient"
 
 import NewQsoForm from "./NewQsoForm"
+import EditQsoForm from "./EditQsoForm"
 import Qso from "./Qso"
 import { modifyQsoCount } from "./logsSlice"
+
+const qsoData = (formData) => {          
+    const { date, time, ...data } = Object.fromEntries(formData.entries())
+    data.qso_datetime = `${date} ${time}`
+    return data
+}
 
 export default function LogContent({ ...props }) {
   const dispatch = useDispatch()
 
-  const { user, token } = useAuthenticatedUser()
+  const { token } = useAuthenticatedUser()
   const confirmModal = useModal()
   const { logId } = useParams()
 
@@ -39,13 +46,14 @@ export default function LogContent({ ...props }) {
     fetchQsos()
   }, [])
 
-  const postNewQso = async (new_qso) => {
-       try {
-         const createdQso = await client({
+  const postNewQso = async (result) => {
+    if (result) {
+        try {
+            const createdQso = await client({
          		url: `/qso/logs/${logId}`,
                 method: 'POST',
                 token,
-                args: { new_qso }
+                args: { new_qso: qsoData(result) }
             })
          setQsos((qsos) => [ createdQso, ...qsos ])
          dispatch(modifyQsoCount({ logId, value: 1 }))
@@ -53,25 +61,28 @@ export default function LogContent({ ...props }) {
        } catch {
          return false
        }
-     }
+    }
+  }
  
-  const postQsoUpdate = async ({qso_id, qso_update}) => {
-       try {
-         const updatedQso = await client({
-         		url: `/qso/${qso_id}`,
+  const postQsoUpdate = async (result) => {
+      if (result) {
+          try {
+            const updatedQso = await client({
+                url: `/qso/${editQso.id}`,
                 method: 'PUT',
                 token,
-                args: { qso_update }
+                args: { qso_update: qsoData(result) }
             })
-         setQsos((qsos) => {
-             const newQsos = [...qsos]
-             const idx = newQsos.findIndex( qso => qso.id === qso_id )
-             newQsos[idx] = updatedQso
-             return newQsos
-         })
-       } catch {
-       }
-     }
+            setQsos((qsos) => {
+                const newQsos = [...qsos]
+                const idx = newQsos.findIndex( qso => qso.id === editQso.id )
+                newQsos[idx] = updatedQso
+                return newQsos
+            })
+        } catch {}
+      }
+      setEditQso(null)
+  }
 
   const deleteQso = async (qsoId) => {
      if (await confirmModal({
@@ -91,7 +102,6 @@ export default function LogContent({ ...props }) {
     }
   }
 
-
   const Qsos = qsos.map( (qso) => (
       <Qso 
         key={qso.id}
@@ -107,6 +117,12 @@ export default function LogContent({ ...props }) {
         <div className={styles.logWindow}>
             {Qsos}
         </div>
+        {editQso &&
+            <EditQsoForm
+                qso={editQso}
+                modalResult={postQsoUpdate}
+            />
+        }
     </div>
     )
 }
