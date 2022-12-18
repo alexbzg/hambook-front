@@ -3,13 +3,17 @@ import React from "react"
 import styles from './LogsList.module.css'
 
 import { DropDownMenu } from "../../components"
+import { formatDate } from "../../utils/datetime"
 
 export default function Qso({ data, onDelete, onEdit, ...props }) {
 
   return (
       <div className={styles.loqRow}>
         <div className={styles.date}>
-            {data.qso_datetime}
+            {formatDate(data.qso_datetime)}
+        </div>
+        <div className={styles.time}>
+            {data.qso_datetime.substring(11, 16)}
         </div>
         <div className={styles.freq}>
             {data.freq}
