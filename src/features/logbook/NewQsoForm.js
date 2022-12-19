@@ -32,6 +32,49 @@ export default function NewQsoForm({ logId, ...props }) {
 
   const timeInputRef = useRef()
   const dateInputRef = useRef()
+  const rstrRef = useRef()
+  const rstsRef = useRef()
+  const bandRef = useRef()
+  const modeRef = useRef()
+  const freqRef = useRef()
+
+  const setFreq = () => {
+    const mode = modeRef.current.value
+    const band = bandRef.current.value
+    freqRef.current.value = QSO_MODES[mode].defFreqs?.[band] || BANDS[band].limits[0]
+  }
+  
+
+  const onBandChange = () => {
+    setFreq()
+  }
+
+  const onModeChange = (mode) => {
+    setFreq()
+    const rst = QSO_MODES[mode].rst
+    rstrRef.current.value = rst
+    rstsRef.current.value = rst
+  }
+
+  const onFreqChange = (freq) => {
+    const strFreq = '' + freq
+    if (strFreq.length > 1) {
+      const MODE = QSO_MODES[modeRef.current.value]
+      if (MODE.defFreqs) {
+        const band = Object.keys(MODE.defFreqs).find( band => ('' + MODE.defFreqs[band]).startsWith(strFreq)) 
+        if (band) {
+            bandRef.current.value = band
+            freqRef.current.value = MODE.defFreqs[band]
+            return
+        }
+      } 
+      const band = Object.keys(BANDS).find( band => BANDS[band].limits[0] <= freq && BANDS[band].limits[1] >= freq)
+      if (band) {
+        bandRef.current.value = band
+      }
+    }
+  }
+
   const [realDateTime, setRealDateTime] = useState(true)
   const setDateTimeToReal = useCallback(() => {
     if (realDateTime && timeInputRef.current?.value) {
@@ -81,7 +124,9 @@ export default function NewQsoForm({ logId, ...props }) {
                     </div>
                     <FormField
                         required
+                        ref={freqRef}
                         id={styles.freq}
+                        onChange={(name, value) => onFreqChange(value)}
                         note="frequency"
                         noteClass={styles.note}
                         defaultValue="144000"
@@ -93,13 +138,17 @@ export default function NewQsoForm({ logId, ...props }) {
                         <span className={styles.note}>band</span><br/>
                         <SelectFromObject
                             name="band"
+                            ref={bandRef}
                             defaultValue={Object.keys(BANDS)[0]}
+                            onChange={(e) => onBandChange(e.target.value)}
                             options={BANDS}/>
                     </div>
                     <div id={styles.mode}>
                         <span className={styles.note}>mode</span><br/>
                         <SelectFromObject
                             name="qso_mode"
+                            ref={modeRef}
+                            onChange={(e) => onModeChange(e.target.value)}
                             defaultValue={Object.keys(QSO_MODES)[0]}
                             options={QSO_MODES}/>
                     </div>
@@ -127,6 +176,7 @@ export default function NewQsoForm({ logId, ...props }) {
                 <div className={styles.flexRow}>
                      <FormField
                         required
+                        ref={rstsRef}
                         id={styles.rsts}
                         note="rst sent"
                         noteClass={styles.note}
@@ -137,6 +187,7 @@ export default function NewQsoForm({ logId, ...props }) {
                      <FormField
                         required
                         id={styles.rstr}
+                        ref={rstrRef}
                         note="rst sent"
                         noteClass={styles.note}
                         defaultValue="599"

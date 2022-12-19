@@ -1,8 +1,8 @@
 import React from "react"
 
-export default function SelectFromObject({ options, ...props }) {
+const SelectFromObject = React.forwardRef(({ options, ...props }, ref) => {
     return (
-        <select {...props}>
+        <select ref={ref} {...props}>
             {Object.keys(options).map( item =>
                 <option
                     key={item}
@@ -10,4 +10,6 @@ export default function SelectFromObject({ options, ...props }) {
                 >{item}</option>)}
         </select>
     )
-}
+})
+
+export default SelectFromObject
