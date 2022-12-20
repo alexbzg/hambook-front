@@ -1,0 +1,7 @@
+.loqRow {
+	display: flex;
+}
+.date, .time, .freq, .mode, .callsign, .rst, .name, .qth {
+	padding: 0 20px;
+	border: 1px solid #ddd;
+}

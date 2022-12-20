@@ -1,6 +1,6 @@
 import React from "react"
 
-import styles from './LogsList.module.css'
+import styles from './Qso.module.css'
 
 import { DropDownMenu } from "../../components"
 import { formatDate } from "../../utils/datetime"
@@ -36,7 +36,7 @@ export default function Qso({ data, onDelete, onEdit, ...props }) {
         <div className={styles.qth}>
             {data.qth}
         </div>
-        <DropDownMenu 
+        <DropDownMenu
             items={[
                 {
                     title: "Delete QSO",

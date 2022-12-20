@@ -17,6 +17,7 @@ export default function DropDownMenu({ items, ...props }) {
   const suppressClick = (e) => {
       e.preventDefault()
       e.nativeEvent.stopImmediatePropagation()
+      setMenuExpanded(state => !state)
   }
 
   return (
