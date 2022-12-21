@@ -15,6 +15,7 @@ export default function Hints({
             <ul className={styles.hints}>
                 {hints.map( (hint, index) => (
                     <li 
+                        tabIndex="-1"
                         key={index}
                         className={activeHint === index ? styles.activeHint : null}
                         onClick={() => onHintClick(hint)}

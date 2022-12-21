@@ -84,16 +84,23 @@ const FormField = forwardRef((props, ref) => {
 	setShowHints(true)
   }
 
-  const handleHintClick = (option) => {
-    (ref || inputRef).current.value = option
+  const handleHintClick = (hint) => {
+    console.log('hintClick');
+    (ref || inputRef).current.value = hint
     setShowHints(false)
     if (props.onChange) {
-      props.onChange(props.name, option)
+      props.onChange(props.name, hint)
+    }
+  }
+
+  const handleBlur = (e) => {
+    if (!e.currentTarget.contains(e.relatedTarget)) {
+      setShowHints(false)
     }
   }
 
   return (
-    <div className={className} id={id}>
+    <div className={className} id={id} onBlur={handleBlur}>
         {props.preInputContent}
         { (props.title || props.note) && (
             <>
@@ -106,7 +113,6 @@ const FormField = forwardRef((props, ref) => {
             ref={ref || inputRef}
             {...inputProps}
             onKeyDown={onKeyDown}
-            onBlur={() => setShowHints(false)}
             onInvalid={e => invalidMessage && e.target.setCustomValidity(invalidMessage)}
 			className={`${styles.input} ${classInvalid}`}
             onChange={onChange}/>

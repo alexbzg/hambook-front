@@ -13,7 +13,7 @@ const CallsignField = forwardRef(({ full = true, ...props }, ref) => {
             pattern={full ? RE_STR_CALLSIGN_FULL : RE_STR_CALLSIGN}
             inputFilter={/[^a-zA-Z\d/]/gi}
             style={{textTransform: 'uppercase'}}
-            autocomplete="off"
+            autoComplete="off"
             {...props}
         />
     )
