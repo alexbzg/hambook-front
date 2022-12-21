@@ -1,7 +1,20 @@
 .loqRow {
-	display: flex;
 }
-.date, .time, .freq, .mode, .callsign, .rst, .name, .qth {
+td{
 	padding: 0 20px;
 	border: 1px solid #ddd;
+}
+
+.date {}
+.time {}
+.freq {}
+.mode {}
+.callsign {}
+.rst {}
+.name {}
+.qth {}
+
+td.menuButton{
+	background-color: #fff;
+	border: none;
 }

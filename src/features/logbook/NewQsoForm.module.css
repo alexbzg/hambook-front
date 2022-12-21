@@ -101,6 +101,7 @@
 #callsign {
 	width: 85%;
 	margin: 0 auto;
+	position: relative;
 }
 #callsign input{
 	background-color: var(--yellow-lite);
@@ -109,6 +110,7 @@
 	font-size: 24px;
 	font-weight: bold;
 	border-color: var(--purple);
+ 	box-shadow: 2px 2px 3px rgb(0, 0, 0, 0.2);
 }
 #buttonOk{
 	width: 50px;

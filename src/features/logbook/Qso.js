@@ -8,35 +8,41 @@ import { formatDate } from "../../utils/datetime"
 export default function Qso({ data, onDelete, onEdit, ...props }) {
 
   return (
-      <div className={styles.loqRow}>
-        <div className={styles.date}>
+      <tr className={styles.loqRow}>
+        <td className={styles.date}>
             {formatDate(data.qso_datetime)}
-        </div>
-        <div className={styles.time}>
+        </td>
+        <td className={styles.time}>
             {data.qso_datetime.substring(11, 16)}
-        </div>
-        <div className={styles.freq}>
+        </td>
+        <td className={styles.freq}>
             {data.freq}
-        </div>
-        <div className={styles.mode}>
+        </td>
+        <td className={styles.mode}>
             {data.qso_mode}
-        </div>
-        <div className={styles.callsign}>
+        </td>
+        <td className={styles.callsign}>
             {data.callsign}
-        </div>
-        <div className={styles.rst}>
+        </td>
+        <td className={styles.rst}>
             {data.rst_s}
-        </div>
-        <div className={styles.rst}>
+        </td>
+        <td className={styles.rst}>
             {data.rst_r}
-        </div>
-        <div className={styles.name}>
+        </td>
+        <td className={styles.name}>
             {data.name}
-        </div>
-        <div className={styles.qth}>
+        </td>
+        <td className={styles.qth}>
             {data.qth}
-        </div>
-        <DropDownMenu
+        </td>
+        <td>
+            <DropDownMenu
+            styles={{
+                menuButton: styles.menuButton,
+                menuWrapper: null,
+                menuItem: null
+            }}
             items={[
                 {
                     title: "Delete QSO",
@@ -47,7 +53,7 @@ export default function Qso({ data, onDelete, onEdit, ...props }) {
                     handler: onEdit
                 }
             ]}/>
-
-      </div>
+        </td>
+      </tr>
   )
 }

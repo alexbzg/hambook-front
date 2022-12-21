@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useCallback, useId } from "react"
 import styles from './NewQsoForm.module.css'
 
 import { useLogs } from "./logsSlice"
+import client from "../../services/apiClient"
 
 import { FormField, SelectFromObject, CallsignField } from "../../components"
 import useInterval from "../../hooks/useInterval"
@@ -30,6 +31,29 @@ export default function NewQsoForm({ logId, ...props }) {
     }
   }
 
+  const [callsignHints, setCallsignHints] = useState()
+
+  const getCallsignHints = useCallback( async (_, value) => {
+    let hints = null
+    if (value && value.length > 1) {
+      try {
+        hints = await client({
+         		url: `/callsigns/autocomplete/${value}`,
+                method: 'GET',
+                token: 'skip',
+                suppressErrorMessage: true
+            })
+      } catch {
+      }
+    }
+    setCallsignHints(hints)
+  }, [] )
+
+  const clearCallsign = () => {
+    callsignInputRef.current.value = null
+    setCallsignHints(null)
+  }
+
   const timeInputRef = useRef()
   const dateInputRef = useRef()
   const rstrRef = useRef()
@@ -43,7 +67,6 @@ export default function NewQsoForm({ logId, ...props }) {
     const band = bandRef.current.value
     freqRef.current.value = QSO_MODES[mode].defFreqs?.[band] || BANDS[band].limits[0]
   }
-
 
   const onBandChange = () => {
     setFreq()
@@ -165,7 +188,7 @@ export default function NewQsoForm({ logId, ...props }) {
                   <div id={styles.buttonClear}>
                     <img
                         src={buttonClear}
-                        onClick={() => callsignInputRef.current.value = null}
+                        onClick={clearCallsign}
                         alt="Clear callsign"
                         title="Clear callsign"/>
                   </div>
@@ -173,6 +196,8 @@ export default function NewQsoForm({ logId, ...props }) {
                         title={null}
                         name="callsign"
                         required
+                        hints={callsignHints}
+                        onChange={getCallsignHints}
                         ref={callsignInputRef}
                         id={styles.callsign}/>
                   <div

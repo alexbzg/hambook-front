@@ -1,0 +1,28 @@
+.hints {
+  position: absolute;
+  right: 260px;
+  top:  44px;
+  background-color: #fff;
+  border: 1px solid #999;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-top: none;
+  list-style: none;
+  margin-top: 0;
+  max-height: 143px;
+  overflow-y: auto;
+  padding-left: 0;
+  width: calc(300px + 1rem);
+  box-shadow: 2px 2px 3px rgb(0, 0, 0, 0.2);
+}
+
+.hints li {
+  padding: 0.5rem;
+}
+
+.activeHint {
+  background-color: var(--orange);
+  color: #000;
+  cursor: pointer;
+  font-weight: 700;
+}

@@ -14,7 +14,7 @@ import EditQsoForm from "./EditQsoForm"
 import Qso from "./Qso"
 import { modifyQsoCount } from "./logsSlice"
 
-const qsoData = (formData) => {          
+const qsoData = (formData) => {
     const { date, time, ...data } = Object.fromEntries(formData.entries())
     data.qso_datetime = `${date} ${time}`
     return data
@@ -63,7 +63,7 @@ export default function LogContent({ ...props }) {
        }
     }
   }
- 
+
   const postQsoUpdate = async (result) => {
       if (result) {
           try {
@@ -103,7 +103,7 @@ export default function LogContent({ ...props }) {
   }
 
   const Qsos = qsos.map( (qso) => (
-      <Qso 
+      <Qso
         key={qso.id}
         data={qso}
         onEdit={() => setEditQso(qso)}
@@ -114,9 +114,9 @@ export default function LogContent({ ...props }) {
   return (
     <div className={styles.LogContent}>
         <NewQsoForm onSubmit={postNewQso} logId={logId}/>
-        <div className={styles.logWindow}>
+        <div className={styles.logWindow}><table>
             {Qsos}
-        </div>
+        </table></div>
         {editQso &&
             <EditQsoForm
                 qso={editQso}
