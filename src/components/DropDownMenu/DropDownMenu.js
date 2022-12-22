@@ -6,36 +6,27 @@ import threeDots from "../../assets/img/icons/three_dots.svg"
 export default function DropDownMenu({ items, ...props }) {
   const [menuExpanded, setMenuExpanded] = useState(false)
 
-  const closeMenu = () => {
-      setMenuExpanded(false)
-  }
-
-  const expandMenu = (e) => {
-      setMenuExpanded(true)
-  }
-
-  const suppressClick = (e) => {
+  const handleClick = (e) => {
       e.preventDefault()
       e.nativeEvent.stopImmediatePropagation()
-      setMenuExpanded(state => !state)
+      setMenuExpanded( (state) => !state )
   }
 
   return (
     <div
-        className={props.styles?.menuButton || styles.menuButton}
+        className={[styles.menuButton, props.styles?.menuButton].join(' ')}
         tabIndex={0}
-        onClickCapture={suppressClick}
-        onFocus={expandMenu}
-        onBlur={closeMenu}>
+        onClickCapture={handleClick}
+        onBlur={() => setMenuExpanded(false)}>
         <img 
             src={threeDots}
             alt="Submenu"/>
         {menuExpanded &&
-            <div className={props.styles?.menuWrapper || styles.menuWrapper}>
+            <div className={[styles.menuWrapper, props.styles?.menuWrapper].join(' ')}>
                 {items.map( (item, index) => (
                     <div
                         key={index}
-                        className={props.styles?.menuItem || styles.menuItem}
+                        className={[styles.menuItem, props.styles?.menuItem].join(' ')}
                         onClickCapture={item.handler}>
                         {item.title}
                     </div>))}

@@ -1,0 +1,133 @@
+.modalContainer{
+	width: 1000px;
+}
+.flexRow{
+	display: flex;
+	flex-direction: row;
+}
+.flexRow div{
+	padding: 0;
+	line-height: 12px;
+}
+.flexRow div span{
+	color: var(--grey);
+    font-size: 12px;
+    font-style: italic;
+}
+
+.flexRow input{
+	padding: 3px 10px;
+	font-weight: bold;
+}
+
+.flexRow select{
+	padding: 3px 10px;
+    margin-bottom: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+	font-weight: bold;
+    color: #333;
+    text-align: center;
+    font-family: 'Nunito', sans-serif;
+    outline: none;
+    line-height: 18px;
+}
+
+#myCallsign input{
+	width: 175px;
+	margin-right: 15px;
+	padding-top: 5px;
+}
+
+#realtime {
+	padding-top: 15px;
+	line-height: 12px;
+	margin-right: 105px;
+	width: 100px;
+	text-align: left;
+	display: none;
+}
+#realtime span{
+	display: inline-block;
+	text-align: left;
+	margin-left: 5px;
+}
+#realtime input{
+	vertical-align: 5px;
+}
+
+#time {	margin-right: 15px;}
+#time input{	width: 100px;}
+
+#date {	margin-right: 15px;}
+#date input{	width: 180px; }
+
+#freq {	margin-right: 15px;}
+#freq input{	width: 180px; padding: 4px 10px;}
+
+#band {	margin-right: 15px;}
+#band select{	width: 100px; }
+
+#mode {}
+
+#mode select{	width: 100px; }
+
+
+
+#buttonClear{
+	width: 30px;
+	height: 30px;
+	padding: 6px 0 0 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+	cursor: pointer;
+	border: none;
+}
+#buttonClear img{
+	width: 30px;
+}
+#callsign {
+	width: 85%;
+	margin: 0 auto;
+	position: relative;
+}
+#callsign input{
+	background-color: var(--yellow-lite);
+	width: 100%;
+	padding: 5px 0;
+	font-size: 24px;
+	font-weight: bold;
+	border-color: var(--purple);
+ 	box-shadow: 2px 2px 3px rgb(0, 0, 0, 0.2);
+}
+#buttonOk{
+	width: 30px;
+	font-size: 20px;
+	font-weight: bold;
+	line-height: 20px;
+	color: var(--grey);
+	cursor: pointer;
+	height: 30px;
+	padding: 12px 10px 0px 0px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+	cursor: pointer;
+	border: none;
+}
+
+
+
+
+#rstr {	margin-right: 15px;}
+#rstr input{	width: 70px;}
+
+#rsts {	margin-right: 15px;}
+#rsts input{	width: 70px;}
+
+#name, #qth {	margin-right: 15px;}
+
+#name input, #qth input, #comment input {	width: 230px;}
+
+#comment {	}

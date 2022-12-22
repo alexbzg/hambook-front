@@ -1,20 +1,47 @@
 .loqRow {
+	font-size: 14px;
+}
+tr:hover{
+	background-color: var(--yellow-lite);
 }
 td{
 	padding: 0 20px;
 	border: 1px solid #ddd;
+	cursor: default;
 }
 
 .date {}
 .time {}
 .freq {}
 .mode {}
-.callsign {}
+.callsign { font-weight: bold; }
 .rst {}
 .name {}
 .qth {}
 
-td.menuButton{
-	background-color: #fff;
+.menuButton{
+	background-color: transparent;
 	border: none;
+	padding: 0;
+	position: relative;
+	margin: 0;
+	text-align: center;
+}
+.menuButton img{
+	width: 20px;
+	margin: 0;
+	padding: 0;
+}
+.menuWrapper{
+	position: absolute;
+	top: 0px;
+	left: 35px;
+	width: 120px;
+	border-radius: 5px;
+    border: 1px solid #ddd;
+	box-shadow: 2px 2px 3px rgb(0, 0, 0, 0.2);
+	z-index: 100px;
+	font-size: 12px;
+	background-color: #fff;
+	cursor: pointer;
 }

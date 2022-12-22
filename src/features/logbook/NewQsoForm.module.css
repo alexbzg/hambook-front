@@ -90,10 +90,11 @@
 #buttonClear{
 	width: 30px;
 	height: 30px;
-	padding: 6px;
+	padding: 6px 0 0 10px;
     border-radius: 5px;
     border: 1px solid #ddd;
 	cursor: pointer;
+	border: none;
 }
 #buttonClear img{
 	width: 30px;
@@ -113,17 +114,18 @@
  	box-shadow: 2px 2px 3px rgb(0, 0, 0, 0.2);
 }
 #buttonOk{
-	width: 50px;
+	width: 30px;
 	font-size: 20px;
 	font-weight: bold;
 	line-height: 20px;
 	color: var(--grey);
 	cursor: pointer;
 	height: 30px;
-	padding: 12px 5px 0px 5px;
+	padding: 12px 10px 0px 0px;
     border-radius: 5px;
     border: 1px solid #ddd;
 	cursor: pointer;
+	border: none;
 }
 
 

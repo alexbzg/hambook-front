@@ -7,8 +7,17 @@ import { BANDS, QSO_MODES } from "../../utils/hamRadio"
 export default function EditQsoForm({ modalResult, qso, ...props }) {
 
     return (
-        <ModalForm modalResult={modalResult}>
+        <ModalForm
+            modalResult={modalResult}
+            styles={{container: styles.modalContainer}}>
             <div className={styles.flexRow}>
+                <CallsignField
+                    id={styles.stationCallsign}
+                    name="station_callsign"
+                    note="my callsign"
+                    defaultValue={qso.station_callsign}
+                    required
+                />
                 <div id={styles.time}>
                     <span className={styles.note}>utc</span><br/>
                     <input
@@ -53,7 +62,7 @@ export default function EditQsoForm({ modalResult, qso, ...props }) {
             </div>
             <div className={styles.flexRow}>
                 <CallsignField
-                    note="Correspondent callsign"
+                    note="corr callsign"
                     required
                     defaultValue={qso.callsign}
                     id={styles.callsign}/>
@@ -100,15 +109,7 @@ export default function EditQsoForm({ modalResult, qso, ...props }) {
                     type="text"
                 />
             </div>
-            <div>
-                <CallsignField
-                    id={styles.stationCallsign}
-                    name="station_callsign"
-                    defaultValue={qso.station_callsign}
-                    required
-                />
-            </div>
         </ModalForm>
     )
 }
- 
+

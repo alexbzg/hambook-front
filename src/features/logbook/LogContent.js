@@ -28,6 +28,7 @@ export default function LogContent({ ...props }) {
   const { logId } = useParams()
 
   const [qsos, setQsos] = useState([])
+  const [lastQso, setLastQso] = useState()
   const [editQso, setEditQso] = useState()
 
   useEffect( () => {
@@ -40,7 +41,9 @@ export default function LogContent({ ...props }) {
                 suppressErrorMessage: true
             })
         setQsos(qsos)
-      } catch {
+        setLastQso(qsos.length ? qsos[0] : null)
+      } catch (error) {
+        setLastQso(null)
       }
     }
     fetchQsos()
@@ -113,10 +116,17 @@ export default function LogContent({ ...props }) {
 
   return (
     <div className={styles.LogContent}>
-        <NewQsoForm onSubmit={postNewQso} logId={logId}/>
-        <div className={styles.logWindow}><table>
-            {Qsos}
-        </table></div>
+        {lastQso !== undefined &&
+        <NewQsoForm 
+            onSubmit={postNewQso} 
+            logId={logId}
+            prevQso={lastQso}
+        />}
+        <div className={styles.logWindow}>
+            <table>
+                <tbody>{Qsos}</tbody>
+            </table>
+        </div>
         {editQso &&
             <EditQsoForm
                 qso={editQso}

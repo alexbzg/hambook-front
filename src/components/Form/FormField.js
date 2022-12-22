@@ -85,12 +85,12 @@ const FormField = forwardRef((props, ref) => {
   }
 
   const handleHintClick = (hint) => {
-    console.log('hintClick');
     (ref || inputRef).current.value = hint
     setShowHints(false)
     if (props.onChange) {
       props.onChange(props.name, hint)
     }
+    (ref || inputRef).current.focus()
   }
 
   const handleBlur = (e) => {

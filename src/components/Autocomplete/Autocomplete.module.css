@@ -1,7 +1,8 @@
 .hints {
   position: absolute;
-  right: 260px;
+  left: 20px;
   top:  44px;
+  columns: 4 auto;
   background-color: #fff;
   border: 1px solid #999;
   border-bottom-right-radius: 5px;
@@ -12,7 +13,7 @@
   max-height: 143px;
   overflow-y: auto;
   padding-left: 0;
-  width: calc(300px + 1rem);
+  width: calc(800px + 1rem);
   box-shadow: 2px 2px 3px rgb(0, 0, 0, 0.2);
 }
 
@@ -21,7 +22,7 @@
 }
 
 .activeHint {
-  background-color: var(--orange);
+  background-color: var(--orange2);
   color: #000;
   cursor: pointer;
   font-weight: 700;

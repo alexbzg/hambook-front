@@ -23,16 +23,14 @@ export function validatePhone(text) {
   return /^\+\d{11}$/.test(text) 
 }
 
-export const RE_STR_CALLSIGN_FULL = 
-    "^([A-Za-z\\d]{1,3}/){0,3}[a-zA-Z]{1,4}\\d{1,3}[a-zA-Z]{1,4}(/[A-Za-z\\d]{1,3}){0,3}$"
+export const RE_STR_CALLSIGN_FULL = "^(:?[A-Za-z\\d]+/)?\\d*[A-Za-z]+\\d+[A-Za-z]+(:?/[A-Za-z\\d]+)*$"
 const RE_CALLSIGN_FULL = new RegExp(RE_STR_CALLSIGN_FULL) 
 
 export function validateFullCallsign(text) {
   return RE_CALLSIGN_FULL.test(text)
 }
 
-export const RE_STR_CALLSIGN = 
-    "^[a-zA-Z]{1,4}\\d{1,3}[a-zA-Z]{1,4}$"
+export const RE_STR_CALLSIGN = "^\\d*[A-Za-z]+\\d+[A-Za-z]+$"
 const RE_CALLSIGN = new RegExp(RE_STR_CALLSIGN) 
 
 export function validateCallsign(text) {

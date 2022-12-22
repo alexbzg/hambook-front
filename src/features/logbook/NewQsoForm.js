@@ -16,13 +16,12 @@ const currentDateTime = () => {
 }
 
 
-export default function NewQsoForm({ logId, ...props }) {
+export default function NewQsoForm({ logId, prevQso, ...props }) {
   const ID = useId()
   const { logs } = useLogs()
   const log = logs.find( item => item.id === logId )
 
   const callsignInputRef = useRef()
-  const stationCallsignInputRef = useRef()
 
   const onSubmit = async (e) => {
     e.preventDefault()
@@ -35,7 +34,7 @@ export default function NewQsoForm({ logId, ...props }) {
 
   const getCallsignHints = useCallback( async (_, value) => {
     let hints = null
-    if (value && value.length > 1) {
+    if (value?.length > 3) {
       try {
         hints = await client({
          		url: `/callsigns/autocomplete/${value}`,
@@ -121,7 +120,7 @@ export default function NewQsoForm({ logId, ...props }) {
                         id={styles.myCallsign}
                         note="my callsign"
                         noteClass={styles.note}
-                        name="my_callsign"
+                        name="station_callsign"
                     />
                     <div id={styles.time}>
                         <span className={styles.note}>utc</span><br/>
@@ -160,7 +159,7 @@ export default function NewQsoForm({ logId, ...props }) {
                         onChange={(name, value) => onFreqChange(value)}
                         note="frequency"
                         noteClass={styles.note}
-                        defaultValue="144000"
+                        defaultValue={prevQso?.freq ?? Object.values(BANDS)[0].limits[0]}
                         name="freq"
                         type="number"
                         step="0.1"
@@ -170,7 +169,7 @@ export default function NewQsoForm({ logId, ...props }) {
                         <SelectFromObject
                             name="band"
                             ref={bandRef}
-                            defaultValue={Object.keys(BANDS)[0]}
+                            defaultValue={prevQso?.band ?? Object.keys(BANDS)[0]}
                             onChange={(e) => onBandChange(e.target.value)}
                             options={BANDS}/>
                     </div>
@@ -180,7 +179,7 @@ export default function NewQsoForm({ logId, ...props }) {
                             name="qso_mode"
                             ref={modeRef}
                             onChange={(e) => onModeChange(e.target.value)}
-                            defaultValue={Object.keys(QSO_MODES)[0]}
+                            defaultValue={prevQso?.qso_mode ?? Object.keys(QSO_MODES)[0]}
                             options={QSO_MODES}/>
                     </div>
                 </div>
@@ -213,7 +212,7 @@ export default function NewQsoForm({ logId, ...props }) {
                         id={styles.rsts}
                         note="rst sent"
                         noteClass={styles.note}
-                        defaultValue="599"
+                        defaultValue={(prevQso && QSO_MODES[prevQso.qso_mode].rst) ?? 599}
                         name="rst_s"
                         type="number"
                     />
@@ -223,7 +222,7 @@ export default function NewQsoForm({ logId, ...props }) {
                         ref={rstrRef}
                         note="rst received"
                         noteClass={styles.note}
-                        defaultValue="599"
+                        defaultValue={(prevQso && QSO_MODES[prevQso.qso_mode].rst) ?? 599}
                         name="rst_r"
                         type="number"
                     />
@@ -245,14 +244,6 @@ export default function NewQsoForm({ logId, ...props }) {
                         noteClass={styles.note}
                         name="comment"
                     />
-                </div>
-                <div>
-                  <CallsignField
-                    ref={stationCallsignInputRef}
-                    id={styles.stationCallsign}
-                    name="station_callsign"
-                    defaultValue={log.callsign}
-                    required/>
                 </div>
         </form>
       }

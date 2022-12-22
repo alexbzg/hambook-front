@@ -4,7 +4,16 @@ import { CSSTransition } from "react-transition-group";
 
 import styles from "./Modal.module.css"
 
-export default function ({ modalResult, title, children, confirmLabel, cancelLabel, confirmCheckbox, requestSubmit }) {
+export default function Modal({ 
+    modalResult, 
+    title, 
+    children, 
+    confirmLabel, 
+    cancelLabel, 
+    confirmCheckbox, 
+    requestSubmit,
+    ...props
+    }) {
 
   const [show, setShow] = useState(true)
   const [confirmChecked, setConfirmChecked] = useState(!confirmCheckbox)
@@ -33,8 +42,7 @@ export default function ({ modalResult, title, children, confirmLabel, cancelLab
     >
         <div className={styles.modalMask} ref={nodeRef}>
             <div className={styles.modalWrapper}>
-                <div className={styles.modalContainer}>
-
+                <div className={[styles.modalContainer, props.styles?.container].join(' ')}>
                     {Boolean(title) &&
                       <div className={styles.modalHeader}>
                         {title}

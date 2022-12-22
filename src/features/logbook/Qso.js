@@ -40,17 +40,16 @@ export default function Qso({ data, onDelete, onEdit, ...props }) {
             <DropDownMenu
             styles={{
                 menuButton: styles.menuButton,
-                menuWrapper: null,
-                menuItem: null
+                menuWrapper: styles.menuWrapper
             }}
             items={[
                 {
-                    title: "Delete QSO",
-                    handler: onDelete
-                },
-                {
                     title: "Edit QSO",
                     handler: onEdit
+                },
+                {
+                    title: "Delete QSO",
+                    handler: onDelete
                 }
             ]}/>
         </td>

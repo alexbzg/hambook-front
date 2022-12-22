@@ -15,14 +15,20 @@ export default function ModalForm({ modalResult, children, ...props }) {
       modalResult(result ? new FormData(document.forms[id]) : null)
     }
 
+    const onSubmit = (e) => {
+      e.preventDefault()
+      modalFormResult(true)
+    }
+
     return (
         <Modal 
             modalResult={modalFormResult} 
             requestSubmit={requestSubmit}
             {...props}
             >
-            <form id={id} onSubmit={(e) => e.preventDefault()}>
+            <form id={id} onSubmit={onSubmit}>
                 {children}
+                <input type="submit" hidden/>
             </form>
         </Modal>
     )
