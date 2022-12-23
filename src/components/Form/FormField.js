@@ -87,6 +87,7 @@ const FormField = forwardRef((props, ref) => {
   const handleHintClick = (hint) => {
     (ref || inputRef).current.value = hint
     setShowHints(false)
+    setActiveHint(null)
     if (props.onChange) {
       props.onChange(props.name, hint)
     }

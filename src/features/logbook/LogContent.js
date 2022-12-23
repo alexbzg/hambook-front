@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useParams } from "react-router-dom"
 import { useDispatch } from "react-redux"
 
@@ -12,6 +12,7 @@ import client from "../../services/apiClient"
 import NewQsoForm from "./NewQsoForm"
 import EditQsoForm from "./EditQsoForm"
 import Qso from "./Qso"
+import LogMenu from "./LogMenu"
 import { modifyQsoCount } from "./logsSlice"
 
 const qsoData = (formData) => {
@@ -30,23 +31,35 @@ export default function LogContent({ ...props }) {
   const [qsos, setQsos] = useState([])
   const [lastQso, setLastQso] = useState()
   const [editQso, setEditQso] = useState()
+  const [showError, setShowError] = useState(null)
 
-  useEffect( () => {
-    async function fetchQsos() {
-      try {
-        const qsos = await client({
-         		url: `/qso/logs/${logId}/qso`,
-                method: 'GET',
-                token,
-                suppressErrorMessage: true
-            })
-        setQsos(qsos)
-        setLastQso(qsos.length ? qsos[0] : null)
-      } catch (error) {
-        setLastQso(null)
+  const fetchQsos = useCallback( async (qsoFilter) => {
+    setShowError(null)
+    setQsos([])
+    try {
+      const qsos = await client({
+            url: `/qso/logs/${logId}/qso`,
+            method: 'GET',
+            token,
+            params: qsoFilter,
+            suppressErrorMessage: true
+          })
+      setQsos(qsos)
+      return qsos
+    } catch (error) {
+      if (error === 'Qso not found' && Object.keys(qsoFilter).length) {
+        setShowError(error)
       }
     }
-    fetchQsos()
+    return null
+  }, [logId])
+
+  useEffect( () => {
+    async function initialFetchQsos() {
+      const qsos = await fetchQsos({})
+      setLastQso(qsos?.length ? qsos[0] : null)
+    }
+    initialFetchQsos()
   }, [])
 
   const postNewQso = async (result) => {
@@ -122,7 +135,11 @@ export default function LogContent({ ...props }) {
             logId={logId}
             prevQso={lastQso}
         />}
+        <LogMenu logId={logId} onQsoFilter={fetchQsos}/>
         <div className={styles.logWindow}>
+            {showError &&
+                <div className={styles.qsoError}>{showError}</div>
+            }
             <table>
                 <tbody>{Qsos}</tbody>
             </table>

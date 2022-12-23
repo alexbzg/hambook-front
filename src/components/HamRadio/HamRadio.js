@@ -19,4 +19,21 @@ const CallsignField = forwardRef(({ full = true, ...props }, ref) => {
     )
 })
 
-export { CallsignField }
+const CallsignSearchField = forwardRef(({ ...props }, ref) => {
+    return (
+        <FormField
+            ref={ref}
+            name="callsign_search"
+            type="text"
+            invalidMessage="Enter valid callsign or search expression (* matches anything)."
+            pattern={`([A-Za-z\\d/]*\\*[A-Za-z\\d/]*|${RE_STR_CALLSIGN_FULL})`}
+            inputFilter={/[^a-zA-Z\d*/]/gi}
+            style={{textTransform: 'uppercase'}}
+            autoComplete="off"
+            {...props}
+        />
+    )
+})
+
+
+export { CallsignField, CallsignSearchField }

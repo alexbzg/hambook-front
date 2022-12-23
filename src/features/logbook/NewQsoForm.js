@@ -23,13 +23,6 @@ export default function NewQsoForm({ logId, prevQso, ...props }) {
 
   const callsignInputRef = useRef()
 
-  const onSubmit = async (e) => {
-    e.preventDefault()
-    if (await props.onSubmit(new FormData(document.forms[ID]))) {
-      callsignInputRef.current.value = null
-    }
-  }
-
   const [callsignHints, setCallsignHints] = useState()
 
   const getCallsignHints = useCallback( async (_, value) => {
@@ -53,6 +46,13 @@ export default function NewQsoForm({ logId, prevQso, ...props }) {
     setCallsignHints(null)
   }
 
+  const onSubmit = async (e) => {
+    e.preventDefault()
+    if (await props.onSubmit(new FormData(document.forms[ID]))) {
+      clearCallsign()
+    }
+  }
+ 
   const timeInputRef = useRef()
   const dateInputRef = useRef()
   const rstrRef = useRef()

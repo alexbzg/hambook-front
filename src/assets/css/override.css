@@ -7,7 +7,7 @@ body {
 	color: #333;
 	text-align: center;
 	font-family: 'Nunito', sans-serif;
-	background: #EDEEF0;
+	background: #ddd;
 	-webkit-font-smoothing: antialiased;
 	position: relative;
 }
@@ -27,6 +27,7 @@ input{
 :root {
   --black: #333;
   --grey: #777;
+  --grey-lite: #eee;
   --orange: #ff8040;
   --orange2: #FFC04F;
   --purple: #639;

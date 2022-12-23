@@ -1,0 +1,12 @@
+.logMenu {
+	width: 1000px;
+	background-color: var(--grey-lite);
+	padding: 0px 50px 0px 50px;
+	border: 1px solid #ccc;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	border-bottom-left-radius: 0px;
+	border-bottom-right-radius: 0px;
+	border-bottom: 1px solid var(--grey-lite);
+	text-align: center;
+}

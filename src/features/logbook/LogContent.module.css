@@ -6,12 +6,16 @@
 	width: 1000px;
 	min-height: 200px;
 	padding: 20px 50px;
-	margin-bottom: 50px;
+	margin:0 auto 50px auto;
 	background-color: #fff;
-	border: 1px solid #ddd;
-	border-radius: 5px;
 	text-align: center;
 	vertical-align: top;
+	border: 1px solid #ccc;
+	border-top-left-radius: 0px;
+	border-top-right-radius: 0px;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+	border-top: 1px solid var(--grey-lite);
 }
 
 .logWindow table{
