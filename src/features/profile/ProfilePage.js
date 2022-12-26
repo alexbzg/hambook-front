@@ -10,7 +10,8 @@ import styles from './Profile.module.css'
 
 import EmailVerification from "../auth/EmailVerification"
 import useAuthenticatedUser from "../auth/useAuthenticatedUser"
-import { useAuthForm } from "../auth/useAuthForm"
+import { handleSubmit } from "../../utils/forms.js"
+import { FormField, CallsignField } from "../../components"
 import { profileUpdate, mediaUpload, mediaDelete, useProfile, PROFILE_MEDIA_LIMIT } from "./profileSlice"
 import { MEDIA_TYPE } from '../../enums.js'
 import defaultAvatarImage from "../../assets/img/default_avatar.jpg"
@@ -23,14 +24,6 @@ export default function ProfilePage({ ...props }) {
   const dispatch = useDispatch()
   const { user } = useAuthenticatedUser()
   const { profile, isLoading } = useProfile()
-  const { created_at, updated_at, user_id, ...initialFormState } = profile
-  const {
-      AuthFormFields,
-      AuthFormSubmit,
-      handleSubmit } = useAuthForm({
-      initialFormState,
-      getAction: () => profileUpdate
-  })
   const confirmModal = useModal()
 
   const [showPrevCallsigns, setShowPrevCallsigns] = useState(Boolean(profile.prevCallsigns))
@@ -44,7 +37,7 @@ export default function ProfilePage({ ...props }) {
   }
 
   const deleteAvatar = async () => {
-    if (await confirmModal({children: "Your current avatar will be deleted."})) {
+    if (await confirmModal({children: "Your current avatar will be deleted.", confirmCheckbox: true})) {
        dispatch(mediaDelete({
            mediaType: MEDIA_TYPE.avatar,
            media_id: profile.avatar.id
@@ -60,7 +53,7 @@ export default function ProfilePage({ ...props }) {
   const deleteMedia = async (media_id, e) => {
     e.preventDefault()
     e.nativeEvent.stopImmediatePropagation()
-    if (await confirmModal({children: "This image will be deleted."})) {
+    if (await confirmModal({children: "This image will be deleted.", confirmCheckbox: true})) {
        dispatch(mediaDelete({
            mediaType: MEDIA_TYPE.profileImage,
            media_id
@@ -68,64 +61,60 @@ export default function ProfilePage({ ...props }) {
     }
   }
 
-
+  const submitProfileUpdate = handleSubmit( (data) => dispatch(profileUpdate(data)))
 
   return (
     <div className={styles.userPage}>
         <EmailVerification/>
-        <form className={styles.form} onSubmit={handleSubmit}>
+        <form className={styles.form} onSubmit={submitProfileUpdate}>
             <div className={styles.columnsWrapper}>
                 <div className={styles.column1}>
-                    {AuthFormFields([
-                        {
-                            name: 'current_callsign',
-                            defaultValue: profile.current_callsign,
-                            className: styles.callsign,
-                            title: "callsign",
-                            type: "text",
-                        }
-                    ])}
+                    <CallsignField
+                        full={false}
+                        name='current_callsign'
+                        defaultValue={profile.current_callsign}
+                        className={styles.callsign}
+                        title="callsign"
+                    />
                     <input
                         type="checkbox"
                         onChange={(e) => setShowPrevCallsigns(e.target.checked)}
                         className={styles.checkboxEx}
                     /> ex-callsigns
-                    {showPrevCallsigns && AuthFormFields([
-                        {
-                            name: 'prev_callsigns',
-                            defaultValue: profile.prev_callsigns,
-                            type: "textarea",
-                            className: styles.prevCallsigns
-                        }])}
-                    {AuthFormFields([
-                        {
-                            name: 'full_name',
-                            defaultValue: profile.full_name,
-                            title: "full name",
-                            type: "text",
-                            className: styles.fullName
-                        },
-                        {
-                            name: 'phone',
-                            defaultValue: profile.phone,
-                            title: "phone (format: +12345678901)",
-                            type: "tel",
-                            pattern: "\\+\\d{11}"
-                        },
-                        {
-                            name: 'address',
-                            defaultValue: profile.address,
-                            title: "home address",
-                            type: "textarea",
-                        },
-                        {
-                            name: 'bio',
-                            defaultValue: profile.bio,
-                            title: "About yourself",
-                            type: "textarea",
-                        }
-                    ])}
-
+                    {showPrevCallsigns && 
+                        <FormField
+                            name='prev_callsigns'
+                            defaultValue={profile.prev_callsigns}
+                            type="textarea"
+                            className={styles.prevCallsigns}
+                        />
+                    }
+                    <FormField
+                        name='full_name'
+                        defaultValue={profile.full_name}
+                        title="full name"
+                        type="text"
+                        className={styles.fullName}
+                    />
+                    <FormField
+                        name='phone'
+                        defaultValue={profile.phone}
+                        title="phone (format: +12345678901)"
+                        type="tel"
+                        pattern="\+\d{11}"
+                    />
+                    <FormField
+                        name='address'
+                        defaultValue={profile.address}
+                        title="home address"
+                        type="textarea"
+                    />
+                    <FormField
+                        name='bio'
+                        defaultValue={profile.bio}
+                        title="About yourself"
+                        type="textarea"
+                    />
                 </div>
                 <div className={styles.column2}>
                     <div className={`${styles.mainPhoto} ${styles.controlsContainer}`}>
@@ -182,7 +171,9 @@ export default function ProfilePage({ ...props }) {
 
 
             </div>
-            <AuthFormSubmit
+            <input 
+                type="submit"
+                name="submit"
                 disabled={isLoading}
                 value="Save profile data"/>
         </form>
