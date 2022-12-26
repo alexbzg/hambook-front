@@ -1,42 +1,33 @@
 import { useState } from "react"
-import { createAsyncThunk } from '@reduxjs/toolkit'
 
-import { useAuthForm, AuthBlock, AuthBlockTitle } from "./useAuthForm"
-import client from "../../services/apiClient.js"
+import { AuthBlock, AuthBlockTitle } from "./useAuthForm"
+import { useAuthenticatedUser } from "./useAuthenticatedUser"
+import { handleSubmit } from "../../utils/forms"
 
-const sendRequest = (setLoading) => createAsyncThunk(
-	'auth/emailVerificationRequest', 
-    async ( password_reset, { getState, rejectWithValue } ) => {
+import client from "../../services/apiClient"
+
+const sendRequest = ({ setLoading, token }) => async () => {
         setLoading('pending')
         try {
             const data = await client({
                 url: `/users/email_verification/request`,
                 method: 'GET', 
-                getState,
-                successMessage: 'The was sent again. Please check your inbox.'
+                token,
+                successMessage: 'The message was sent again. Please check your inbox.'
             })
             setLoading('fulfilled')
-            return data
         } catch (e) {
             setLoading('rejected')
-            return rejectWithValue(e)
         }
     }
-)
 
 export default function EmailVerification({ ...props }) {
   const [loading, setLoading] = useState('idle')
-  const getAction = () => sendRequest(setLoading)
-
-  const {
-    user,
-    AuthFormSubmit,
-    handleSubmit
-  } = useAuthForm({ 
-      initialFormState: {}, 
-      getAction, 
-  })
+  
+  const { user, token } = useAuthenticatedUser()
   if (user.email_verified) return null
+
+  const emailVerificationSubmit = handleSubmit(sendRequest({ setLoading, token }))
 
   return (
         <AuthBlock>
@@ -46,9 +37,12 @@ export default function EmailVerification({ ...props }) {
                 Use the link in the message to verify your email.<br/>
                 If you don't see it in your inbox, please check your spam folder.
             </span><br/>
-              <form onSubmit={handleSubmit}>
-                <AuthFormSubmit disabled={loading === 'pending'}
-                    value="Send the message once more"/>
+              <form onSubmit={emailVerificationSubmit}>
+                <input 
+                    type="submit" 
+                    disabled={loading === 'pending'}
+                    value="Send the message once more"
+                />
             </form>
         </AuthBlock>
   )
