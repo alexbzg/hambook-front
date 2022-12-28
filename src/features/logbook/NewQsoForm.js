@@ -25,7 +25,7 @@ export default function NewQsoForm({ logId, prevQso, ...props }) {
 
   const [callsignHints, setCallsignHints] = useState()
 
-  const getCallsignHints = useCallback( async (_, value) => {
+  const getCallsignHints = useCallback( async (value) => {
     let hints = null
     if (value?.length > 3) {
       try {
@@ -52,7 +52,7 @@ export default function NewQsoForm({ logId, prevQso, ...props }) {
       clearCallsign()
     }
   }
- 
+
   const timeInputRef = useRef()
   const dateInputRef = useRef()
   const rstrRef = useRef()
@@ -122,41 +122,43 @@ export default function NewQsoForm({ logId, prevQso, ...props }) {
                         noteClass={styles.note}
                         name="station_callsign"
                     />
+                    <div id={styles.realtime}>
+                      manual<br/>time/date<br/>
+                      <input
+                        type="checkbox"
+                        checked={!realDateTime}
+                        onChange={() => setRealDateTime( state => !state )}
+                        />
+                    </div>
                     <div id={styles.time}>
-                        <span className={styles.note}>utc</span><br/>
-                        <input
+                        <FormField
                             required
                             type="time"
                             name="time"
+                            note="utc"
+                            noteClass={styles.note}
                             ref={timeInputRef}
+                            onChange={() => setRealDateTime(false)}
                             defaultValue={currentDateTime()[1]}
                         />
                     </div>
                     <div id={styles.date}>
-                        <span className={styles.note}>date</span><br/>
-                        <input
+                        <FormField
                             required
                             type="date"
                             name="date"
+                            note="date"
+                            noteClass={styles.note}
+                            onChange={() => setRealDateTime(false)}
                             ref={dateInputRef}
                             defaultValue={currentDateTime()[0]}
                         />
-                    </div>
-                    <div id={styles.realtime}>
-                        <span className={styles.realDateTime}>
-                            <input
-                                type="checkbox"
-                                checked={!realDateTime}
-                                onChange={() => setRealDateTime( state => !state )}
-                            />
-                            <span>manual time/date</span>
-                        </span>
                     </div>
                     <FormField
                         required
                         ref={freqRef}
                         id={styles.freq}
-                        onChange={(name, value) => onFreqChange(value)}
+                        onChange={(e) => onFreqChange(e.target.value)}
                         note="frequency"
                         noteClass={styles.note}
                         defaultValue={prevQso?.freq ?? Object.values(BANDS)[0].limits[0]}
@@ -196,7 +198,7 @@ export default function NewQsoForm({ logId, prevQso, ...props }) {
                         name="callsign"
                         required
                         hints={callsignHints}
-                        onChange={getCallsignHints}
+                        onChange={(e) => getCallsignHints(e.target.value)}
                         ref={callsignInputRef}
                         id={styles.callsign}/>
                   <div

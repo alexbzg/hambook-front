@@ -47,36 +47,34 @@
 }
 
 #myCallsign input{
-	width: 175px;
+	width: 150px;
 	margin-right: 15px;
 	padding-top: 5px;
 }
 
 #realtime {
-	padding-top: 15px;
-	line-height: 12px;
-	margin-right: 105px;
-	width: 100px;
-	text-align: left;
-	display: none;
+	margin-right: 15px;
+	padding-top: 10px;
+	font-size: 10px;
+	line-height: 10px;
+	width: 120px;
+	text-align: center;
+	color: var(--grey);
+	font-style: italic;
 }
-#realtime span{
-	display: inline-block;
-	text-align: left;
-	margin-left: 5px;
-}
+
 #realtime input{
-	vertical-align: 5px;
+	margin: 0 5px 0 0;
 }
 
 #time {	margin-right: 15px;}
-#time input{	width: 100px;}
+#time input{	width: 120px;}
 
 #date {	margin-right: 15px;}
 #date input{	width: 180px; }
 
 #freq {	margin-right: 15px;}
-#freq input{	width: 180px; padding: 4px 10px;}
+#freq input{	width: 120px; padding: 4px 10px;}
 
 #band {	margin-right: 15px;}
 #band select{	width: 100px; }
@@ -111,7 +109,6 @@
 	font-size: 24px;
 	font-weight: bold;
 	border-color: var(--purple);
- 	box-shadow: 2px 2px 3px rgb(0, 0, 0, 0.2);
 }
 #buttonOk{
 	width: 30px;

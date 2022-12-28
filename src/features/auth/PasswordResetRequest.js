@@ -1,41 +1,31 @@
 import { useState } from "react"
-import { createAsyncThunk } from '@reduxjs/toolkit'
 
-import { useAuthForm, AuthBlock, AuthBlockTitle } from "./useAuthForm"
-import client from "../../services/apiClient.js"
+import { AuthBlock, AuthBlockTitle, FormField } from "../../components"
 
-const sendRequest = (setLoading) => createAsyncThunk(
-	'auth/passwordResetRequest', 
-    async ( { email }, { rejectWithValue } ) => {
+import client from "../../services/apiClient"
+
+import { handleSubmit } from "../../utils/forms"
+
+const sendRequest = (setLoading) => async ({ email }) => {
         setLoading('pending')
         try {
-            const data = await client({
+            await client({
                 url: `/users/password_reset/request/${email}`,
                 method: 'GET', 
                 token: 'skip',
                 successMessage: 'The message was sent successfully. Please check your inbox.'
             })
             setLoading('fulfilled')
-            return data
         } catch (e) {
             setLoading('rejected')
-            return rejectWithValue(e)
         }
     }
-)
 
 
 export default function PasswordResetRequest({ ...props }) {
   const [loading, setLoading] = useState('idle')
-  const getAction = () => sendRequest(setLoading)
-  const {
-    AuthFormFields,
-    AuthFormSubmit,
-    handleSubmit
-  } = useAuthForm({ 
-      initialFormState: {email: ""}, 
-      getAction
-  })
+
+  const passwordResetRequestSubmit = handleSubmit(sendRequest(setLoading))
 
   return (
     <AuthBlock>
@@ -46,15 +36,18 @@ export default function PasswordResetRequest({ ...props }) {
 		If you don't see the message in your inbox, please check your spam folder.
 	  </span><br/><br/>
       {loading !== 'fulfilled' && (
-          <form onSubmit={handleSubmit}>
-            {AuthFormFields([{
-                title: "Your registered email",
-                type: "text",
-                name: "email"
-            }])}
-            <AuthFormSubmit
+          <form onSubmit={passwordResetRequestSubmit}>
+            <FormField
+                required
+                title="Your registered email"
+                type="email"
+                name="email"
+            />
+            <input 
+                type="submit"
                 disabled={loading === 'pending'}
-                value="Send"/>
+                value="Send"
+            />
           </form> )}
     </AuthBlock>
   )

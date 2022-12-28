@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-import { AuthBlock, AuthBlockTitle } from "./useAuthForm"
+import { AuthBlock, AuthBlockTitle } from "../../components"
 import { useAuthenticatedUser } from "./useAuthenticatedUser"
 import { handleSubmit } from "../../utils/forms"
 
@@ -9,7 +9,7 @@ import client from "../../services/apiClient"
 const sendRequest = ({ setLoading, token }) => async () => {
         setLoading('pending')
         try {
-            const data = await client({
+            await client({
                 url: `/users/email_verification/request`,
                 method: 'GET', 
                 token,

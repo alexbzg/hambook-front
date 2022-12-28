@@ -5,4 +5,6 @@ const handleSubmit = (action) => (e) => {
     action(data)
 }
 
-export { handleSubmit }
+const excludeUnset = (data) => Object.fromEntries(Object.entries(data).filter( item => item[1] ))
+  
+export { handleSubmit, excludeUnset }

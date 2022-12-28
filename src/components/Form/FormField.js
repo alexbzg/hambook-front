@@ -79,7 +79,7 @@ const FormField = forwardRef((props, ref) => {
       e.target.selectionEnd = position
     }
     if (props.onChange) {
-      props.onChange(props.name, props.type === 'checkbox' ? e.target.checked : e.target.value)
+      props.onChange(e)
     }
 	setShowHints(true)
   }
