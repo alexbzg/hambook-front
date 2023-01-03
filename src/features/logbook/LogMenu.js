@@ -5,7 +5,9 @@ import styles from './LogMenu.module.css'
 import { CallsignSearchField } from "../../components"
 import { excludeUnset } from "../../utils/forms"
 
-export default function LogMenu({ onQsoFilter, logId, ...props }) {
+const TABS = [{id: 'log', label: 'Log'}, {id: 'callsignLookup', label: 'Callsign info'}]
+
+export default function LogMenu({ onQsoFilter, activeTab, onActiveTab, logId, ...props }) {
 
   const [qsoFilter, setQsoFilter] = useState({})
 
@@ -17,15 +19,18 @@ export default function LogMenu({ onQsoFilter, logId, ...props }) {
       }
   }
 
+  const Tabs = TABS.map( ({ id, label }) => <span onClick={() => onActiveTab(id)}>{label}</span> )
+
   return (
     <div className={styles.logMenu}>
-      <span>Log</span>
-      <span>Callsign info</span>
-      <CallsignSearchField
-        title={null}
-        id={styles.callsign}
-        onSearch={(callsign_search) => updateQsoFilter({ callsign_search })}
-      />
+      {Tabs}
+      {activeTab === 'log' &&
+        <CallsignSearchField
+            title={null}
+            id={styles.callsign}
+            onSearch={(callsign_search) => updateQsoFilter({ callsign_search })}
+        />
+      }
     </div>
   )
 

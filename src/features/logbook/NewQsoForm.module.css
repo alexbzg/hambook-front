@@ -93,12 +93,13 @@
     border: 1px solid #ddd;
 	cursor: pointer;
 	border: none;
+	display: none;
 }
 #buttonClear img{
 	width: 30px;
 }
 #callsign {
-	width: 85%;
+	width: 100%;
 	margin: 0 auto;
 	position: relative;
 }
@@ -123,6 +124,7 @@
     border: 1px solid #ddd;
 	cursor: pointer;
 	border: none;
+	display: none;
 }
 
 

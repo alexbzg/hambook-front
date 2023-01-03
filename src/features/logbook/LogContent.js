@@ -13,6 +13,7 @@ import NewQsoForm from "./NewQsoForm"
 import EditQsoForm from "./EditQsoForm"
 import Qso from "./Qso"
 import LogMenu from "./LogMenu"
+import CallsignLookup from "./CallsignLookup"
 import { modifyQsoCount } from "./logsSlice"
 
 const qsoData = (formData) => {
@@ -32,6 +33,8 @@ export default function LogContent({ ...props }) {
   const [lastQso, setLastQso] = useState()
   const [editQso, setEditQso] = useState()
   const [showError, setShowError] = useState(null)
+  const [activeTab, setActiveTab] = useState('log')
+  const [callsignLookup, setCallsignLookup] = useState()
 
   const fetchQsos = useCallback( async (qsoFilter) => {
     setShowError(null)
@@ -134,15 +137,30 @@ export default function LogContent({ ...props }) {
             onSubmit={postNewQso} 
             logId={logId}
             prevQso={lastQso}
+            onCallsignLookup={setCallsignLookup}
         />}
-        <LogMenu logId={logId} onQsoFilter={fetchQsos}/>
+        <LogMenu 
+            logId={logId} 
+            activeTab={activeTab} 
+            onActiveTab={setActiveTab}
+            onQsoFilter={fetchQsos}
+        />
         <div className={styles.logWindow}>
-            {showError &&
-                <div className={styles.qsoError}>{showError}</div>
-            }
-            <table>
-                <tbody>{Qsos}</tbody>
-            </table>
+        {activeTab === 'log' &&
+            <>
+                {showError &&
+                    <div className={styles.qsoError}>{showError}</div>
+                }
+                <table>
+                    <tbody>{Qsos}</tbody>
+                </table>
+            </>
+          }
+        {activeTab === 'callsignLookup' &&
+            <CallsignLookup
+                callsign={callsignLookup}
+            />
+        }
         </div>
         {editQso &&
             <EditQsoForm

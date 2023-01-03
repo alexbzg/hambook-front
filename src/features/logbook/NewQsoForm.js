@@ -16,7 +16,7 @@ const currentDateTime = () => {
 }
 
 
-export default function NewQsoForm({ logId, prevQso, ...props }) {
+export default function NewQsoForm({ logId, prevQso, onCallsignLookup, ...props }) {
   const ID = useId()
   const { logs } = useLogs()
   const log = logs.find( item => item.id === logId )
@@ -25,7 +25,10 @@ export default function NewQsoForm({ logId, prevQso, ...props }) {
 
   const [callsignHints, setCallsignHints] = useState()
 
-  const getCallsignHints = useCallback( async (value) => {
+  const onCallsignChange = useCallback( async (value) => {
+    if (onCallsignLookup && callsignInputRef.current.checkValidity()) {
+      onCallsignLookup(value)
+    }
     let hints = null
     if (value?.length > 3) {
       try {
@@ -39,7 +42,7 @@ export default function NewQsoForm({ logId, prevQso, ...props }) {
       }
     }
     setCallsignHints(hints)
-  }, [] )
+  }, [onCallsignLookup] )
 
   const clearCallsign = () => {
     callsignInputRef.current.value = null
@@ -131,25 +134,21 @@ export default function NewQsoForm({ logId, prevQso, ...props }) {
                         />
                     </div>
                     <div id={styles.time}>
-                        <FormField
+                        <span className={styles.note}>utc</span><br/>
+                        <input
                             required
                             type="time"
                             name="time"
-                            note="utc"
-                            noteClass={styles.note}
                             ref={timeInputRef}
-                            onChange={() => setRealDateTime(false)}
                             defaultValue={currentDateTime()[1]}
                         />
                     </div>
                     <div id={styles.date}>
-                        <FormField
+                        <span className={styles.note}>date</span><br/>
+                        <input
                             required
                             type="date"
                             name="date"
-                            note="date"
-                            noteClass={styles.note}
-                            onChange={() => setRealDateTime(false)}
                             ref={dateInputRef}
                             defaultValue={currentDateTime()[0]}
                         />
@@ -198,7 +197,7 @@ export default function NewQsoForm({ logId, prevQso, ...props }) {
                         name="callsign"
                         required
                         hints={callsignHints}
-                        onChange={(e) => getCallsignHints(e.target.value)}
+                        onChange={(e) => onCallsignChange(e.target.value)}
                         ref={callsignInputRef}
                         id={styles.callsign}/>
                   <div
