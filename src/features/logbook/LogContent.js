@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { useParams } from "react-router-dom"
 import { useDispatch } from "react-redux"
 
@@ -35,6 +35,7 @@ export default function LogContent({ ...props }) {
   const [showError, setShowError] = useState(null)
   const [activeTab, setActiveTab] = useState('log')
   const [callsignLookup, setCallsignLookup] = useState()
+  const callsignSearchRef = useRef()
 
   const fetchQsos = useCallback( async (qsoFilter) => {
     setShowError(null)
@@ -56,6 +57,14 @@ export default function LogContent({ ...props }) {
     }
     return null
   }, [logId])
+
+  const handleCallsignSearch = useCallback( (value) => {
+    if (activeTab === 'log') {
+      fetchQsos(value)
+    } else if (activeTab === 'callsignLookup') {
+      setCallsignLookup(value)
+    }
+  }, [fetchQsos, activeTab])
 
   useEffect( () => {
     async function initialFetchQsos() {
@@ -130,6 +139,11 @@ export default function LogContent({ ...props }) {
       />
   ))
 
+  const handleCallsignLookupChange = useCallback( (value) => {
+    setCallsignLookup(value)
+    callsignSearchRef.current.value = value
+  }, [callsignSearchRef])
+
   return (
     <div className={styles.LogContent}>
         {lastQso !== undefined &&
@@ -137,13 +151,14 @@ export default function LogContent({ ...props }) {
             onSubmit={postNewQso} 
             logId={logId}
             prevQso={lastQso}
-            onCallsignLookup={setCallsignLookup}
+            onCallsignLookup={handleCallsignLookupChange}
         />}
         <LogMenu 
+            ref={callsignSearchRef}
             logId={logId} 
             activeTab={activeTab} 
             onActiveTab={setActiveTab}
-            onQsoFilter={fetchQsos}
+            onCallsignSearch={handleCallsignSearch}
         />
         <div className={styles.logWindow}>
         {activeTab === 'log' &&

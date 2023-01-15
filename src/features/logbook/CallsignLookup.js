@@ -4,6 +4,8 @@ import styles from './CallsignLookup.module.css'
 
 import useAuthenticatedUser from "../auth/useAuthenticatedUser"
 
+import { Spinner } from "../../components"
+
 import client from "../../services/apiClient"
 
 export default function CallsignLookup({ callsign, ...props }) {
@@ -16,7 +18,7 @@ export default function CallsignLookup({ callsign, ...props }) {
     async function lookupRequest() {
         if (callsign) {
             setLookupData()
-            setLoading('loading')
+            setLoading('pending')
             try {
                 const data = await client({
                     url: `/callsigns/qrz/${callsign}`,
@@ -27,21 +29,37 @@ export default function CallsignLookup({ callsign, ...props }) {
                 setLookupData(data)
                 setLoading('succeeded')
             } catch (error) {
+                setLookupData()
                 setLoading('rejected')
             }
+        } else {
+            setLoading("idle")
+            setLookupData()
         }
     }
     lookupRequest()
   }, [callsign, token])
 
-  return (lookupData && (
-          <>
-            {lookupData.image &&
-                <img src={lookupData.image}/>
+  return (
+          <div id={styles.callsignLookup}>
+            {loading === "pending" &&
+                <Spinner/>
             }
-            {Object.entries(lookupData).map( ([ prop, value ]) => (<>{prop}: {value}<br/></>) )}
-          </>)
-  )
+            {loading === 'rejected' &&
+                <span className={styles.callsignNotFound}>No callsign info for {callsign.toUpperCase()}</span>
+            }
+            {lookupData?.image &&
+                <img src={lookupData.image} alt={`From ${callsign} profile`}/>
+            }
+            {lookupData && 
+                <>
+                    <span className={styles.callsign}>{lookupData.call}</span><br/>
+                    <span className={styles.name}>{lookupData.name_fmt}</span>
+                    {Object.entries(lookupData).map( ([ prop, value ]) => (
+                        <span key={prop} hidden>{prop}: {value}</span>) )}
+                </>
+            }
+          </div>)
 
 }
 

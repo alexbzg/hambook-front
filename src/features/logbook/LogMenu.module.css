@@ -1,20 +1,20 @@
 .logMenu {
 	width: 1000px;
-	background-color: var(--grey-lite);
-	padding: 5px 50px 5px 50px;
+	background-color: white;
+	padding: 10px 50px 10px 50px;
 	border: 1px solid #ccc;
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
 	border-bottom-left-radius: 0px;
 	border-bottom-right-radius: 0px;
-	border-bottom: 1px solid var(--grey-lite);
+	border-bottom: none;
 	text-align: center;
 	position: relative;
 }
 
 .logMenu form{
 	position: absolute;
-	top: 5px;
+	top: 9px;
 	right: 5px;
 }
 .logMenu input{
@@ -24,7 +24,14 @@
 
 
 .logMenu span{
-	text-decoration: underline;
 	margin: 0 10px;
 	cursor: pointer;
+	color: var(--purple);
+	font-weight: bold;
 }
+.logMenu span:hover{
+	text-decoration: underline;
+}
+.activeTab {
+}
+

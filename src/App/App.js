@@ -27,8 +27,10 @@ export default function App() {
                         requireNotAuthenticated/>}
             />
           <Route path="/profile" element={<ProtectedRoute component={ProfilePage} />} />
-          <Route path="/logbook" element={<ProtectedRoute component={LogsList} />} />
-          <Route path="/logbook/:logId" element={<ProtectedRoute component={LogContent} />} />
+          <Route path="logbook">
+            <Route index element={<ProtectedRoute component={LogsList} />} />
+            <Route path=":logId" element={<ProtectedRoute component={LogContent} />} />
+          </Route>
         </Routes>
       </Layout>
     </BrowserRouter>

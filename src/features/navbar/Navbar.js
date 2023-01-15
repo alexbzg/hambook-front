@@ -1,5 +1,5 @@
 import React from "react"
-import { Link } from "react-router-dom"
+import { NavLink } from "react-router-dom"
 
 import styles from "./Navbar.module.css"
 import logo from "../../assets/img/hambook_logo.svg"
@@ -12,8 +12,14 @@ const mainMenu = [
 	"LOGBOOK",
 	"PHOTOBOOK"
 ]
-const MainMenuItems = mainMenu.map((entry, index) =>
-	<Link to={entry.toLowerCase()} key={index}>{entry}</Link>
+const MainMenuItems = mainMenu.map((entry, index) => (
+	<NavLink 
+        to={entry.toLowerCase()} 
+        key={index} 
+        className={({ isActive }) => isActive ? styles.activeLink : ''}>
+            {entry}
+    </NavLink>
+    )
 )
 
 export default function Navbar({ ...props }) {

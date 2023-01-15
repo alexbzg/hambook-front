@@ -26,9 +26,7 @@ export default function NewQsoForm({ logId, prevQso, onCallsignLookup, ...props 
   const [callsignHints, setCallsignHints] = useState()
 
   const onCallsignChange = useCallback( async (value) => {
-    if (onCallsignLookup && callsignInputRef.current.checkValidity()) {
-      onCallsignLookup(value)
-    }
+    onCallsignLookup?.(callsignInputRef.current.checkValidity() ? value : null)
     let hints = null
     if (value?.length > 3) {
       try {
@@ -46,6 +44,7 @@ export default function NewQsoForm({ logId, prevQso, onCallsignLookup, ...props 
 
   const clearCallsign = () => {
     callsignInputRef.current.value = null
+    onCallsignLookup?.()
     setCallsignHints(null)
   }
 

@@ -5,7 +5,7 @@
 .logWindow {
 	width: 1000px;
 	min-height: 200px;
-	padding: 20px 50px;
+	padding: 0px 50px 20px 50px;
 	margin:0 auto 50px auto;
 	background-color: #fff;
 	text-align: center;
@@ -15,10 +15,19 @@
 	border-top-right-radius: 0px;
 	border-bottom-left-radius: 5px;
 	border-bottom-right-radius: 5px;
-	border-top: 1px solid var(--grey-lite);
+	border-top: none;
 }
 
 .logWindow table{
 	width: 100%;
 	border-collapse: collapse;
 }
+
+.logWindow img{
+	max-width: 150px;
+	max-height: 150px;
+	padding: 3px;
+	border: 1px solid var(--grey-lite);
+}
+
+

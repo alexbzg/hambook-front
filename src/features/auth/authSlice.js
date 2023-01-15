@@ -63,6 +63,7 @@ export const fetchUserFromToken = createAsyncThunk(
                 method: 'GET', 
 				token,
                 args: null,
+                suppressErrorMessage: true,
 				getState, 
             })
             if (data?.profile) {

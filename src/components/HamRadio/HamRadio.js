@@ -24,7 +24,7 @@ const CallsignField = forwardRef(({ full = true, ...props }, ref) => {
     )
 })
 
-const CallsignSearchField = forwardRef(({ name, onSearch, ...props }, ref) => {
+const CallsignSearchField = forwardRef(({ name, allowWildcards = true, onSearch, ...props }, ref) => {
 
     const fallbackRef = useRef()
     const searchInputRef = ref ?? fallbackRef
@@ -42,14 +42,22 @@ const CallsignSearchField = forwardRef(({ name, onSearch, ...props }, ref) => {
       onSearch(undefined)
     }
 
+    const pattern = allowWildcards ? 
+        `([A-Za-z\\d/]*\\*[A-Za-z\\d/\\*]*|${RE_STR_CALLSIGN_FULL})` :
+        RE_STR_CALLSIGN_FULL
+
+    const invalidMessage = allowWildcards ?
+        "Enter valid callsign or search expression (* matches anything)." :
+        "Enter valid callsign."
+
     return (
         <form onSubmit={onSubmit}>
             <FormField
                 ref={searchInputRef}
                 name="callsign_search"
                 type="text"
-                invalidMessage="Enter valid callsign or search expression (* matches anything)."
-                pattern={`([A-Za-z\\d/]*\\*[A-Za-z\\d/\\*]*|${RE_STR_CALLSIGN_FULL})`}
+                invalidMessage={invalidMessage}
+                pattern={pattern}
                 inputFilter={/[^a-zA-Z\d*/]/gi}
                 style={{textTransform: 'uppercase'}}
                 autoComplete="off"

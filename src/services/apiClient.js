@@ -53,3 +53,29 @@ const client = async ({
   }    
 
 export default client
+
+const resoursePromise = (params) => {
+  let status = "pending"
+  let result
+  let suspend = client(params).then(
+    (res) => {
+        status = "succeeded"
+        result = res
+    },
+    (err) => {
+        status = "rejected"
+        result = err
+    }
+  )
+  return {
+    read() {
+      if (status === "pending") {
+        throw suspend
+      } else if (status === "rejected") {
+        throw result
+      } else {
+        return result
+      }
+    }
+  }
+}
