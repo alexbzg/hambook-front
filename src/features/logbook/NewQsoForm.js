@@ -24,9 +24,12 @@ export default function NewQsoForm({ logId, prevQso, onCallsignLookup, ...props 
   const callsignInputRef = useRef()
 
   const [callsignHints, setCallsignHints] = useState()
+  const [callsignInputState, setCallsignInputState] = useState('empty')
 
   const onCallsignChange = useCallback( async (value) => {
-    onCallsignLookup?.(callsignInputRef.current.checkValidity() ? value : null)
+    const isValid = callsignInputRef.current.checkValidity()
+    onCallsignLookup(isValid ? value : null)
+    setCallsignInputState( value ? ( isValid ? 'valid' : 'non-empty' ) : 'empty' )
     let hints = null
     if (value?.length > 3) {
       try {
@@ -44,8 +47,9 @@ export default function NewQsoForm({ logId, prevQso, onCallsignLookup, ...props 
 
   const clearCallsign = () => {
     callsignInputRef.current.value = null
-    onCallsignLookup?.()
+    onCallsignLookup(null)
     setCallsignHints(null)
+    setCallsignInputState('empty')
   }
 
   const onSubmit = async (e) => {
@@ -184,6 +188,7 @@ export default function NewQsoForm({ logId, prevQso, onCallsignLookup, ...props 
                     </div>
                 </div>
                 <div className={styles.flexRow}>
+                  {callsignInputState !== 'empty' &&
                   <div id={styles.buttonClear}>
                     <img
                         src={buttonClear}
@@ -191,6 +196,7 @@ export default function NewQsoForm({ logId, prevQso, onCallsignLookup, ...props 
                         alt="Clear callsign"
                         title="Clear callsign"/>
                   </div>
+                  }
                   <CallsignField
                         title={null}
                         name="callsign"
@@ -199,11 +205,13 @@ export default function NewQsoForm({ logId, prevQso, onCallsignLookup, ...props 
                         onChange={(e) => onCallsignChange(e.target.value)}
                         ref={callsignInputRef}
                         id={styles.callsign}/>
+                  {callsignInputState === 'valid' &&
                   <div
                     id={styles.buttonOk}
                     onClick={() => document.forms[ID].requestSubmit()}>
                     OK
                   </div>
+                  }
                 </div>
                 <div className={styles.flexRow}>
                      <FormField

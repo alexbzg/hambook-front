@@ -1,2 +1,61 @@
 #callsignLookup {
+	text-align: center;
+	line-height: 1.5em;
+}
+#callsignLookup.spinner{
+	margin-top: 50px;
+}
+
+#callsignInfoRow {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	margin-bottom: 50px;
+}
+#callsignInfoRow img{
+	display: block;
+	margin: 0 auto 20px auto;
+}
+#callsignPerson{
+	flex-grow: 1;
+	padding-top: 5px;
+}
+#callsignPerson .callsign{
+	font-size: 30px;
+	font-weight: bold;
+}
+#callsignPerson .name{
+	font-size: 20px;
+	font-weight: bold;
+}
+#callsignPerson .email{
+	color: var(--purple);
+	text-decoration: underline;
+}
+#callsignAddr{
+	flex-grow: 1;
+}
+#callsignAddr .country{
+	font-size: 20px;
+	font-weight: bold;
+}
+#callsignQth{
+	flex-grow: 1;
+	color: var (--grey);
+}
+#callsignQth table{
+	width: 60%;
+	margin: 0 auto;
+}
+#callsignQth td{
+	border: 1px solid #eee;
+	font-size: 14px;
+}
+#callsignQth tr:hover{
+	background-color: #fff;
+}
+#qrzcomLogo{
+	border: none;
+	opacity: 0.5;
+	width: 100px;
 }

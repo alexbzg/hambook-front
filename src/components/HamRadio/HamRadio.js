@@ -1,4 +1,4 @@
-import { forwardRef, useRef, useState } from "react"
+import { forwardRef, useRef, useState, useEffect, useCallback } from "react"
 
 import { FormField } from ".."
 import { RE_STR_CALLSIGN_FULL, RE_STR_CALLSIGN } from "../../utils/validation"
@@ -24,20 +24,30 @@ const CallsignField = forwardRef(({ full = true, ...props }, ref) => {
     )
 })
 
-const CallsignSearchField = forwardRef(({ name, allowWildcards = true, onSearch, ...props }, ref) => {
+const CallsignSearchField = forwardRef(({ name, allowWildcards = true, searchExpression, onSearch, onChange, ...props }, ref) => {
 
     const fallbackRef = useRef()
     const searchInputRef = ref ?? fallbackRef
 
-    const [searchExpression, setSearchExpression] = useState()
+    const [_searchExpression, set_searchExpression] = useState(searchExpression)
+
+    useEffect(() => {
+        set_searchExpression( (state) => {
+            if (state !== searchExpression) {
+                searchInputRef.current.value = searchExpression
+                state = searchExpression
+            }
+            return state
+        })
+    }, [searchExpression])
 
     const onSubmit = (e) => {
       e.preventDefault()
-      onSearch(searchExpression || undefined)
+      onSearch(_searchExpression || undefined)
     }
 
     const onClear = (e) => {
-      setSearchExpression(undefined)
+      set_searchExpression(undefined)
       searchInputRef.current.value = ''
       onSearch(undefined)
     }
@@ -50,6 +60,11 @@ const CallsignSearchField = forwardRef(({ name, allowWildcards = true, onSearch,
         "Enter valid callsign or search expression (* matches anything)." :
         "Enter valid callsign."
 
+    const handleChange = useCallback( (e) => {
+        set_searchExpression(e.target.value)
+        onChange?.(e)
+    }, [onChange])
+
     return (
         <form onSubmit={onSubmit}>
             <FormField
@@ -61,7 +76,7 @@ const CallsignSearchField = forwardRef(({ name, allowWildcards = true, onSearch,
                 inputFilter={/[^a-zA-Z\d*/]/gi}
                 style={{textTransform: 'uppercase'}}
                 autoComplete="off"
-                onChange={(e) => setSearchExpression(e.target.value)}
+                onChange={handleChange}
                 postInputContent={(
                     <>
                         <img
@@ -70,7 +85,7 @@ const CallsignSearchField = forwardRef(({ name, allowWildcards = true, onSearch,
                             src={buttonSearchImg}
                             alt="Search callsign"
                             title="Search callsign"/>
-                        {searchExpression &&
+                        {_searchExpression &&
                         <img
                             id={styles.buttonDelete}
                             src={buttonClearImg}

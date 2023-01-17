@@ -5,7 +5,7 @@ import styles from './Qso.module.css'
 import { DropDownMenu } from "../../components"
 import { formatDate } from "../../utils/datetime"
 
-export default function Qso({ data, onDelete, onEdit, ...props }) {
+export default function Qso({ data, onDelete, onEdit, onCallsignClick, ...props }) {
 
   return (
       <tr className={styles.loqRow}>
@@ -21,7 +21,9 @@ export default function Qso({ data, onDelete, onEdit, ...props }) {
         <td className={styles.mode}>
             {data.qso_mode}
         </td>
-        <td className={styles.callsign}>
+        <td 
+            className={styles.callsign} 
+            onClick={() => onCallsignClick(data.callsign)}>
             {data.callsign}
         </td>
         <td className={styles.rst}>

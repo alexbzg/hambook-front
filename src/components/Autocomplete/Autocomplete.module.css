@@ -13,8 +13,9 @@
   max-height: 143px;
   overflow-y: auto;
   padding-left: 0;
-  width: calc(800px + 1rem);
+  width: calc(950px + 1rem);
   box-shadow: 2px 2px 3px rgb(0, 0, 0, 0.2);
+  z-index: 10;
 }
 
 .hints li {

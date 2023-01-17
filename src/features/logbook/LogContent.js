@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useParams } from "react-router-dom"
 import { useDispatch } from "react-redux"
 
@@ -8,6 +8,7 @@ import useAuthenticatedUser from "../auth/useAuthenticatedUser"
 import useModal from "../../components/Modal/useModal"
 
 import client from "../../services/apiClient"
+import { excludeUnset } from "../../utils/forms"
 
 import NewQsoForm from "./NewQsoForm"
 import EditQsoForm from "./EditQsoForm"
@@ -35,43 +36,44 @@ export default function LogContent({ ...props }) {
   const [showError, setShowError] = useState(null)
   const [activeTab, setActiveTab] = useState('log')
   const [callsignLookup, setCallsignLookup] = useState()
-  const callsignSearchRef = useRef()
-
-  const fetchQsos = useCallback( async (qsoFilter) => {
-    setShowError(null)
-    setQsos([])
-    try {
-      const qsos = await client({
-            url: `/qso/logs/${logId}/qso`,
-            method: 'GET',
-            token,
-            params: qsoFilter,
-            suppressErrorMessage: true
-          })
-      setQsos(qsos)
-      return qsos
-    } catch (error) {
-      if (error === 'Qso not found' && Object.keys(qsoFilter).length) {
-        setShowError(error)
-      }
-    }
-    return null
-  }, [logId])
-
-  const handleCallsignSearch = useCallback( (value) => {
-    if (activeTab === 'log') {
-      fetchQsos(value)
-    } else if (activeTab === 'callsignLookup') {
-      setCallsignLookup(value)
-    }
-  }, [fetchQsos, activeTab])
+  const [callsignLookupValid, setCallsignLookupValid] = useState()
+  const [qsoFilter, setQsoFilter] = useState({})
 
   useEffect( () => {
-    async function initialFetchQsos() {
-      const qsos = await fetchQsos({})
-      setLastQso(qsos?.length ? qsos[0] : null)
+    async function fetchQsos () {
+        setShowError(null)
+        setQsos([])
+        try {
+            const qsos = await client({
+                    url: `/qso/logs/${logId}/qso`,
+                    method: 'GET',
+                    token,
+                    params: qsoFilter,
+                    suppressErrorMessage: true
+                })
+            setQsos(qsos)
+            setLastQso( (state) => state === undefined ? 
+                (qsos?.length ? qsos[0] : null) : state )
+            return qsos
+        } catch (error) {
+            if (error === 'Qso not found' && Object.keys(qsoFilter).length) {
+                setShowError(error)
+            }
+        }
+        return null
     }
-    initialFetchQsos()
+    fetchQsos()
+  }, [token, logId, qsoFilter])
+
+  const handleCallsignSearch = useCallback( (callsign_search) => {
+      setQsoFilter( (state) => state.callsign_search !== callsign_search ?
+            excludeUnset({ ...state, callsign_search }) : state )
+      setCallsignLookup(callsign_search)
+  }, [])
+
+  const handleCallsignLookup = useCallback( (value) => {
+      setCallsignLookup(value)
+      setCallsignLookupValid(value)
   }, [])
 
   const postNewQso = async (result) => {
@@ -134,16 +136,12 @@ export default function LogContent({ ...props }) {
       <Qso
         key={qso.id}
         data={qso}
+        onCallsignClick={handleCallsignLookup} 
         onEdit={() => setEditQso(qso)}
         onDelete={() => deleteQso(qso.id)}
       />
   ))
-
-  const handleCallsignLookupChange = useCallback( (value) => {
-    setCallsignLookup(value)
-    callsignSearchRef.current.value = value
-  }, [callsignSearchRef])
-
+ 
   return (
     <div className={styles.LogContent}>
         {lastQso !== undefined &&
@@ -151,13 +149,14 @@ export default function LogContent({ ...props }) {
             onSubmit={postNewQso} 
             logId={logId}
             prevQso={lastQso}
-            onCallsignLookup={handleCallsignLookupChange}
+            onCallsignLookup={handleCallsignLookup}
         />}
         <LogMenu 
-            ref={callsignSearchRef}
-            logId={logId} 
             activeTab={activeTab} 
             onActiveTab={setActiveTab}
+            callsignLookup={callsignLookup}
+            onCallsignLookup={setCallsignLookup}
+            onCallsignLookupValid={setCallsignLookupValid}
             onCallsignSearch={handleCallsignSearch}
         />
         <div className={styles.logWindow}>
@@ -173,7 +172,7 @@ export default function LogContent({ ...props }) {
           }
         {activeTab === 'callsignLookup' &&
             <CallsignLookup
-                callsign={callsignLookup}
+                callsign={callsignLookupValid}
             />
         }
         </div>

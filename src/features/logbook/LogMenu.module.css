@@ -1,7 +1,7 @@
 .logMenu {
 	width: 1000px;
-	background-color: white;
-	padding: 10px 50px 10px 50px;
+	background-color: var(--purple);
+	padding: 3px 50px;
 	border: 1px solid #ccc;
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
@@ -14,8 +14,8 @@
 
 .logMenu form{
 	position: absolute;
-	top: 9px;
-	right: 5px;
+	top: 2px;
+	right: 2px;
 }
 .logMenu input{
 	width: 150px;
@@ -26,12 +26,12 @@
 .logMenu span{
 	margin: 0 10px;
 	cursor: pointer;
-	color: var(--purple);
-	font-weight: bold;
+	color: white;
 }
 .logMenu span:hover{
-	text-decoration: underline;
+	color: var(--orange);
 }
-.activeTab {
+.logMenu span.activeTab {
+	color: var(--orange);
 }
 

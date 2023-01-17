@@ -1,32 +1,38 @@
-import { useState, useCallback, forwardRef } from 'react'
+import {useRef, useState} from 'react'
 
 import styles from './LogMenu.module.css'
 
 import { CallsignSearchField } from "../../components"
-import { excludeUnset } from "../../utils/forms"
 
 const TABS = [{id: 'log', label: 'Log'}, {id: 'callsignLookup', label: 'Callsign info'}]
 
-const LogMenu = forwardRef(({ onCallsignSearch, activeTab, onActiveTab, logId, ...props }, ref) => {
+const LogMenu = ({ 
+    onCallsignSearch, 
+    onCallsignLookup,
+    onCallsignLookupValid,
+    callsignLookup, 
+    onActiveTab, 
+    ...props }) => {
 
-  const [qsoFilter, setQsoFilter] = useState({})
+  const [activeTab, setActiveTab] = useState('log')
+  const callsignInputRef = useRef()
 
-  const handleCallsignSearch = useCallback( (updateData) => {
-      if (activeTab === 'log') {
-        if (Object.keys(updateData).some( key => updateData[key] !== qsoFilter[key] )) {
-          const newQsoFilter = excludeUnset({ ...qsoFilter, ...updateData })
-          onCallsignSearch(newQsoFilter)
-          setQsoFilter(newQsoFilter)
+  const handleTabClick = (tabId) => {
+    if (activeTab !== tabId) {
+        if (tabId === 'callsignLookup') {
+            onCallsignLookupValid(callsignInputRef.current.checkValidity() ? 
+                callsignInputRef.current.value : null)
         }
-      } else if (activeTab === 'callsignLookup') {
-        onCallsignSearch(updateData.callsign_search)
-      }
-  }, [onCallsignSearch, activeTab])
+        setActiveTab(tabId)
+        onActiveTab(tabId)
+    }
+  }
 
   const Tabs = TABS.map( ({ id, label }) => (
       <span 
+        key={id}
         className={activeTab === id ? styles.activeTab : ''}
-        onClick={() => onActiveTab(id)}>
+        onClick={() => handleTabClick(id)}>
         {label}
       </span>
   ))
@@ -35,16 +41,18 @@ const LogMenu = forwardRef(({ onCallsignSearch, activeTab, onActiveTab, logId, .
     <div className={styles.logMenu}>
       {Tabs}
       <CallsignSearchField
-          ref={ref}
+          ref={callsignInputRef}
           title={null}
           id={styles.callsign}
+          onChange={(e) => onCallsignLookup(e.target.value)}
+          searchExpression={callsignLookup}
           allowWildcards={activeTab === 'log'}
-          onSearch={(callsign_search) => handleCallsignSearch({ callsign_search })}
+          onSearch={onCallsignSearch}
       />
     </div>
   )
 
-})
+}
 
 export default LogMenu
 

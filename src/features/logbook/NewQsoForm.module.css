@@ -15,6 +15,7 @@
 .flexRow {
 	display: flex;
 	flex-direction: row;
+	position: relative;
 }
 .flexRow div{
 	padding: 0;
@@ -86,14 +87,14 @@
 
 
 #buttonClear{
+	position: absolute;
 	width: 30px;
 	height: 30px;
-	padding: 6px 0 0 10px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
+	top: 7px;
+	left: 10px;
 	cursor: pointer;
-	border: none;
-	display: none;
+	#display: none;
+	z-index: 10;
 }
 #buttonClear img{
 	width: 30px;
@@ -112,19 +113,16 @@
 	border-color: var(--purple);
 }
 #buttonOk{
-	width: 30px;
-	font-size: 20px;
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	font-size: 24px;
+	line-height: 24px;
 	font-weight: bold;
-	line-height: 20px;
 	color: var(--grey);
 	cursor: pointer;
-	height: 30px;
-	padding: 12px 10px 0px 0px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-	cursor: pointer;
-	border: none;
-	display: none;
+	#display: none;
+	z-index: 10;
 }
 
 

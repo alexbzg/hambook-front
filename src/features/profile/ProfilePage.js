@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux"
 
 import LightGallery from 'lightgallery/react'
 import lgZoom from 'lightgallery/plugins/zoom'
-import '../../assets/lightgallery/css/lightgallery.css';
+import '../../assets/lightgallery/css/lightgallery.css'
 import '../../assets/lightgallery/css/lg-zoom.css'
 
 import styles from './Profile.module.css'
