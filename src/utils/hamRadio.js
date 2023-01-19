@@ -65,3 +65,7 @@ export const QSO_MODES = Object.freeze({
     }
 })
 
+export function stripCallsign(value) {
+  return value.match(/\d*[A-Za-z]+\d+[A-Za-z]+/)?.[0]
+}
+

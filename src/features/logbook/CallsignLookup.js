@@ -12,6 +12,7 @@ import useAuthenticatedUser from "../auth/useAuthenticatedUser"
 import { Spinner } from "../../components"
 
 import client from "../../services/apiClient"
+import { stripCallsign } from "../../utils/hamRadio"
 
 import qrzcomLogo from "../../assets/img/qrz_com.svg"
 
@@ -28,7 +29,7 @@ export default function CallsignLookup({ callsign, ...props }) {
             setLoading('pending')
             try {
                 const data = await client({
-                    url: `/callsigns/qrz/${callsign}`,
+                    url: `/callsigns/qrz/${stripCallsign(callsign)}`,
                     method: 'GET',
                     token,
                     suppressErrorMessage: true
@@ -57,20 +58,22 @@ export default function CallsignLookup({ callsign, ...props }) {
             }
             <div id={styles.callsignInfoRow}>
                     {lookupData?.image &&
-                        <LightGallery plugins={[lgZoom]} mode="lg-fade">
-                            <a href={lookupData.image}>
-                                <img
-                                    id={styles.qrzcomImage}
-                                    src={lookupData.image}
-                                    alt={`${callsign} profile photo`}/>
-                            </a>
-                        </LightGallery>
+                        <div id={styles.callsignPhoto}>
+                            <LightGallery plugins={[lgZoom]} mode="lg-fade">
+                                <a href={lookupData.image}>
+                                    <img
+                                        id={styles.qrzcomImage}
+                                        src={lookupData.image}
+                                        alt={`${callsign} profile photo`}/>
+                                </a>
+                            </LightGallery>
+                        </div>
                     }
                 <div id={styles.callsignPerson}>
                     {lookupData &&
                         <>
                             <span className={styles.callsign}>{lookupData.call}</span><br/>
-                            <span className={styles.name}>{lookupData.name_fmt}</span><br/><br/>
+                            <span className={styles.name}>{lookupData.name_fmt}</span><br/>
                             <span className={styles.email}>{lookupData.email}</span>
                             {Object.entries(lookupData).map( ([ prop, value ]) => (
                                 <span key={prop} hidden>{prop}: {value}</span>) )}
@@ -87,29 +90,19 @@ export default function CallsignLookup({ callsign, ...props }) {
                          </>
                     }
                 </div>
-                <div id={styles.callsignQth}>
+            </div>
+            <div id={styles.callsignInfoRow}>
                     {lookupData &&
                         <>
-                            <table>
-                                <tr>
-                                    <td>Latitude</td><td>{lookupData.lat}</td>
-                                </tr>
-                                <tr>
-                                    <td>Longtude</td><td>{lookupData.lon}</td>
-                                </tr>
-                                <tr>
-                                    <td>Grid</td><td>{lookupData.grid}</td>
-                                </tr>
-                                <tr>
-                                    <td>CQ zone</td><td>{lookupData.cqzone}</td>
-                                </tr>
-                                <tr>
-                                    <td>ITU zone</td><td>{lookupData.ituzone}</td>
-                                </tr>
-                            </table>
+                            <table><tr>
+                            <td className={styles.qth}>Latitude: <b>{lookupData.lat}</b></td>
+                            <td className={styles.qth}>Longtude: <b>{lookupData.lon}</b></td>
+                            <td className={styles.qth}>Grid: <b>{lookupData.grid}</b></td>
+                            <td className={styles.qth}>CQ zone: <b>{lookupData.cqzone}</b></td>
+                            <td className={styles.qth}>ITU zone: <b>{lookupData.ituzone}</b></td>
+                            </tr></table>
                          </>
                     }
-                </div>
             </div>
             <img
                 id={styles.qrzcomLogo}

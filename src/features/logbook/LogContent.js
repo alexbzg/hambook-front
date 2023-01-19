@@ -68,7 +68,7 @@ export default function LogContent({ ...props }) {
   const handleCallsignSearch = useCallback( (callsign_search) => {
       setQsoFilter( (state) => state.callsign_search !== callsign_search ?
             excludeUnset({ ...state, callsign_search }) : state )
-      setCallsignLookup(callsign_search)
+      setCallsignLookupValid(callsign_search)
   }, [])
 
   const handleCallsignLookup = useCallback( (value) => {

@@ -23,11 +23,5 @@
 	border-collapse: collapse;
 }
 
-.logWindow img{
-	max-width: 150px;
-	max-height: 150px;
-	padding: 3px;
-	border: 1px solid var(--grey-lite);
-}
 
 
