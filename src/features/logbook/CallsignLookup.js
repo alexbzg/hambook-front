@@ -54,7 +54,7 @@ export default function CallsignLookup({ callsign, ...props }) {
                 <Spinner/>
             }
             {loading === 'rejected' && callsign &&
-                <span className={styles.callsignNotFound}>No callsign info for {callsign.toUpperCase()}</span>
+                <span className={styles.callsignNotFound}>No callsign info for {stripCallsign(callsign.toUpperCase())}</span>
             }
             <div id={styles.callsignInfoRow}>
                     {lookupData?.image &&

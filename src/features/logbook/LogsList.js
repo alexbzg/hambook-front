@@ -2,11 +2,15 @@ import { useState, useCallback } from "react"
 import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
 
+import fileDownload from 'js-file-download'
+
 import styles from './LogsList.module.css'
 
 import { useLogs, logUpdate, logCreate, logDelete } from "./logsSlice"
 import useModal from "../../components/Modal/useModal"
+import useAuthenticatedUser from "../auth/useAuthenticatedUser"
 
+import client from "../../services/apiClient"
 
 import LogsListItem from "./LogsListItem"
 import LogSettings from "./LogSettings"
@@ -15,6 +19,8 @@ const ListItemWrapper = (props) => <div {...props} className={styles.logsListIte
 
 export default function LogsList({ ...props }) {
   const dispatch = useDispatch()
+  const { token } = useAuthenticatedUser()
+
   const navigate = useNavigate()
   const { logs } = useLogs()
   const confirmModal = useModal()
@@ -50,6 +56,21 @@ export default function LogsList({ ...props }) {
      }
   }
 
+  const handleDownload = async (item) => {
+    try {
+        const adifDownload = await client({
+         	url: `/qso/logs/${item.id}/adif`,
+            method: 'POST',
+            token,
+            args: { qso_filter: {} }
+        })
+        fileDownload(adifDownload, `${item.id}.adi`)
+        return true
+    } catch {
+        return false
+    }
+  }
+
   const handleOpenItem = useCallback((item) => {
       navigate(`/logbook/${item.id}`)
   }, [])
@@ -62,7 +83,9 @@ export default function LogsList({ ...props }) {
             {...item}
             onOpen={() => handleOpenItem(item)}
             onDelete={() => handleDeleteItem(item)}
-            onEdit={() => handleEditItem(item)}/>
+            onEdit={() => handleEditItem(item)}
+            onDownload={() => handleDownload(item)}
+      />
       </ListItemWrapper>)
   )
 

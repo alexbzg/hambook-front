@@ -30,6 +30,10 @@ export default function LogsList({ ...props }) {
                 {
                     title: "Delete log",
                     handler: props.onDelete
+                },
+                {
+                    title: "ADIF export",
+                    handler: props.onDownload
                 }
             ]}/>
     </>
