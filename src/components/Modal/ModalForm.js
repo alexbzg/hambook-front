@@ -17,7 +17,9 @@ export default function ModalForm({ modalResult, children, ...props }) {
 
     const onSubmit = (e) => {
       e.preventDefault()
-      modalFormResult(true)
+      if (!modalFormResult) {
+        modalFormResult(true)
+      }
     }
 
     return (

@@ -14,6 +14,7 @@ import client from "../../services/apiClient"
 
 import LogsListItem from "./LogsListItem"
 import LogSettings from "./LogSettings"
+import LogExport from "./LogExport"
 
 const ListItemWrapper = (props) => <div {...props} className={styles.logsListItem}/>
 
@@ -26,6 +27,7 @@ export default function LogsList({ ...props }) {
   const confirmModal = useModal()
 
   const [editLog, setEditLog] = useState()
+  const [exportLog, setExportLog] = useState()
 
   const handleInputChange = useCallback((label, value) => {
       setEditLog( (editLog) => ({ ...editLog, [label]: value }) )
@@ -56,18 +58,20 @@ export default function LogsList({ ...props }) {
      }
   }
 
-  const handleDownload = async (item) => {
+  const logExportModalResult = async (result) => {
     try {
-        const adifDownload = await client({
-         	url: `/qso/logs/${item.id}/adif`,
-            method: 'POST',
-            token,
-            args: { qso_filter: {} }
-        })
-        fileDownload(adifDownload, `${item.id}.adi`)
-        return true
-    } catch {
-        return false
+        if (result) {
+            const qso_filter = Object.fromEntries(result.entries())
+            const adifDownload = await client({
+                url: `/qso/logs/${exportLog.id}/adif`,
+                method: 'POST',
+                token,
+                args: { qso_filter }
+            })
+            fileDownload(adifDownload, `${exportLog.id}.adi`)
+        }
+    } finally {
+      setExportLog()
     }
   }
 
@@ -84,7 +88,7 @@ export default function LogsList({ ...props }) {
             onOpen={() => handleOpenItem(item)}
             onDelete={() => handleDeleteItem(item)}
             onEdit={() => handleEditItem(item)}
-            onDownload={() => handleDownload(item)}
+            onExport={() => setExportLog(item)}
       />
       </ListItemWrapper>)
   )
@@ -102,6 +106,12 @@ export default function LogsList({ ...props }) {
                 handleInputChange={handleInputChange}
                 log={editLog}/>
         }
+        {Boolean(exportLog) &&
+            <LogExport 
+                modalResult={logExportModalResult}
+                log={exportLog}/>
+        }
+
 
     </div>
     )

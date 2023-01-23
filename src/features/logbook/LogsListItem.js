@@ -33,7 +33,7 @@ export default function LogsList({ ...props }) {
                 },
                 {
                     title: "ADIF export",
-                    handler: props.onDownload
+                    handler: props.onExport
                 }
             ]}/>
     </>
