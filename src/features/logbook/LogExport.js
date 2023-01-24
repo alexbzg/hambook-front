@@ -11,12 +11,12 @@ export default function LogSettings({ modalResult, log, ...props }) {
         <ModalForm modalResult={modalResult}>
           <div className={styles.logExport}>
             <div id={styles.exportAll}>
-                export all qso
                 <input
                 type="checkbox"
                 checked={exportAll}
                 onChange={() => setExportAll( state => !state )}
                 />
+                export all 
             </div>
             <FormField
                 name="date_begin"

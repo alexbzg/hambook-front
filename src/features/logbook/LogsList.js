@@ -68,7 +68,11 @@ export default function LogsList({ ...props }) {
                 token,
                 args: { qso_filter }
             })
-            fileDownload(adifDownload, `${exportLog.id}.adi`)
+            let fileName = exportLog.callsign.replace(/\//, '_')
+            if (qso_filter.date_begin) {
+                fileName = [fileName, qso_filter.date_begin, qso_filter.date_end].join('_')
+            }
+            fileDownload(adifDownload, `${fileName}.adi`)
         }
     } finally {
       setExportLog()

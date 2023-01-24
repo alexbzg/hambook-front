@@ -54,8 +54,13 @@ export default function NewQsoForm({ logId, prevQso, onCallsignLookup, ...props 
 
   const onSubmit = async (e) => {
     e.preventDefault()
-    if (await props.onSubmit(new FormData(document.forms[ID]))) {
-      clearCallsign()
+    if (document.activeElement !== callsignInputRef.current) {
+        callsignInputRef.current.focus()
+    } else if (await props.onSubmit(new FormData(document.forms[ID]))) {
+        clearCallsign()
+        nameRef.current.value = ''
+        qthRef.current.value = ''
+        commentRef.current.value = ''
     }
   }
 
@@ -66,6 +71,9 @@ export default function NewQsoForm({ logId, prevQso, onCallsignLookup, ...props 
   const bandRef = useRef()
   const modeRef = useRef()
   const freqRef = useRef()
+  const nameRef = useRef()
+  const qthRef = useRef()
+  const commentRef = useRef()
 
   const setFreq = () => {
     const mode = modeRef.current.value
@@ -239,18 +247,21 @@ export default function NewQsoForm({ logId, prevQso, onCallsignLookup, ...props 
                         note="corr name"
                         noteClass={styles.note}
                         name="name"
+                        ref={nameRef}
                     />
                      <FormField
                         id={styles.qth}
                         note="corr qth"
                         noteClass={styles.note}
                         name="qth"
+                        ref={qthRef}
                     />
                      <FormField
                         id={styles.comment}
                         note="comment"
                         noteClass={styles.note}
                         name="comment"
+                        ref={commentRef}
                     />
                 </div>
         </form>
