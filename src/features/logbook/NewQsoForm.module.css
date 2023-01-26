@@ -142,9 +142,17 @@
 
 
 
-
-#stationCallsign {
-
-	display: none;
+#moreFieldsButton{
+	text-align: right;
+	margin-top: -10px;
 }
-
+#moreFieldsButton img{
+	width: 30px;
+	cursor: pointer;
+}
+#field1, #field2, #field3, #field4, #field5 {
+	flex-grow: 1;
+}
+#field1 input, #field2 input, #field3 input, #field4 input, #field5 input {
+	width: 83%;
+}

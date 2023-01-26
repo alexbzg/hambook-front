@@ -83,7 +83,7 @@ export default function LogContent({ ...props }) {
          		url: `/qso/logs/${logId}`,
                 method: 'POST',
                 token,
-                args: { new_qso: qsoData(result) }
+                args: { new_qso: result }
             })
          setQsos((qsos) => [ createdQso, ...qsos ])
          dispatch(modifyQsoCount({ logId, value: 1 }))

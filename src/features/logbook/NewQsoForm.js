@@ -1,14 +1,18 @@
 import { useState, useEffect, useRef, useCallback, useId } from "react"
+import { useDispatch } from "react-redux"
+
 
 import styles from './NewQsoForm.module.css'
 
-import { useLogs } from "./logsSlice"
+import { useLogs, logUpdate } from "./logsSlice"
 import client from "../../services/apiClient"
-
+import { excludeUnset } from "../../utils/forms"
 import { FormField, SelectFromObject, CallsignField } from "../../components"
+import QsoFieldExtra from "./QsoFieldExtra"
 import useInterval from "../../hooks/useInterval"
-import { BANDS, QSO_MODES } from "../../utils/hamRadio"
+import { BANDS, QSO_MODES, QSO_FIELDS_EXTRA } from "../../utils/hamRadio"
 import buttonClear from "../../assets/img/icons/clear.svg"
+import threeDots from "../../assets/img/icons/three_dots.svg"
 
 const currentDateTime = () => {
    const dtStr = (new Date()).toISOString()
@@ -16,8 +20,10 @@ const currentDateTime = () => {
 }
 
 
-export default function NewQsoForm({ logId, prevQso, onCallsignLookup, ...props }) {
+export default function NewQsoForm({ logId, prevQso, qso, onCallsignLookup, ...props }) {
   const ID = useId()
+  const dispatch = useDispatch()
+
   const { logs } = useLogs()
   const log = logs.find( item => item.id === logId )
 
@@ -25,6 +31,46 @@ export default function NewQsoForm({ logId, prevQso, onCallsignLookup, ...props 
 
   const [callsignHints, setCallsignHints] = useState()
   const [callsignInputState, setCallsignInputState] = useState('empty')
+  const [showExtraFieldsRow, setShowExtraFieldsRow] = useState()    
+
+  const timeInputRef = useRef()
+  const dateInputRef = useRef()
+  const rstrRef = useRef()
+  const rstsRef = useRef()
+  const bandRef = useRef()
+  const modeRef = useRef()
+  const freqRef = useRef()
+
+  const [extraFields, setExtraFields] = useState(log.extra_fields)
+  const extraFieldsRefs = useRef([])
+  const [extraFieldsValues, setExtraFieldsValues] = useState(qso ? {...qso.extra} : 
+    Object.fromEntries(extraFields.filter( field => QSO_FIELDS_EXTRA[field].persist ).
+        map( field => [field, prevQso?.extra?.[field]] ) ) )
+
+  const handleExtraFieldChange = useCallback( async (field, index) => {
+    setExtraFields( (state) => {
+        const newState = [...state]
+        newState[index] = field
+        return newState
+    })
+    extraFieldsRefs.current[index].value = extraFieldsValues[field] ?? ''
+  }, [qso])
+  useEffect( () => {
+    if (JSON.stringify(extraFields) !== JSON.stringify(log.extra_fields)) {
+      dispatch( logUpdate({ log_id: logId, log_update: { extra_fields: extraFields } }) )   
+    }
+    setExtraFieldsValues( state => Object.fromEntries(extraFields.map( field => [field,  state[field]] )))
+  }, [...extraFields, dispatch, log.extra_fields] )
+
+  const handleExtraFieldValueChange = useCallback( async (value, index) => {
+    const field = extraFields[index]
+    extraFieldsRefs.current.forEach( (ref, _index) => {
+      if (_index !== index && extraFields[_index] === field) {
+        ref.value = value
+      }
+    })
+    setExtraFieldsValues( state => ({ ...state, [field]: value }) )
+  }, [...extraFields, extraFieldsRefs] )
 
   const onCallsignChange = useCallback( async (value) => {
     const isValid = callsignInputRef.current.checkValidity()
@@ -56,24 +102,23 @@ export default function NewQsoForm({ logId, prevQso, onCallsignLookup, ...props 
     e.preventDefault()
     if (document.activeElement !== callsignInputRef.current) {
         callsignInputRef.current.focus()
-    } else if (await props.onSubmit(new FormData(document.forms[ID]))) {
-        clearCallsign()
-        nameRef.current.value = ''
-        qthRef.current.value = ''
-        commentRef.current.value = ''
+    } else {
+        const { date, time, ...qsoData } = Object.fromEntries(new FormData(document.forms[ID]))
+        qsoData.qso_datetime = `${date} ${time}`
+        qsoData.extra = excludeUnset(extraFieldsValues)
+        if ( await props.onSubmit(qsoData) ) {
+            clearCallsign()
+            extraFields.forEach( (field, index) => { 
+                if (!QSO_FIELDS_EXTRA[extraFields[index]].persist) {
+                    extraFieldsValues[field] = ''
+                    if (extraFieldsRefs.current[index]) {
+                        extraFieldsRefs.current[index].value = ''
+                    }
+                }
+            })
+        }
     }
   }
-
-  const timeInputRef = useRef()
-  const dateInputRef = useRef()
-  const rstrRef = useRef()
-  const rstsRef = useRef()
-  const bandRef = useRef()
-  const modeRef = useRef()
-  const freqRef = useRef()
-  const nameRef = useRef()
-  const qthRef = useRef()
-  const commentRef = useRef()
 
   const setFreq = () => {
     const mode = modeRef.current.value
@@ -111,7 +156,7 @@ export default function NewQsoForm({ logId, prevQso, onCallsignLookup, ...props 
     }
   }
 
-  const [realDateTime, setRealDateTime] = useState(true)
+  const [realDateTime, setRealDateTime] = useState(!qso)
   const setDateTimeToReal = useCallback(() => {
     if (realDateTime && timeInputRef.current?.value) {
         const dtStr = (new Date()).toISOString()
@@ -121,6 +166,16 @@ export default function NewQsoForm({ logId, prevQso, onCallsignLookup, ...props 
   }, [realDateTime])
   useEffect( setDateTimeToReal, [setDateTimeToReal] )
   useInterval( setDateTimeToReal, realDateTime ? 1000 : null )
+
+  const _QsoFieldExtra = (id) => (
+        <QsoFieldExtra
+            key={id}
+            field={extraFields[id]}
+            value={extraFieldsValues[extraFields[id]]}
+            ref={el => extraFieldsRefs.current[id] =  el }
+            onFieldChange={(field) => handleExtraFieldChange(field, id)}
+            onValueChange={(value) => handleExtraFieldValueChange(value, id)}/>
+  )
 
   return (
       <div className={styles.newQso}>
@@ -136,6 +191,7 @@ export default function NewQsoForm({ logId, prevQso, onCallsignLookup, ...props 
                         noteClass={styles.note}
                         name="station_callsign"
                     />
+                    {!qso &&
                     <div id={styles.realtime}>
                       manual<br/>time/date<br/>
                       <input
@@ -144,6 +200,7 @@ export default function NewQsoForm({ logId, prevQso, onCallsignLookup, ...props 
                         onChange={() => setRealDateTime( state => !state )}
                         />
                     </div>
+                    }
                     <div id={styles.time}>
                         <span className={styles.note}>utc</span><br/>
                         <input
@@ -242,28 +299,21 @@ export default function NewQsoForm({ logId, prevQso, onCallsignLookup, ...props 
                         name="rst_r"
                         type="number"
                     />
-                     <FormField
-                        id={styles.name}
-                        note="corr name"
-                        noteClass={styles.note}
-                        name="name"
-                        ref={nameRef}
-                    />
-                     <FormField
-                        id={styles.qth}
-                        note="corr qth"
-                        noteClass={styles.note}
-                        name="qth"
-                        ref={qthRef}
-                    />
-                     <FormField
-                        id={styles.comment}
-                        note="comment"
-                        noteClass={styles.note}
-                        name="comment"
-                        ref={commentRef}
-                    />
+                    {[0, 1, 2].map( id => _QsoFieldExtra(id) )}
                 </div>
+                <div 
+                    id={styles.moreFieldsButton}
+                    onClick={() => setShowExtraFieldsRow( state => !state)}>
+                    <img
+                        src={threeDots}
+                        alt="More ADIF fields"
+                        title="More ADIF fieldsn"/>
+                </div>
+                {showExtraFieldsRow &&
+                    <div className={styles.flexRow}>
+                        {[3, 4, 5, 6].map( id => _QsoFieldExtra(id) )}
+                    </div>
+                }
         </form>
       }
       </div>

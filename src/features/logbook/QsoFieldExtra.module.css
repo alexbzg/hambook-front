@@ -1,0 +1,33 @@
+.wrapper {
+	margin: 0;
+	flex-grow: 1;
+}
+.wrapper input{
+	width: 87%;
+}
+
+select.field {
+	border: none;
+	margin: 0;
+	padding: 0;
+	font-size: 12px;
+	color: var(--purple);
+	cursor: pointer;
+	font-style: italic;
+	list-style-type: none;
+	/* for Firefox */
+	-moz-appearance: none;
+	/* for Chrome */
+	-webkit-appearance: none;
+	line-height: 12px;
+}
+select.field:hover {
+	text-decoration: underline;
+}
+select.field::-ms-expand {
+	/* IE */
+	display: none;
+}
+
+.value {
+}

@@ -16,8 +16,8 @@ export default function LogSettings({ modalResult, log, ...props }) {
                 checked={exportAll}
                 onChange={() => setExportAll( state => !state )}
                 />
-                export all 
-            </div>
+                Export all QSO
+            </div><br/>
             <FormField
                 name="date_begin"
                 type="date"

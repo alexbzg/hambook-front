@@ -69,3 +69,63 @@ export function stripCallsign(value) {
   return value.match(/\d*[A-Za-z]+\d+[A-Za-z]+/)?.[0]
 }
 
+export const QSO_FIELDS_EXTRA = Object.freeze({
+    CNTY: {},
+    COMMENT: {},
+    CONTEST_ID: {},
+    COUNTRY: {},
+    CQZ: {},
+    DARC_DOK: {},
+    DISTANCE: {},
+    DXCC: {},
+    GRIDSQUARE: {},
+    IOTA: {},
+    ITUZ: {},
+    MY_CITY: {
+        persist: true
+    },
+    MY_CNTY: {
+        persist: true
+    },
+    MY_COUNTRY: {
+         persist: true
+    },
+    MY_CQ_ZONE: {
+        persist: true
+    },
+    MY_DXCC: {
+         persist: true
+    },
+    MY_GRIDSQUARE: {
+         persist: true
+    },
+    MY_NAME: {
+         persist: true
+    },
+    MY_POTA_REF: {
+           persist: true
+    },
+    MY_SOTA_REF: {
+            persist: true
+    },
+    MY_STATE: {
+         persist: true
+    },
+    MY_WWFF_REF: {
+         persist: true
+    },
+    NAME: {},
+    NOTES: {},
+    OPERATOR: {
+        persist: true
+    },
+    POTA_REF: {},
+    QTH: {},
+    SOTA_REF: {},
+    STATE: {},
+    PFX: {},
+    SRX: {},
+    STX: {},
+    WWFF_REF: {}
+})
+

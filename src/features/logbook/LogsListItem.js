@@ -17,10 +17,10 @@ export default function LogsList({ ...props }) {
             {props.qso_count} QSO
         </div>
 
-        <DropDownMenu 
+        <DropDownMenu
             items={[
                 {
-                    title: "Open",
+                    title: "Open log",
                     handler: props.onOpen
                 },
                 {
@@ -28,12 +28,12 @@ export default function LogsList({ ...props }) {
                     handler: props.onEdit
                 },
                 {
-                    title: "Delete log",
-                    handler: props.onDelete
-                },
-                {
                     title: "ADIF export",
                     handler: props.onExport
+                },
+                {
+                    title: "Delete log",
+                    handler: props.onDelete
                 }
             ]}/>
     </>

@@ -33,10 +33,10 @@ export default function Qso({ data, onDelete, onEdit, onCallsignClick, ...props 
             {data.rst_r}
         </td>
         <td className={styles.name}>
-            {data.name}
+            {data.extra?.NAME}
         </td>
         <td className={styles.qth}>
-            {data.qth}
+            {data.extra?.QTH}
         </td>
         <td>
             <DropDownMenu

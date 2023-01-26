@@ -31,39 +31,7 @@
 	display: inline-block;
 	padding-top: 25px;
 }
-/*
-.menuButton {
-	text-align: right;
-	font-weight: bold;
-	color: var(--grey);
-	text-align: right;
-	background-color: #f7f7f7;
-	border-top: 1px solid #ccc;
-	margin-top: 15px;
-	line-height: 15px;
-}
-.menuButton img{
-	width: 18px;
-	margin: 0 5px 2px 0;
-}
 
-.menuWrapper {
-	font-size: 14px;
-	line-height: 14px;
-	padding: 0;
-	text-align: left;
-
-}
-
-.menuItem {
-	padding: 5px 20px;
-	font-weight: normal;
-	color: #333;
-}
-.menuItem:hover {
-	background-color: var(--orange);
-}
-*/
 .logCallsign {
 	padding: 10px 10px 0px 10px;
 	font-size: 20px;
@@ -78,5 +46,28 @@
 	color: var(--grey);
 }
 
+.logQso{
+	margin-top: 5px;
+	font-size: 14px;
+	color: #333;
+}
 
+
+.logExport div{
+	display: inline-block;
+	color:  var(--grey);
+}
+#exportAll{
+	color: #333;
+	margin-bottom: 10px;
+}
+#exportAll input{
+	margin-right: 5px;
+}
+.logExport input{
+	margin: 0 5px;
+}
+.logExport input:disabled{
+	background-color: var(--grey-lite);
+}
 
