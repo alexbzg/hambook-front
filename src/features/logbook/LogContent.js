@@ -10,7 +10,7 @@ import useModal from "../../components/Modal/useModal"
 import client from "../../services/apiClient"
 import { excludeUnset } from "../../utils/forms"
 
-import NewQsoForm from "./NewQsoForm"
+import QsoForm from "./QsoForm"
 import EditQsoForm from "./EditQsoForm"
 import Qso from "./Qso"
 import LogMenu from "./LogMenu"
@@ -95,13 +95,13 @@ export default function LogContent({ ...props }) {
   }
 
   const postQsoUpdate = async (result) => {
-      if (result) {
-          try {
+     try {
+        if (result) {
             const updatedQso = await client({
                 url: `/qso/${editQso.id}`,
                 method: 'PUT',
                 token,
-                args: { qso_update: qsoData(result) }
+                args: { qso_update: result }
             })
             setQsos((qsos) => {
                 const newQsos = [...qsos]
@@ -109,9 +109,10 @@ export default function LogContent({ ...props }) {
                 newQsos[idx] = updatedQso
                 return newQsos
             })
-        } catch {}
+        } 
+      } finally {
+        setEditQso()
       }
-      setEditQso(null)
   }
 
   const deleteQso = async (qsoId) => {
@@ -145,7 +146,7 @@ export default function LogContent({ ...props }) {
   return (
     <div className={styles.LogContent}>
         {lastQso !== undefined &&
-        <NewQsoForm 
+        <QsoForm 
             onSubmit={postNewQso} 
             logId={logId}
             prevQso={lastQso}
@@ -179,6 +180,7 @@ export default function LogContent({ ...props }) {
         {editQso &&
             <EditQsoForm
                 qso={editQso}
+                logId={logId}
                 modalResult={postQsoUpdate}
             />
         }
