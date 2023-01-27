@@ -1,0 +1,158 @@
+.newQso {
+	width: 1000px;
+	padding: 20px 50px;
+	margin-bottom: 20px;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	text-align: center;
+	vertical-align: top;
+}
+.newQso form{
+	display: flex;
+	flex-direction: column;
+}
+.flexRow {
+	display: flex;
+	flex-direction: row;
+	position: relative;
+}
+.flexRow div{
+	padding: 0;
+	line-height: 12px;
+}
+.flexRow div span{
+	color: var(--grey);
+    font-size: 12px;
+    font-style: italic;
+}
+
+.flexRow input{
+	padding: 3px 10px;
+	font-weight: bold;
+}
+
+.flexRow select{
+	padding: 3px 10px;
+    margin-bottom: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+	font-weight: bold;
+    color: #333;
+    text-align: center;
+    font-family: 'Nunito', sans-serif;
+    outline: none;
+    line-height: 18px;
+}
+
+#myCallsign input{
+	width: 150px;
+	margin-right: 15px;
+	padding-top: 5px;
+}
+
+#realtime {
+	margin-right: 15px;
+	padding-top: 10px;
+	font-size: 10px;
+	line-height: 10px;
+	width: 120px;
+	text-align: center;
+	color: var(--grey);
+	font-style: italic;
+}
+
+#realtime input{
+	margin: 0 5px 0 0;
+}
+
+#time {	margin-right: 15px;}
+#time input{	width: 120px;}
+
+#date {	margin-right: 15px;}
+#date input{	width: 180px; }
+
+#freq {	margin-right: 15px;}
+#freq input{	width: 120px; padding: 4px 10px;}
+
+#band {	margin-right: 15px;}
+#band select{	width: 100px; }
+
+#mode {}
+
+#mode select{	width: 100px; }
+
+
+
+#buttonClear{
+	position: absolute;
+	width: 30px;
+	height: 30px;
+	top: 7px;
+	left: 10px;
+	cursor: pointer;
+	#display: none;
+	z-index: 10;
+}
+#buttonClear img{
+	width: 30px;
+}
+#callsign {
+	width: 100%;
+	margin: 0 auto;
+	position: relative;
+}
+#callsign input{
+	background-color: var(--yellow-lite);
+	width: 100%;
+	padding: 5px 0;
+	font-size: 24px;
+	font-weight: bold;
+	border-color: var(--purple);
+}
+#buttonOk{
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	font-size: 24px;
+	line-height: 24px;
+	font-weight: bold;
+	color: var(--grey);
+	cursor: pointer;
+	#display: none;
+	z-index: 10;
+}
+
+
+
+
+#rstr {	margin-right: 15px;}
+#rstr input{	width: 70px;}
+
+#rsts {	margin-right: 15px;}
+#rsts input{	width: 70px;}
+
+#name, #qth {	margin-right: 15px;}
+
+#name input, #qth input, #comment input {	width: 230px;}
+
+#comment {	}
+
+
+
+#moreFieldsButton{
+	text-align: right;
+	margin-top: -10px;
+}
+#moreFieldsButton img{
+	width: 30px;
+	cursor: pointer;
+}
+#field1, #field2, #field3, #field4, #field5 {
+	flex-grow: 1;
+}
+#field1 input, #field2 input, #field3 input, #field4 input, #field5 input {
+	width: 83%;
+}
