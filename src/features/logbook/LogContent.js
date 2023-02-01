@@ -43,8 +43,9 @@ export default function LogContent({ ...props }) {
     async function fetchQsos () {
         setShowError(null)
         setQsos([])
+        let qsos = []
         try {
-            const qsos = await client({
+            qsos = await client({
                     url: `/qso/logs/${logId}/qso`,
                     method: 'GET',
                     token,
@@ -52,13 +53,14 @@ export default function LogContent({ ...props }) {
                     suppressErrorMessage: true
                 })
             setQsos(qsos)
-            setLastQso( (state) => state === undefined ? 
-                (qsos?.length ? qsos[0] : null) : state )
-            return qsos
         } catch (error) {
             if (error === 'Qso not found' && Object.keys(qsoFilter).length) {
                 setShowError(error)
             }
+        } finally {
+            setLastQso( (state) => state === undefined ? 
+                (qsos?.length ? qsos[0] : null) : state )
+            return qsos
         }
         return null
     }

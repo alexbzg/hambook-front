@@ -14,7 +14,7 @@ export default function LogsList({ ...props }) {
             {props.description}
         </div>
        <div className={styles.logQso}>
-            {props.qso_count} QSO
+            {props.qso_count ?? 0} QSO
         </div>
 
         <DropDownMenu
