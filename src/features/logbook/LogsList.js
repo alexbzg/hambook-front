@@ -6,7 +6,7 @@ import fileDownload from 'js-file-download'
 
 import styles from './LogsList.module.css'
 
-import { useLogs, logUpdate, logCreate, logDelete } from "./logsSlice"
+import { useLogs, logUpdate, logCreate, logDelete, adifUpload } from "./logsSlice"
 import useModal from "../../components/Modal/useModal"
 import useAuthenticatedUser from "../auth/useAuthenticatedUser"
 
@@ -15,6 +15,7 @@ import client from "../../services/apiClient"
 import LogsListItem from "./LogsListItem"
 import LogSettings from "./LogSettings"
 import LogExport from "./LogExport"
+import Upload from "./Upload"
 
 const ListItemWrapper = (props) => <div {...props} className={styles.logsListItem}/>
 
@@ -23,7 +24,7 @@ export default function LogsList({ ...props }) {
   const { token } = useAuthenticatedUser()
 
   const navigate = useNavigate()
-  const { logs } = useLogs()
+  const { logs, uploading } = useLogs()
   const confirmModal = useModal()
 
   const [editLog, setEditLog] = useState()
@@ -83,6 +84,13 @@ export default function LogsList({ ...props }) {
       navigate(`/logbook/${item.id}`)
   }, [])
 
+  const onUploadProgress = useCallback( (progress) => {
+  }, [])
+
+  const onAdifImport = async ({ file, log_id }) => {
+    dispatch(adifUpload({ file, log_id, onUploadProgress }))
+  }
+
   const QsoLogs = logs.map( (item) => (
       <ListItemWrapper 
         key={item.id}
@@ -93,6 +101,7 @@ export default function LogsList({ ...props }) {
             onDelete={() => handleDeleteItem(item)}
             onEdit={() => handleEditItem(item)}
             onExport={() => setExportLog(item)}
+            onImport={(file) => onAdifImport({ file, log_id: item.id })}
       />
       </ListItemWrapper>)
   )
@@ -115,6 +124,11 @@ export default function LogsList({ ...props }) {
                 modalResult={logExportModalResult}
                 log={exportLog}/>
         }
+        {uploading === 'loading' &&
+            <Upload 
+                modalResult={() => {}}/>
+        }
+
 
 
     </div>

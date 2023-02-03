@@ -42,6 +42,28 @@ export const logUpdate = createAsyncThunk(
     }
 )
 
+export const adifUpload = createAsyncThunk(
+	'logs/upload-adif', 
+    async ( { log_id, file, onUploadProgress }, { rejectWithValue, getState } ) => {
+        const formData = new FormData()
+        formData.append('log_id', log_id)
+        formData.append('file', file)
+        try {
+            const data = await client({
+                url: `/qso/logs/${log_id}/adif`,
+                method: 'PUT',
+                getState,
+                args: formData
+            })
+            return {...data, log_id }
+        } catch (e) {
+            return rejectWithValue(e)
+        }
+    }
+)
+
+
+
 export const logCreate = createAsyncThunk(
 	'logs/create', 
     async ( new_log, { rejectWithValue, getState } ) => {
@@ -81,7 +103,7 @@ const extraReducerRejected = (state, { payload }) => {
 }
 
 const extraReducerPending = (state) => {
-  state.mediaIsLoading = 'loading'
+  state.loading = 'loading'
   state.error = null
 }
 
@@ -89,8 +111,10 @@ const logsSlice = createSlice({
   name: 'logs',
   initialState: {
     loading: 'idle',
+    uploading: 'idle',
     error: null,
-    logs: []
+    logs: [],
+    importTasks: []
   },
   reducers: {
     modifyQsoCount: ( state, { payload }) => {
@@ -133,7 +157,18 @@ const logsSlice = createSlice({
       state.logs = state.logs.filter( log => log.id !== payload )
       state.isLoading = 'succeeded'
     },
-    [logDelete.rejected]: extraReducerRejected
+    [logDelete.rejected]: extraReducerRejected,
+     // adif upload
+    [adifUpload.pending]: (state) => {
+      state.uploading = 'loading'
+    },
+    [adifUpload.fulfilled]: (state, { payload }) => {
+      state.uploading = 'succeeded'
+      state.importTasks.push(payload)
+    },
+    [adifUpload.rejected]: (state) => {
+      state.uploading = 'rejected'
+    }
    
   },
 })
@@ -146,7 +181,8 @@ export const useLogs = () => {
     const error = useSelector((state) => state.logs.error)
     const isLoading = useSelector((state) => state.logs.loading === 'loading')
     const loading = useSelector((state) => state.logs.loading )
+    const uploading = useSelector((state) => state.logs.uploading )
 
-    return { logs, error, isLoading, loading }
+    return { logs, error, isLoading, loading, uploading }
 }
 
