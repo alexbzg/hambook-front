@@ -44,16 +44,19 @@ export const logUpdate = createAsyncThunk(
 
 export const adifUpload = createAsyncThunk(
 	'logs/upload-adif', 
-    async ( { log_id, file, onUploadProgress }, { rejectWithValue, getState } ) => {
+    async ( { log_id, file, onUploadProgress, signal }, { rejectWithValue, getState } ) => {
         const formData = new FormData()
         formData.append('log_id', log_id)
         formData.append('file', file)
         try {
             const data = await client({
-                url: `/qso/logs/${log_id}/adif`,
+                url: `/qso/logs/${log_id}/adif/`,
                 method: 'PUT',
+                onUploadProgress,
+                signal,
                 getState,
-                args: formData
+                args: formData,
+                suppressErrorMessage: true
             })
             return {...data, log_id }
         } catch (e) {

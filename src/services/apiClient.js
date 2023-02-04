@@ -12,6 +12,8 @@ const client = async ({
 	params, 
     headers,
     getState,
+    onUploadProgress,
+    signal,
     successMessage,
     suppressErrorMessage
     }) => {
@@ -30,6 +32,8 @@ const client = async ({
       const { data } = await axios({
 		method,
         headers,
+        onUploadProgress,
+        signal,
 		url: urlPath, 
 		data: args })
       if (successMessage) {

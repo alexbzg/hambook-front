@@ -29,6 +29,7 @@ export default function LogsList({ ...props }) {
 
   const [editLog, setEditLog] = useState()
   const [exportLog, setExportLog] = useState()
+  const [adifUploadData, setAdifUploadData] = useState()
 
   const handleInputChange = useCallback((label, value) => {
       setEditLog( (editLog) => ({ ...editLog, [label]: value }) )
@@ -84,12 +85,9 @@ export default function LogsList({ ...props }) {
       navigate(`/logbook/${item.id}`)
   }, [])
 
-  const onUploadProgress = useCallback( (progress) => {
-  }, [])
-
-  const onAdifImport = async ({ file, log_id }) => {
-    dispatch(adifUpload({ file, log_id, onUploadProgress }))
-  }
+  const doAdifUpload = useCallback( async ({ onUploadProgress, signal  }) => 
+    dispatch(adifUpload({ ...adifUploadData, onUploadProgress, signal })), 
+    [adifUploadData, dispatch, adifUpload])
 
   const QsoLogs = logs.map( (item) => (
       <ListItemWrapper 
@@ -101,7 +99,7 @@ export default function LogsList({ ...props }) {
             onDelete={() => handleDeleteItem(item)}
             onEdit={() => handleEditItem(item)}
             onExport={() => setExportLog(item)}
-            onImport={(file) => onAdifImport({ file, log_id: item.id })}
+            onImport={(file) => setAdifUploadData({ file, log_id: item.id })}
       />
       </ListItemWrapper>)
   )
@@ -124,13 +122,11 @@ export default function LogsList({ ...props }) {
                 modalResult={logExportModalResult}
                 log={exportLog}/>
         }
-        {uploading === 'loading' &&
-            <Upload 
-                modalResult={() => {}}/>
-        }
-
-
-
+        <Upload
+            uploadData={adifUploadData}
+            uploading={uploading}
+            uploadOperation={doAdifUpload}
+            modalResult={() => setAdifUploadData()}/>
     </div>
     )
 }

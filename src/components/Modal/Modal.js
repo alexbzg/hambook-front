@@ -8,8 +8,8 @@ export default function Modal({
     modalResult, 
     title, 
     children, 
-    confirmLabel, 
-    cancelLabel, 
+    confirmButton, 
+    cancelButton, 
     confirmCheckbox, 
     requestSubmit,
     ...props
@@ -61,15 +61,16 @@ export default function Modal({
                             </div>
                         )}
                         <button 
-                            disabled={!confirmChecked}
+                            disabled={!confirmChecked || confirmButton?.disabled}
                             className={styles.modalDefaultButton} 
                             onClick={() => setResult(true)}>
-                            {confirmLabel || `OK`}
+                            {confirmButton?.label || `OK`}
                         </button>
                         <button 
                             className={styles.modalCancelButton} 
+                            disabled={cancelButton?.disabled}
                             onClick={() => setResult(false)}>
-                            {cancelLabel || `Cancel`}
+                            {cancelButton?.label || `Cancel`}
                         </button>
 
                     </div>
