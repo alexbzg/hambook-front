@@ -1,4 +1,4 @@
-import { useRef, forwardRef, useState, useEffect, useMemo } from "react"
+import { useRef, forwardRef, useState, useEffect } from "react"
 
 import PhoneInput from 'react-phone-number-input/input'
 import { isValidPhoneNumber } from 'react-phone-number-input'
@@ -31,16 +31,13 @@ const FormField = forwardRef((props, ref) => {
   const [activeHint, setActiveHint] = useState(null)
   const [showHints, setShowHints] = useState()
 
-  const inputFilters = useMemo( () => {
-      const r = []
-      if (inputFilter) {
-          r.push(inputFilter)
-      }
-      if (props.type === 'email') {
-          r.push(/[^a-zA-Z0-9@.!#$%&'*+/=?^_`{|}~-]/gi)
-      }
-      return r
-  }, [inputFilter, props.type === 'email'] )
+  const inputFilters = []
+  if (inputFilter) {
+    inputFilters.push(inputFilter)
+  }
+  if (props.type === 'email') {
+    inputFilters.push(/[^a-zA-Z0-9@.!#$%&'*+/=?^_`{|}~-]/gi)
+  }
   
   useEffect( () => {
     setActiveHint( (val) => {

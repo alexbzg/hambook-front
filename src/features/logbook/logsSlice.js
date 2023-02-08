@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 import client from '../../services/apiClient.js'
-
+import { showToast } from "../../features/toasts/toasts"
 
 export const logsFetch = createAsyncThunk(
 	'logs/fetch', 
@@ -42,9 +42,48 @@ export const logUpdate = createAsyncThunk(
     }
 )
 
+const checkImportTask = createAsyncThunk(
+	'logs/check-import', 
+    async ( task_id, { rejectWithValue, getState, dispatch } ) => {
+        try {
+            const data = await client({
+                url: `/tasks/${task_id}`,
+                method: 'GET',
+                token: 'skip',
+                suppressErrorMessage: true
+            })
+            if (data.status === 'PENDING') {
+                scheduleCheckImportTask({ task_id, dispatch })
+            } else {
+                const task = getState().importTasks[task_id]
+                let message
+                if (data.status === 'SUCCESS') {
+                    message = (<>
+                                {task.filename} was imported successfully.<br/>
+                                {data.result.new} were found.
+                                </>)
+                } else {
+                    message = (<>
+                                {task.filename} import failed.
+                                </>)
+                }
+                showToast( message, 
+                    data.status === 'SUCCESS' ? 'success' : 'error'  )
+            }
+            return data
+        } catch (e) {
+            return rejectWithValue(e)
+        }
+    }
+)
+
+const scheduleCheckImportTask = ({ task_id, dispatch }) => {
+    setTimeout( () => dispatch(checkImportTask(task_id)), 30000)
+}
+
 export const adifUpload = createAsyncThunk(
 	'logs/upload-adif', 
-    async ( { log_id, file, onUploadProgress, signal }, { rejectWithValue, getState } ) => {
+    async ( { log_id, file, onUploadProgress, signal }, { rejectWithValue, getState, dispatch } ) => {
         const formData = new FormData()
         formData.append('log_id', log_id)
         formData.append('file', file)
@@ -58,14 +97,14 @@ export const adifUpload = createAsyncThunk(
                 args: formData,
                 suppressErrorMessage: true
             })
-            return {...data, log_id }
+            scheduleCheckImportTask({ task_id: data.id, dispatch })
+
+            return {...data, log_id, filename: file.name }
         } catch (e) {
             return rejectWithValue(e)
         }
     }
 )
-
-
 
 export const logCreate = createAsyncThunk(
 	'logs/create', 
@@ -117,7 +156,7 @@ const logsSlice = createSlice({
     uploading: 'idle',
     error: null,
     logs: [],
-    importTasks: []
+    importTasks: {}
   },
   reducers: {
     modifyQsoCount: ( state, { payload }) => {
@@ -167,12 +206,28 @@ const logsSlice = createSlice({
     },
     [adifUpload.fulfilled]: (state, { payload }) => {
       state.uploading = 'succeeded'
-      state.importTasks.push(payload)
+      state.importTasks[payload.id] = payload
     },
     [adifUpload.rejected]: (state) => {
       state.uploading = 'rejected'
+    },
+    // adif import status check
+    [checkImportTask.pending]: (state) => {
+    },
+    [checkImportTask.fulfilled]: (state, { payload }) => {
+      if (payload.status !== 'PENDING') {
+        const importTask = state.importTasks[payload.id]
+        if (payload.status === 'SUCCESS') {
+            const idx = state.logs.findIndex( log => log.id === importTask.log_id )
+            state.logs[idx] = { ...state.logs[idx], qso_count: state.logs[idx].qso_count + payload.result.new }
+        }
+        delete state.importTasks[payload.task_id]
+      }
+    },
+    [checkImportTask.rejected]: (state) => {
     }
    
+  
   },
 })
 export default logsSlice.reducer
