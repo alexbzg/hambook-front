@@ -10,14 +10,15 @@ export default function LogSettings({ modalResult, log, ...props }) {
           <div className={styles.logSettings}>
               <CallsignField
                 defaultValue={log.callsign}
+                title="Log callsign"
                 required/>
               <FormField
                 name="description"
                 defaultValue={log.description}
-                title="Description"/>
+                title="Log description"/>
           </div>
         </ModalForm>
     )
 
 }
- 
+

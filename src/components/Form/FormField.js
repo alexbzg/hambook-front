@@ -1,10 +1,14 @@
-import { useRef, forwardRef, useState, useEffect } from "react"
+import { useRef, forwardRef, useState, useEffect, useMemo } from "react"
+
+import PhoneInput from 'react-phone-number-input/input'
+import { isValidPhoneNumber } from 'react-phone-number-input'
 
 import styles from './FormField.module.css'
 import { Autocomplete } from "../../components"
 
 const FormField = forwardRef((props, ref) => {
-  const InputElement = props.type === `textarea` ? `textarea` : `input`
+  const InputElement = props.type === `textarea` ? `textarea` : 
+        (props.type === 'tel' ? PhoneInput : `input`)
   const classInvalid = !props.isValid || props.isValid(props.name) ? '' : 'invalid'
   const { 
       preInputContent, 
@@ -21,10 +25,22 @@ const FormField = forwardRef((props, ref) => {
       hints,
       ...inputProps } = props
 
-  const inputRef = useRef()
+  const backupRef = useRef()
+  const inputRef = ref || backupRef
 
   const [activeHint, setActiveHint] = useState(null)
   const [showHints, setShowHints] = useState()
+
+  const inputFilters = useMemo( () => {
+      const r = []
+      if (inputFilter) {
+          r.push(inputFilter)
+      }
+      if (props.type === 'email') {
+          r.push(/[^a-zA-Z0-9@.!#$%&'*+/=?^_`{|}~-]/gi)
+      }
+      return r
+  }, [inputFilter, props.type === 'email'] )
   
   useEffect( () => {
     setActiveHint( (val) => {
@@ -70,22 +86,29 @@ const FormField = forwardRef((props, ref) => {
    
   const onChange = (e) => {
     e.target.setCustomValidity('')
-    if (inputFilter) {
-      let position = e.target.selectionStart
-      if (position > 0) {
-        position = e.target.value.substring(0, position).replace(inputFilter, '').length
+    inputFilters.forEach( (filter) => {
+      let position = null
+      if (props.type !== 'email') {
+        position = e.target.selectionStart
+        if (position > 0) {
+            position = e.target.value.substring(0, position).replace(filter, '').length
+        }
       }
-      e.target.value = e.target.value.replace(inputFilter, '')
-      e.target.selectionEnd = position
-    }
-    if (props.onChange) {
-      props.onChange(e)
-    }
+      e.target.value = e.target.value.replace(filter, '')
+      if (props.type !== 'email') {
+        e.target.selectionEnd = position
+      }
+    })
+    props.onChange?.(e)
 	setShowHints(true)
   }
 
+  const onPhoneChange = (value) => {
+    inputRef.current.setCustomValidity(isValidPhoneNumber(value) ? '' : 'Enter valid phone number')
+  }
+
   const handleHintClick = (hint) => {
-    const inputEl = (ref || inputRef).current
+    const inputEl = inputRef.current
     inputEl.value = hint
     setShowHints(false)
     setActiveHint(null)
@@ -112,12 +135,14 @@ const FormField = forwardRef((props, ref) => {
             </>
         )}
         <InputElement
-            ref={ref || inputRef}
+            ref={inputRef}
             {...inputProps}
             onKeyDown={onKeyDown}
             onInvalid={e => invalidMessage && e.target.setCustomValidity(invalidMessage)}
 			className={`${styles.input} ${classInvalid}`}
-            onChange={onChange}/>
+            pattern={!inputProps.pattern && props.type === 'email' && 
+                "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$"}
+            onChange={props.type === 'tel' ? onPhoneChange : onChange}/>
         {showHints && hints && (
             <Autocomplete 
                 hints={hints}

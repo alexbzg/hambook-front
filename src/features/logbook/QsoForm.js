@@ -141,6 +141,7 @@ const QsoForm = forwardRef( ({ logId, prevQso, qso, onCallsignLookup, ...props }
   }
 
   const onFreqChange = (freq) => {
+    freqRef.current.value = Number(freq).toFixed(1)
     const strFreq = '' + freq
     if (strFreq.length > 1) {
       const MODE = QSO_MODES[modeRef.current.value]

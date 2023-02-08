@@ -61,7 +61,7 @@ export default function ProfilePage({ ...props }) {
     }
   }
 
-  const submitProfileUpdate = handleSubmit( (data) => dispatch(profileUpdate(data)))
+  const submitProfileUpdate = handleSubmit( (data) => dispatch(profileUpdate(data)) )
 
   return (
     <div className={styles.userPage}>
@@ -85,6 +85,7 @@ export default function ProfilePage({ ...props }) {
                         <FormField
                             name='prev_callsigns'
                             defaultValue={profile.prev_callsigns}
+                            inputFilter={/[^a-zA-Z\d/ ]/gi}
                             type="textarea"
                             className={styles.prevCallsigns}
                         />
@@ -99,9 +100,8 @@ export default function ProfilePage({ ...props }) {
                     <FormField
                         name='phone'
                         defaultValue={profile.phone}
-                        title="phone (format: +12345678901)"
+                        title="phone"
                         type="tel"
-                        pattern="\+\d{11}"
                     />
                     <FormField
                         name='address'

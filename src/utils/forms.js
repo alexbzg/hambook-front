@@ -1,7 +1,14 @@
 const handleSubmit = (action) => (e) => {
     e.preventDefault()
-    const data = Object.fromEntries(Array.from(new FormData(e.target)).filter(
+    const form = e.target
+    const data = Object.fromEntries(Array.from(new FormData(form)).filter(
         (item) => item[1] !== ''))
+    for (let idx = 0; idx < form.elements.length; idx++) {
+      let el = form.elements[idx]
+      if (el.type === 'tel' && el.name in  data) {
+        data[el.name] = data[el.name].replace(/ /g, '')
+      }
+    }
     action(data)
 }
 
