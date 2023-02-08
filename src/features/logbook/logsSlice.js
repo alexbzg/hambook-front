@@ -55,12 +55,12 @@ const checkImportTask = createAsyncThunk(
             if (data.status === 'PENDING') {
                 scheduleCheckImportTask({ task_id, dispatch })
             } else {
-                const task = getState().importTasks[task_id]
+                const task = getState().logs.importTasks[task_id]
                 let message
                 if (data.status === 'SUCCESS') {
                     message = (<>
                                 {task.filename} was imported successfully.<br/>
-                                {data.result.new} were found.
+                                {data.result.new} new qso were found.
                                 </>)
                 } else {
                     message = (<>

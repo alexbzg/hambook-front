@@ -25,6 +25,10 @@ const FormField = forwardRef((props, ref) => {
       hints,
       ...inputProps } = props
 
+  if (!inputProps.pattern && inputProps.type === 'email') {
+      inputProps.pattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$"
+  }
+
   const backupRef = useRef()
   const inputRef = ref || backupRef
 
@@ -121,6 +125,7 @@ const FormField = forwardRef((props, ref) => {
     }
   }
 
+    
   return (
     <div className={className} id={id} onBlur={handleBlur}>
         {props.preInputContent}
@@ -137,8 +142,6 @@ const FormField = forwardRef((props, ref) => {
             onKeyDown={onKeyDown}
             onInvalid={e => invalidMessage && e.target.setCustomValidity(invalidMessage)}
 			className={`${styles.input} ${classInvalid}`}
-            pattern={!inputProps.pattern && props.type === 'email' && 
-                "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$"}
             onChange={props.type === 'tel' ? onPhoneChange : onChange}/>
         {showHints && hints && (
             <Autocomplete 
