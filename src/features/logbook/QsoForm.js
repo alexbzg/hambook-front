@@ -189,7 +189,7 @@ const QsoForm = forwardRef( ({ logId, prevQso, qso, onCallsignLookup, ...props }
                 <div className={styles.flexRow}>
                     <CallsignField
                         required
-                        defaultValue={log.callsign}
+                        defaultValue={qso?.station_callsign ?? log.callsign}
                         id={styles.myCallsign}
                         note="My callsign"
                         noteClass={styles.note}
@@ -232,7 +232,7 @@ const QsoForm = forwardRef( ({ logId, prevQso, qso, onCallsignLookup, ...props }
                         onChange={(e) => onFreqChange(e.target.value)}
                         note="Frequency"
                         noteClass={styles.note}
-                        defaultValue={prevQso?.freq ?? Object.values(BANDS)[0].limits[0]}
+                        defaultValue={(qso ?? prevQso)?.freq ?? Object.values(BANDS)[0].limits[0]}
                         name="freq"
                         type="number"
                         step="0.1"
@@ -242,7 +242,7 @@ const QsoForm = forwardRef( ({ logId, prevQso, qso, onCallsignLookup, ...props }
                         <SelectFromObject
                             name="band"
                             ref={bandRef}
-                            defaultValue={prevQso?.band ?? Object.keys(BANDS)[0]}
+                            defaultValue={(qso ?? prevQso)?.band ?? Object.keys(BANDS)[0]}
                             onChange={(e) => onBandChange(e.target.value)}
                             options={BANDS}/>
                     </div>
@@ -252,7 +252,7 @@ const QsoForm = forwardRef( ({ logId, prevQso, qso, onCallsignLookup, ...props }
                             name="qso_mode"
                             ref={modeRef}
                             onChange={(e) => onModeChange(e.target.value)}
-                            defaultValue={prevQso?.qso_mode ?? Object.keys(QSO_MODES)[0]}
+                            defaultValue={(qso ?? prevQso)?.qso_mode ?? Object.keys(QSO_MODES)[0]}
                             options={QSO_MODES}/>
                     </div>
                 </div>
@@ -290,7 +290,7 @@ const QsoForm = forwardRef( ({ logId, prevQso, qso, onCallsignLookup, ...props }
                         id={styles.rsts}
                         note="RST sent"
                         noteClass={styles.note}
-                        defaultValue={(prevQso && QSO_MODES[prevQso.qso_mode].rst) ?? 599}
+                        defaultValue={qso?.rst_s ?? (prevQso && QSO_MODES[prevQso.qso_mode].rst) ?? 599}
                         name="rst_s"
                         type="number"
                     />
@@ -300,7 +300,7 @@ const QsoForm = forwardRef( ({ logId, prevQso, qso, onCallsignLookup, ...props }
                         ref={rstrRef}
                         note="RST received"
                         noteClass={styles.note}
-                        defaultValue={(prevQso && QSO_MODES[prevQso.qso_mode].rst) ?? 599}
+                        defaultValue={qso?.rst_r ?? (prevQso && QSO_MODES[prevQso.qso_mode].rst) ?? 599}
                         name="rst_r"
                         type="number"
                     />
