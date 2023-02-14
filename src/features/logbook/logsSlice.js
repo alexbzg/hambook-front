@@ -3,6 +3,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 import client from '../../services/apiClient.js'
 import { showToast } from "../../features/toasts/toasts"
+import AdifImportResult from "./AdifImportResult"
 
 export const logsFetch = createAsyncThunk(
 	'logs/fetch', 
@@ -56,19 +57,12 @@ const checkImportTask = createAsyncThunk(
                 scheduleCheckImportTask({ task_id, dispatch })
             } else {
                 const task = getState().logs.importTasks[task_id]
-                let message
-                if (data.status === 'SUCCESS') {
-                    message = (<>
-                                {task.filename} was imported successfully.<br/>
-                                {data.result.new} new qso were found.
-                                </>)
-                } else {
-                    message = (<>
-                                {task.filename} import failed.
-                                </>)
-                }
-                showToast( message, 
-                    data.status === 'SUCCESS' ? 'success' : 'error'  )
+                if (task.background) {
+                    showToast( <AdifImportResult
+                                    filename={task.filename}
+                                    {...data}/>,
+                        data.status === 'SUCCESS' ? 'success' : 'error'  )
+                } 
             }
             return data
         } catch (e) {
@@ -83,7 +77,7 @@ const scheduleCheckImportTask = ({ task_id, dispatch }) => {
 
 export const adifUpload = createAsyncThunk(
 	'logs/upload-adif', 
-    async ( { log_id, file, onUploadProgress, signal }, { rejectWithValue, getState, dispatch } ) => {
+    async ( { log_id, file, onUploadProgress, signal, callback }, { rejectWithValue, getState, dispatch } ) => {
         const formData = new FormData()
         formData.append('log_id', log_id)
         formData.append('file', file)
@@ -98,7 +92,7 @@ export const adifUpload = createAsyncThunk(
                 suppressErrorMessage: true
             })
             scheduleCheckImportTask({ task_id: data.id, dispatch })
-
+            callback?.(data.id)
             return {...data, log_id, filename: file.name }
         } catch (e) {
             return rejectWithValue(e)
@@ -160,13 +154,14 @@ const logsSlice = createSlice({
   },
   reducers: {
     modifyQsoCount: ( state, { payload }) => {
-      const logs = [...state.logs]
-      const affectedLogIndex = logs.findIndex( item => item.id === payload.logId )
-      logs[affectedLogIndex] = { 
-          ...logs[affectedLogIndex], 
-          qso_count: logs[affectedLogIndex].qso_count + payload.value
-      }
-      return { ...state, logs }
+      const affectedLogIndex = state.logs.findIndex( item => item.id === payload.logId )
+      state.logs[affectedLogIndex].qso_count += payload.value
+    },
+    deleteImportTask: ( state, { payload }) => {
+      delete state.importTasks[payload.importTaskId]
+    },
+    setImportTaskBackground: ( state, { payload } ) => {
+      state.importTasks[payload.importTaskId].background = true
     }
   },
   extraReducers: {
@@ -221,7 +216,13 @@ const logsSlice = createSlice({
             const idx = state.logs.findIndex( log => log.id === importTask.log_id )
             state.logs[idx] = { ...state.logs[idx], qso_count: state.logs[idx].qso_count + payload.result.new }
         }
-        delete state.importTasks[payload.task_id]
+        if (importTask.background) {
+          delete state.importTasks[payload.task_id]
+        } else {
+          importTask.message = payload.message
+          importTask.status = payload.status
+          importTask.result = payload.result
+        }
       }
     },
     [checkImportTask.rejected]: (state) => {
@@ -232,7 +233,7 @@ const logsSlice = createSlice({
 })
 export default logsSlice.reducer
 
-export const { modifyQsoCount } = logsSlice.actions
+export const { modifyQsoCount, deleteImportTask, setImportTaskBackground } = logsSlice.actions
 
 export const useLogs = () => {
     const logs = useSelector((state) => state.logs.logs)
@@ -240,7 +241,8 @@ export const useLogs = () => {
     const isLoading = useSelector((state) => state.logs.loading === 'loading')
     const loading = useSelector((state) => state.logs.loading )
     const uploading = useSelector((state) => state.logs.uploading )
+    const useImportTask = (taskId) => useSelector((state) => state.logs.importTasks[taskId] )
 
-    return { logs, error, isLoading, loading, uploading }
+    return { logs, error, isLoading, loading, uploading, useImportTask }
 }
 
