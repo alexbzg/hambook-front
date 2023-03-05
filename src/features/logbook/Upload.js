@@ -2,24 +2,17 @@ import { useState, useEffect, useCallback } from "react"
 import {useDispatch } from "react-redux"
 import styles from './LogsList.module.css'
 
-import { ModalForm, ProgressBar } from "../../components"
+import { ModalForm } from "../../components"
 import { useLogs, setImportTaskBackground, deleteImportTask } from "./logsSlice"
 import AdifImportResult from "./AdifImportResult"
 
 export default function Upload({  uploadData, uploadOperation, uploading, ...props }) {
     const dispatch = useDispatch()
 
-    const [uploadProgress, setUploadProgress] = useState()
     const [importTaskId, setImportTaskId] = useState()
 
     const { useImportTask } = useLogs()
     const importTask = useImportTask(importTaskId)
-    console.log(`importTask:`)
-    console.log(importTask)
-
-    const onUploadProgress = useCallback( (progressEvent) => {
-        setUploadProgress(progressEvent.progress)
-    }, [] )
 
     useEffect( () => {
 
@@ -28,7 +21,6 @@ export default function Upload({  uploadData, uploadOperation, uploading, ...pro
         async function _upload() {
             const uploadResult = await uploadOperation({
                 signal: abortController.signal,
-                onUploadProgress,
             })
             setImportTaskId(uploadResult.payload.id)
         }
@@ -41,7 +33,7 @@ export default function Upload({  uploadData, uploadOperation, uploading, ...pro
     }, [uploadData])
 
     const cancelButtonProps = {
-        label: uploading !== 'loading' && !importTask?.result ? 'Background' : null,
+        label: uploading !== 'loading' && !importTask?.result ? 'Import in background' : null,
         hidden: Boolean(importTask?.result)
     }
     const confirmButtonProps = {hidden: uploading === 'loading' || Boolean(!importTask?.result)}

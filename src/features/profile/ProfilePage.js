@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useDispatch } from "react-redux"
 
 import LightGallery from 'lightgallery/react'
@@ -18,6 +18,7 @@ import defaultAvatarImage from "../../assets/img/default_avatar.jpg"
 import addIcon from "../../assets/img/icons/add.svg"
 import deleteIcon from "../../assets/img/icons/delete.svg"
 import useModal from "../../components/Modal/useModal.js"
+import { getCountries, getRegions, getCities } from "../../utils/countries.js"
 
 
 export default function ProfilePage({ ...props }) {
@@ -27,6 +28,43 @@ export default function ProfilePage({ ...props }) {
   const confirmModal = useModal()
 
   const [showPrevCallsigns, setShowPrevCallsigns] = useState(Boolean(profile.prevCallsigns))
+
+  const [countries, setCountries] = useState([])
+  useEffect( () => {
+      const _getCountries = async () => {
+        const _countries = await getCountries()
+        setCountries(_countries.data)
+      }
+      _getCountries()
+  }, [])
+  const [selectedCountry, setSelectedCountry] = useState()
+  const [regions, setRegions] = useState([])
+  const [selectedRegion, setSelectedRegion] = useState()
+  const [cities, setCities] = useState([])
+  const regionSelectRef = useRef()
+  const citySelectRef = useRef()
+  useEffect( () => {
+      const _getRegions = async () => {
+        const _states = await getRegions(selectedCountry)
+        setRegions(_states.data)
+      }
+      setSelectedRegion()
+      regionSelectRef.current.value = ''
+      citySelectRef.current.value = ''
+      if (selectedCountry) {
+        _getRegions()
+      }
+  }, [selectedCountry])
+  useEffect( () => {
+      const _getCities = async () => {
+        const _cities = await getCities(selectedCountry, selectedRegion)
+        setCities(_cities.data.cities)
+      }
+      citySelectRef.current.value = ''
+      if (selectedRegion) {
+        _getCities()
+      }
+  }, [selectedRegion])
 
   const uploadAvatar = async (file) => {
     if (!profile.avatar ||
@@ -91,10 +129,19 @@ export default function ProfilePage({ ...props }) {
                         />
                     }
                     <FormField
-                        name='full_name'
-                        defaultValue={profile.full_name}
-                        title="full name"
+                        name='first_name'
+                        defaultValue={profile.first_name}
+                        title="first name"
                         type="text"
+                        inputFilter={/[^a-zA-Z \-]/}
+                        className={styles.fullName}
+                    />
+                    <FormField
+                        name='last_name'
+                        defaultValue={profile.last_name}
+                        title="last name"
+                        type="text"
+                        inputFilter={/[^a-zA-Z \-]/}
                         className={styles.fullName}
                     />
                     <FormField
@@ -103,6 +150,41 @@ export default function ProfilePage({ ...props }) {
                         title="phone"
                         type="tel"
                     />
+                    <span className={styles.title}>country</span>
+                    <select
+                        name="country"
+                        defaultValue={profile.country}
+                        className={styles.country}
+                        onChange={(e) => setSelectedCountry(e.target.value)}>
+                        <option value="" selected disabled>Select country</option>
+                        {countries.map( (item) => (
+                            <option value={item.id} key={item.id}>{item.name}</option>))}
+                    </select>
+                    <span className={styles.title}>State/region</span>
+                    <select
+                        name="region"
+                        ref={regionSelectRef}
+                        defaultValue={profile.region}
+                        className={styles.country}
+                        disabled={!selectedCountry}
+                        onChange={(e) => setSelectedRegion(e.target.value)}>
+                        <option value="" selected disabled>Select region</option>
+                        {regions.map( (item) => (
+                            <option value={item.id} key={item.id}>{item.name}</option>))}
+                    </select>
+                    <span className={styles.title}>City</span>
+                    <select
+                        name="city"
+                        ref={citySelectRef}
+                        disabled={!selectedRegion}
+                        defaultValue={profile.city}
+                        className={styles.country}>
+                        <option value="" selected disabled>Select city</option>
+                        {cities.map( (item) => (
+                            <option value={item.id} key={item.id}>{item.name}</option>))}
+                    </select>
+
+
                     <FormField
                         name='address'
                         defaultValue={profile.address}
