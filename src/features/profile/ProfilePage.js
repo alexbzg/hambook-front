@@ -6,6 +6,8 @@ import lgZoom from 'lightgallery/plugins/zoom'
 import '../../assets/lightgallery/css/lightgallery.css'
 import '../../assets/lightgallery/css/lg-zoom.css'
 
+import Select from 'react-select'
+
 import styles from './Profile.module.css'
 
 import EmailVerification from "../auth/EmailVerification"
@@ -29,42 +31,64 @@ export default function ProfilePage({ ...props }) {
 
   const [showPrevCallsigns, setShowPrevCallsigns] = useState(Boolean(profile.prevCallsigns))
 
+  const countrySelectRef = useRef()
+  const regionSelectRef = useRef()
+  const citySelectRef = useRef()
+  const [selectedCountry, setSelectedCountry] = useState(profile?.country)
+  const [selectedRegion, setSelectedRegion] = useState(profile?.region)
   const [countries, setCountries] = useState([])
   useEffect( () => {
       const _getCountries = async () => {
         const _countries = await getCountries()
         setCountries(_countries.data)
+        if (profile?.country) {
+          const country = _countries.data.find( (item) => item.id == profile.country )
+          countrySelectRef.current.setValue({ value: country.id, label: country.name }, 'set-value')
+          setSelectedCountry(profile.country)
+        }
       }
       _getCountries()
-  }, [])
-  const [selectedCountry, setSelectedCountry] = useState()
+  }, [profile])
+  const countryChange = (e) => {
+      console.log(e)
+  }
   const [regions, setRegions] = useState([])
-  const [selectedRegion, setSelectedRegion] = useState()
   const [cities, setCities] = useState([])
-  const regionSelectRef = useRef()
-  const citySelectRef = useRef()
   useEffect( () => {
       const _getRegions = async () => {
-        const _states = await getRegions(selectedCountry)
-        setRegions(_states.data)
+        const _regions = await getRegions(selectedCountry)
+        setRegions(_regions.data)
+        if (profile?.region && profile?.country == selectedCountry) {
+          const region = _regions.data.find( (item) => item.id == profile.region )
+          regionSelectRef.current.setValue({ value: region.id, label: region.name }, 'set-value')
+          setSelectedRegion(profile.region)
+        }
       }
       setSelectedRegion()
       regionSelectRef.current.value = ''
       citySelectRef.current.value = ''
       if (selectedCountry) {
         _getRegions()
+      } else {
+        setRegions([])
       }
-  }, [selectedCountry])
+  }, [selectedCountry, profile])
   useEffect( () => {
       const _getCities = async () => {
         const _cities = await getCities(selectedCountry, selectedRegion)
         setCities(_cities.data.cities)
+        if (profile?.city && profile?.region == selectedRegion) {
+          const city = _cities.data.cities.find( (item) => item.id == profile.city )
+          citySelectRef.current.setValue({ value: city.id, label: city.name }, 'set-value')
+        }
       }
       citySelectRef.current.value = ''
       if (selectedRegion) {
         _getCities()
+      } else {
+        setCities([])
       }
-  }, [selectedRegion])
+  }, [selectedRegion, profile])
 
   const uploadAvatar = async (file) => {
     if (!profile.avatar ||
@@ -119,7 +143,7 @@ export default function ProfilePage({ ...props }) {
                         onChange={(e) => setShowPrevCallsigns(e.target.checked)}
                         className={styles.checkboxEx}
                     /> ex-callsigns
-                    {showPrevCallsigns && 
+                    {showPrevCallsigns &&
                         <FormField
                             name='prev_callsigns'
                             defaultValue={profile.prev_callsigns}
@@ -128,61 +152,63 @@ export default function ProfilePage({ ...props }) {
                             className={styles.prevCallsigns}
                         />
                     }
-                    <FormField
-                        name='first_name'
-                        defaultValue={profile.first_name}
-                        title="first name"
-                        type="text"
-                        inputFilter={/[^a-zA-Z \-]/}
-                        className={styles.fullName}
-                    />
-                    <FormField
-                        name='last_name'
-                        defaultValue={profile.last_name}
-                        title="last name"
-                        type="text"
-                        inputFilter={/[^a-zA-Z \-]/}
-                        className={styles.fullName}
-                    />
+                    <div className={styles.nameBlock}>
+                      <FormField
+                          name='first_name'
+                          defaultValue={profile.first_name}
+                          title="first name"
+                          type="text"
+                          inputFilter={/[^a-zA-Z \-]/}
+                          className={styles.name}
+                      />
+                      <FormField
+                          name='last_name'
+                          defaultValue={profile.last_name}
+                          title="last name"
+                          type="text"
+                          inputFilter={/[^a-zA-Z \-]/}
+                      />
+                    </div>
                     <FormField
                         name='phone'
                         defaultValue={profile.phone}
                         title="phone"
                         type="tel"
                     />
-                    <span className={styles.title}>country</span>
-                    <select
-                        name="country"
-                        defaultValue={profile.country}
-                        className={styles.country}
-                        onChange={(e) => setSelectedCountry(e.target.value)}>
-                        <option value="" selected disabled>Select country</option>
-                        {countries.map( (item) => (
-                            <option value={item.id} key={item.id}>{item.name}</option>))}
-                    </select>
-                    <span className={styles.title}>State/region</span>
-                    <select
-                        name="region"
-                        ref={regionSelectRef}
-                        defaultValue={profile.region}
-                        className={styles.country}
-                        disabled={!selectedCountry}
-                        onChange={(e) => setSelectedRegion(e.target.value)}>
-                        <option value="" selected disabled>Select region</option>
-                        {regions.map( (item) => (
-                            <option value={item.id} key={item.id}>{item.name}</option>))}
-                    </select>
-                    <span className={styles.title}>City</span>
-                    <select
-                        name="city"
-                        ref={citySelectRef}
-                        disabled={!selectedRegion}
-                        defaultValue={profile.city}
-                        className={styles.country}>
-                        <option value="" selected disabled>Select city</option>
-                        {cities.map( (item) => (
-                            <option value={item.id} key={item.id}>{item.name}</option>))}
-                    </select>
+                    <div className={styles.countryBlock}>
+                      <span className={styles.title}>country</span>
+                      <Select
+                          name="country"
+                          ref={countrySelectRef}
+                          defaultValue={profile.country}
+                          className={styles.country}
+                          onChange={ (option) => setSelectedCountry(option.value) }
+                          options={countries.map( (item) => ( { value: item.id, label: item.name } ) )}
+                      />
+                    </div>
+                    <div className={styles.regionBlock}>
+                      <span className={styles.title}>State/region</span>
+                      <Select
+                          name="region"
+                          ref={regionSelectRef}
+                          defaultValue={profile.region}
+                          className={styles.country}
+                          disabled={!selectedCountry}
+                          onChange={(option) => setSelectedRegion(option.value)}
+                          options={regions.map( (item) => ( { value: item.id, label: item.name } ) )}
+                      />
+                    </div>
+                    <div className={styles.cityBlock}>
+                      <span className={styles.title}>City</span>
+                      <Select
+                          name="city"
+                          ref={citySelectRef}
+                          disabled={!selectedRegion}
+                          defaultValue={profile.city}
+                          className={styles.country}
+                          options={cities.map( (item) => ( { value: item.id, label: item.name } ) )}
+                      />
+                    </div>
 
 
                     <FormField
@@ -224,7 +250,7 @@ export default function ProfilePage({ ...props }) {
                     <div className={styles.photos}>
                         <LightGallery plugins={[lgZoom]} mode="lg-fade">
                             {profile.media.map( (item)  =>
-                                <a className={styles.controlsContainer} 
+                                <a className={styles.controlsContainer}
                                     key={item.id} href={item.url}>
                                     <img src={item.url} alt=""/>
                                     <img className={styles.controlDelete}
@@ -253,7 +279,7 @@ export default function ProfilePage({ ...props }) {
 
 
             </div>
-            <input 
+            <input
                 type="submit"
                 name="submit"
                 disabled={isLoading}

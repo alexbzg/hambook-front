@@ -20,7 +20,7 @@
 	text-align: left;
 	font-size: 12px;
 	line-height: 12px;
-	color: #777;
+	color: #333;
 }
 .column2 {
 	width: 300px;
@@ -47,15 +47,29 @@
 	margin-bottom: 0;
 }
 
-.column1 .fullName{	margin-top: 30px;}
-.column1 .fullName input{	font-weight: bold;}
 .column1 .prevCallsigns{	margin-bottom: 0;}
+
+.column1 .nameBlock div{
+	display: inline-block;
+	margin-top: 20px;
+}
+.column1 .nameBlock div.name{
+	margin-right: 5px;
+}
+.column1 .nameBlock input{
+	font-weight: bold;
+	width: 200px;
+}
 .userPage input[type=submit] {
 	margin-top: 20px;
 	background-color: var(--orange);
 	cursor: pointer;
 }
 
+
+.country{
+	width: 100px;
+}
 
 
 
