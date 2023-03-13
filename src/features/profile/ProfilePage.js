@@ -20,7 +20,7 @@ import defaultAvatarImage from "../../assets/img/default_avatar.jpg"
 import addIcon from "../../assets/img/icons/add.svg"
 import deleteIcon from "../../assets/img/icons/delete.svg"
 import useModal from "../../components/Modal/useModal.js"
-import { getCountries, getRegions, getCities } from "../../utils/countries.js"
+import { getCountries, getRegions, getRegionData } from "../../utils/countries.js"
 
 
 export default function ProfilePage({ ...props }) {
@@ -33,60 +33,64 @@ export default function ProfilePage({ ...props }) {
 
   const countrySelectRef = useRef()
   const regionSelectRef = useRef()
-  const citySelectRef = useRef()
+  const districtSelectRef = useRef()
   const [selectedCountry, setSelectedCountry] = useState(profile?.country)
   const [selectedRegion, setSelectedRegion] = useState(profile?.region)
   const [countries, setCountries] = useState([])
+  const [regions, setRegions] = useState([])
+  const [regionData, setRegionData] = useState({districts: [], cities: []})
+  const [cityHints, setCityHints] = useState([])
+  const onCityChange = (value) => {
+    if (value?.length > 2) {
+      setCityHints(regionData.cities.filter( (item) => 
+          item.toLowerCase().startsWith(value.toLowerCase()) ))
+    } else {
+      setCityHints()
+    }
+  }
   useEffect( () => {
       const _getCountries = async () => {
         const _countries = await getCountries()
-        setCountries(_countries.data)
+        setCountries(_countries)
         if (profile?.country) {
-          const country = _countries.data.find( (item) => item.id == profile.country )
-          countrySelectRef.current.setValue({ value: country.id, label: country.name }, 'set-value')
+          const country = _countries.find( (item) => item.value === profile.country )
+          countrySelectRef.current.setValue(country, 'set-value')
           setSelectedCountry(profile.country)
         }
       }
       _getCountries()
   }, [profile])
-  const countryChange = (e) => {
-      console.log(e)
-  }
-  const [regions, setRegions] = useState([])
-  const [cities, setCities] = useState([])
   useEffect( () => {
       const _getRegions = async () => {
         const _regions = await getRegions(selectedCountry)
-        setRegions(_regions.data)
-        if (profile?.region && profile?.country == selectedCountry) {
-          const region = _regions.data.find( (item) => item.id == profile.region )
-          regionSelectRef.current.setValue({ value: region.id, label: region.name }, 'set-value')
+        setRegions(_regions)
+        if (profile?.region && profile?.country === selectedCountry) {
+          const region = _regions.find( (item) => item.value === profile.region )
+          regionSelectRef.current.setValue(region, 'set-value')
           setSelectedRegion(profile.region)
         }
       }
       setSelectedRegion()
-      regionSelectRef.current.value = ''
-      citySelectRef.current.value = ''
+      regionSelectRef.current.clearValue()
+      districtSelectRef.current.clearValue()
+      setRegions([])
       if (selectedCountry) {
         _getRegions()
-      } else {
-        setRegions([])
-      }
+      } 
   }, [selectedCountry, profile])
   useEffect( () => {
-      const _getCities = async () => {
-        const _cities = await getCities(selectedCountry, selectedRegion)
-        setCities(_cities.data.cities)
-        if (profile?.city && profile?.region == selectedRegion) {
-          const city = _cities.data.cities.find( (item) => item.id == profile.city )
-          citySelectRef.current.setValue({ value: city.id, label: city.name }, 'set-value')
+      const _getRegionData = async () => {
+        const _regionData = await getRegionData(selectedCountry, selectedRegion)
+        setRegionData(_regionData)
+        if (profile?.district && profile?.region === selectedRegion) {
+          const district = _regionData?.districts.find( (item) => item.value === profile.district )
+          districtSelectRef.current.setValue(district, 'set-value')
         }
       }
-      citySelectRef.current.value = ''
+      districtSelectRef.current.clearValue()
+      setRegionData({districts: [], cities: []})
       if (selectedRegion) {
-        _getCities()
-      } else {
-        setCities([])
+        _getRegionData()
       }
   }, [selectedRegion, profile])
 
@@ -182,34 +186,40 @@ export default function ProfilePage({ ...props }) {
                           ref={countrySelectRef}
                           defaultValue={profile.country}
                           className={styles.country}
-                          onChange={ (option) => setSelectedCountry(option.value) }
-                          options={countries.map( (item) => ( { value: item.id, label: item.name } ) )}
+                          onChange={ (option) => setSelectedCountry(option?.value) }
+                          options={countries}
                       />
                     </div>
                     <div className={styles.regionBlock}>
-                      <span className={styles.title}>State/region</span>
+                      <span className={styles.title}>Region/State</span>
                       <Select
                           name="region"
                           ref={regionSelectRef}
                           defaultValue={profile.region}
                           className={styles.country}
                           disabled={!selectedCountry}
-                          onChange={(option) => setSelectedRegion(option.value)}
-                          options={regions.map( (item) => ( { value: item.id, label: item.name } ) )}
+                          onChange={(option) => setSelectedRegion(option?.value)}
+                          options={regions}
                       />
                     </div>
                     <div className={styles.cityBlock}>
-                      <span className={styles.title}>City</span>
+                      <span className={styles.title}>District/County</span>
                       <Select
-                          name="city"
-                          ref={citySelectRef}
+                          name="district"
+                          ref={districtSelectRef}
                           disabled={!selectedRegion}
                           defaultValue={profile.city}
                           className={styles.country}
-                          options={cities.map( (item) => ( { value: item.id, label: item.name } ) )}
+                          options={regionData.districts}
                       />
                     </div>
-
+                    <FormField
+                        title="City"
+                        name="city"
+                        hints={cityHints}
+                        defaultValue={profile?.city}
+                        onChange={(e) => onCityChange(e.target.value)}
+                    />
 
                     <FormField
                         name='address'

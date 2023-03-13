@@ -1,14 +1,25 @@
 import axios from "axios"
 
 export const getCountries = async () => {
-  return await axios.get('/countries+states+cities/countries.json')
+  const rsp = await axios.get('/geonames_cache/countries.json')
+  return rsp.data
 }
 
 export const getRegions = async (countryId) => {
-  return await axios.get(`/countries+states+cities/${countryId}/states.json`)
+  try {
+    const rsp = await axios.get(`/geonames_cache/${countryId}/regions.json`)
+    return rsp.data
+  } catch {
+    return []
+  }
 }
 
-export const getCities = async (countryId, regionId) => {
-  return await axios.get(`/countries+states+cities/${countryId}/${regionId}.json`)
+export const getRegionData = async (countryId, regionId) => {
+  try {
+    const rsp = await axios.get(`/geonames_cache/${countryId}/${regionId}.json`)
+    return rsp.data
+  } catch {
+    return {districts: [], cities: []}
+  }
 }
 
