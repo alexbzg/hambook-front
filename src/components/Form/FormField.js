@@ -7,7 +7,7 @@ import styles from './FormField.module.css'
 import { Autocomplete } from "../../components"
 
 const FormField = forwardRef((props, ref) => {
-  const InputElement = props.type === `textarea` ? `textarea` : 
+  const InputElement = props.type === 'textarea' ? 'textarea' : 
         (props.type === 'tel' ? PhoneInput : `input`)
   const classInvalid = !props.isValid || props.isValid(props.name) ? '' : 'invalid'
   const { 
@@ -34,6 +34,12 @@ const FormField = forwardRef((props, ref) => {
 
   const [activeHint, setActiveHint] = useState(null)
   const [showHints, setShowHints] = useState()
+  const [value, setValue] = useState(props.defaultValue)
+  if (props.type === 'tel') {
+    delete inputProps.defaultValue
+    inputProps.value = value
+    inputProps.onChange = setValue
+  }
 
   const inputFilters = []
   if (inputFilter) {

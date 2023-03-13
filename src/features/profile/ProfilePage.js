@@ -220,7 +220,11 @@ export default function ProfilePage({ ...props }) {
                         defaultValue={profile?.city}
                         onChange={(e) => onCityChange(e.target.value)}
                     />
-
+                    <FormField
+                        name='zip_code'
+                        defaultValue={profile.zip_code}
+                        title="Zip (postal) code"
+                    />
                     <FormField
                         name='address'
                         defaultValue={profile.address}
