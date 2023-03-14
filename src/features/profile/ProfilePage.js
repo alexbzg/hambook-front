@@ -42,7 +42,7 @@ export default function ProfilePage({ ...props }) {
   const [cityHints, setCityHints] = useState([])
   const onCityChange = (value) => {
     if (value?.length > 2) {
-      setCityHints(regionData.cities.filter( (item) => 
+      setCityHints(regionData.cities.filter( (item) =>
           item.toLowerCase().startsWith(value.toLowerCase()) ))
     } else {
       setCityHints()
@@ -76,7 +76,7 @@ export default function ProfilePage({ ...props }) {
       setRegions([])
       if (selectedCountry) {
         _getRegions()
-      } 
+      }
   }, [selectedCountry, profile])
   useEffect( () => {
       const _getRegionData = async () => {
@@ -190,10 +190,18 @@ export default function ProfilePage({ ...props }) {
                           options={countries}
                       />
                     </div>
+                    <div className={styles.zipcodeBlock}>
+                      <FormField
+                          name='zip_code'
+                          defaultValue={profile.zip_code}
+                          title="Zip (postal) code"
+                      />
+                    </div>
                     <div className={styles.regionBlock}>
                       <span className={styles.title}>Region/State</span>
                       <Select
                           name="region"
+                          isClearable={true}
                           ref={regionSelectRef}
                           defaultValue={profile.region}
                           className={styles.country}
@@ -202,29 +210,27 @@ export default function ProfilePage({ ...props }) {
                           options={regions}
                       />
                     </div>
-                    <div className={styles.cityBlock}>
+                    <div className={styles.regionBlock}>
                       <span className={styles.title}>District/County</span>
                       <Select
                           name="district"
                           ref={districtSelectRef}
+                          isClearable={true}
                           disabled={!selectedRegion}
                           defaultValue={profile.city}
                           className={styles.country}
                           options={regionData.districts}
                       />
                     </div>
-                    <FormField
-                        title="City"
-                        name="city"
-                        hints={cityHints}
-                        defaultValue={profile?.city}
-                        onChange={(e) => onCityChange(e.target.value)}
-                    />
-                    <FormField
-                        name='zip_code'
-                        defaultValue={profile.zip_code}
-                        title="Zip (postal) code"
-                    />
+                    <div className={styles.cityBlock}>
+                      <FormField
+                          title="City"
+                          name="city"
+                          hints={cityHints}
+                          defaultValue={profile?.city}
+                          onChange={(e) => onCityChange(e.target.value)}
+                      />
+                    </div>
                     <FormField
                         name='address'
                         defaultValue={profile.address}

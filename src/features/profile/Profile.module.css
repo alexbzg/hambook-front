@@ -60,16 +60,39 @@
 	font-weight: bold;
 	width: 200px;
 }
+
+.column1 .countryBlock{
+	display: inline-block;
+	margin-top: 20px;
+	margin-bottom: 10px;
+	width: 220px;
+}
+.column1 .zipcodeBlock{
+	display: inline-block;
+	margin-left: 15px;
+}
+.column1 .zipcodeBlock input{
+	margin-bottom: 0px;
+}
+
+.column1 .regionBlock{
+	margin-bottom: 10px;
+}
+.column1 .countryBlock div, .column1 .regionBlock div{
+	font-size: 16px;
+}
+.column1 .cityBlock{
+	position: relative;
+}
+
+
+
 .userPage input[type=submit] {
 	margin-top: 20px;
 	background-color: var(--orange);
 	cursor: pointer;
 }
 
-
-.country{
-	width: 100px;
-}
 
 
 
