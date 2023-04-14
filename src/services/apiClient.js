@@ -21,9 +21,9 @@ const client = async ({
       // get user data from store
       const urlPath = formatURL(url, params)
 
-      // configure authorization header with user's token
+      // configure authorization header with user's token if any
       if (token !== 'skip') {
-        token = token || getState()?.auth?.token
+        token = token || getState?.()?.auth?.token
         if (token) {
             headers = { Authorization: `Bearer ${token}`, ...headers }
         }

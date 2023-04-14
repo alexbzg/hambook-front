@@ -74,7 +74,7 @@ const QsoForm = forwardRef( ({ logId, prevQso, qso, onCallsignLookup, ...props }
   }, [...extraFields, extraFieldsRefs] )
 
   const onCallsignChange = useCallback( async (value) => {
-    const isValid = callsignInputRef.current.checkValidity()    
+    const isValid = callsignInputRef.current.checkValidity()
     onCallsignLookup?.(isValid ? value : null)
     setCallsignInputState( value ? ( isValid ? 'valid' : 'non-empty' ) : 'empty' )
     if (!qso) {
@@ -195,6 +195,19 @@ const QsoForm = forwardRef( ({ logId, prevQso, qso, onCallsignLookup, ...props }
                         noteClass={styles.note}
                         name="station_callsign"
                     />
+                    <div id={styles.date}>
+                        <span className={styles.note}>Date</span><br/>
+                        <input
+                            required
+                            type="date"
+                            name="date"
+                            ref={dateInputRef}
+                            defaultValue={splitDateTime(qso?.qso_datetime)[0]}
+                        />
+                    </div>
+                </div>
+                <div className={styles.flexRow}>
+
                     {!qso &&
                     <div id={styles.realtime}>
                       Manual<br/>time/date<br/>
@@ -205,6 +218,7 @@ const QsoForm = forwardRef( ({ logId, prevQso, qso, onCallsignLookup, ...props }
                         />
                     </div>
                     }
+
                     <div id={styles.time}>
                         <span className={styles.note}>UTC</span><br/>
                         <input
@@ -213,16 +227,6 @@ const QsoForm = forwardRef( ({ logId, prevQso, qso, onCallsignLookup, ...props }
                             name="time"
                             ref={timeInputRef}
                             defaultValue={splitDateTime(qso?.qso_datetime)[1]}
-                        />
-                    </div>
-                    <div id={styles.date}>
-                        <span className={styles.note}>Date</span><br/>
-                        <input
-                            required
-                            type="date"
-                            name="date"
-                            ref={dateInputRef}
-                            defaultValue={splitDateTime(qso?.qso_datetime)[0]}
                         />
                     </div>
                     <FormField

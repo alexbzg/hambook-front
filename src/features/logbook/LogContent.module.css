@@ -1,7 +1,19 @@
-.logContent {
+table.logContentLayout {
+	width: 1400px;
+	height: 100%;
+	margin: 0 auto 300px auto;
+	border-spacing: 5px;
+}
+table.logContentLayout td{
+	vertical-align: top;
+	padding: 0;
+	margin: 0;
+}
+table.logContentLayout tr:hover{
+	background-color: transparent;
 }
 
-
+/*
 .logWindow {
 	width: 1000px;
 	min-height: 200px;
@@ -22,6 +34,56 @@
 	width: 100%;
 	border-collapse: collapse;
 }
+*/
 
+table.logContentLayout td.newQsoWindow{
+	width: 50%;
+	text-align: left;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+}
+table.logContentLayout td.hambookProfileWindow{
+	width: 25%;
+	text-align: left;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+}
+table.logContentLayout td.dxClusterWindow{
+	width: 25%;
+	text-align: left;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+}
 
+table.logContentLayout td.qrzComWindow{
+	width: 25%;
+	text-align: left;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+}
+table.logContentLayout td.qrzRuWindow{
+	width: 25%;
+	text-align: left;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+}
+table.logContentLayout td.statsWindow{
+	width: 25%;
+	text-align: left;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+}
 
+table.logContentLayout td.logWindow{
+	width: 75%;
+	text-align: left;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+}

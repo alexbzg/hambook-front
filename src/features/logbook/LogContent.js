@@ -58,7 +58,7 @@ export default function LogContent({ ...props }) {
                 setShowError(error)
             }
         } finally {
-            setLastQso( (state) => state === undefined ? 
+            setLastQso( (state) => state === undefined ?
                 (qsos?.length ? qsos[0] : null) : state )
             return qsos
         }
@@ -111,7 +111,7 @@ export default function LogContent({ ...props }) {
                 newQsos[idx] = updatedQso
                 return newQsos
             })
-        } 
+        }
       } finally {
         setEditQso()
       }
@@ -139,53 +139,70 @@ export default function LogContent({ ...props }) {
       <Qso
         key={qso.id}
         data={qso}
-        onCallsignClick={handleCallsignLookup} 
+        onCallsignClick={handleCallsignLookup}
         onEdit={() => setEditQso(qso)}
         onDelete={() => deleteQso(qso.id)}
       />
   ))
- 
+
   return (
     <div className={styles.LogContent}>
-        {lastQso !== undefined &&
-        <QsoForm 
-            onSubmit={postNewQso} 
-            logId={logId}
-            prevQso={lastQso}
-            onCallsignLookup={handleCallsignLookup}
-        />}
-        <LogMenu 
-            activeTab={activeTab} 
-            onActiveTab={setActiveTab}
-            callsignLookup={callsignLookup}
-            onCallsignLookup={setCallsignLookup}
-            onCallsignLookupValid={setCallsignLookupValid}
-            onCallsignSearch={handleCallsignSearch}
-        />
-        <div className={styles.logWindow}>
-        {activeTab === 'log' &&
-            <>
-                {showError &&
-                    <div className={styles.qsoError}>{showError}</div>
-                }
-                <table>
-                    <tbody>{Qsos}</tbody>
-                </table>
-            </>
-          }
-        {activeTab === 'callsignLookup' &&
-            <CallsignLookup
-                callsign={callsignLookupValid}
-            />
-        }
-        </div>
-        {editQso &&
-            <EditQsoForm
-                qso={editQso}
+      <table className={styles.logContentLayout}>
+        <tr>
+          <td colspan="2" className={styles.newQsoWindow}>
+            {lastQso !== undefined &&
+            <QsoForm
+                onSubmit={postNewQso}
                 logId={logId}
-                modalResult={postQsoUpdate}
+                prevQso={lastQso}
+                onCallsignLookup={handleCallsignLookup}
+            />}
+          </td>
+          <td className={styles.hambookProfileWindow}>HAMBOOK profile</td>
+          <td rowspan="3"className={styles.dxClusterWindow}>DX cluster</td>
+        </tr>
+        <tr>
+          <td className={styles.qrzComWindow}>QRZ.com</td>
+          <td className={styles.qrzRuWindow}>QRZ.ru</td>
+          <td className={styles.statsWindow}>Stats</td>
+        </tr>
+        <tr>
+          <td className={styles.logWindow} colspan="3">
+            <LogMenu
+              activeTab={activeTab}
+              onActiveTab={setActiveTab}
+              callsignLookup={callsignLookup}
+              onCallsignLookup={setCallsignLookup}
+              onCallsignLookupValid={setCallsignLookupValid}
+              onCallsignSearch={handleCallsignSearch}
             />
-        }
+            <div className={styles.logWindow}>
+            {activeTab === 'log' &&
+              <>
+                  {showError &&
+                      <div className={styles.qsoError}>{showError}</div>
+                  }
+                  <table>
+                      <tbody>{Qsos}</tbody>
+                  </table>
+              </>
+            }
+            {activeTab === 'callsignLookup' &&
+                <CallsignLookup
+                    callsign={callsignLookupValid}
+                />
+            }
+            </div>
+            {editQso &&
+                <EditQsoForm
+                    qso={editQso}
+                    logId={logId}
+                    modalResult={postQsoUpdate}
+                />
+            }
+          </td>
+        </tr>
+      </table>
     </div>
     )
 }

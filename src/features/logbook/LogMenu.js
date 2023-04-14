@@ -48,6 +48,7 @@ const LogMenu = ({
           searchExpression={callsignLookup}
           allowWildcards={activeTab === 'log'}
           onSearch={onCallsignSearch}
+          searchTitle="Search callsign"
       />
     </div>
   )
