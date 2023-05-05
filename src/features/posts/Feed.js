@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 
@@ -12,6 +12,8 @@ import styles from './Feed.module.css'
 
 export default function Feed({ mode, ...props }) {
     
+    const { user, token } = useAuthenticatedUser()
+
     const [ showUserSearchResults, setShowUserSearchResults ] = useState()
     const [ userSearchResults, setUserSearchResults ] = useState()
 
@@ -20,7 +22,26 @@ export default function Feed({ mode, ...props }) {
         setShowUserSearchResults(true)
     }
 
-    const { user, token } = useAuthenticatedUser()
+    const [ posts, setPosts ] = useState([])
+    const getPosts = useCallback(async () => {
+        try {
+            const postsData = await client({
+                url: `/posts/${mode === FEED_MODE.my ? '' : 'world'}`,
+                method: 'GET',
+                params: mode === FEED_MODE.my ? { user_id: user.id } : {},
+                token
+            })
+            setPosts(postsData)
+        } finally {
+        }
+    }, [token, mode, user])
+    useEffect(() => {
+        async function _load() {
+            await getPosts()
+        }
+        _load()
+    }, [])
+
     const showEditor = mode === FEED_MODE.my ? true :
         (mode === FEED_MODE.world && user?.is_admin ? true : false)
     const [editorValue, setEditorValue] = useState('')
@@ -38,6 +59,7 @@ export default function Feed({ mode, ...props }) {
             } }
         })
         setEditorValue('')
+        await getPosts()
       } finally {
       }
     }
@@ -64,6 +86,14 @@ export default function Feed({ mode, ...props }) {
                         onClick={post}
                     />
                 </>
+            }
+            {posts.length &&
+                    posts.map( (item) => 
+                        <div 
+                            className="styles.post" 
+                            key={item.id}
+                            dangerouslySetInnerHTML={{__html: item.contents}}
+                        />)
             }
         </div>
     )
