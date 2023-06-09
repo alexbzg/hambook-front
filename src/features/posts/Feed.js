@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from 'react'
-import ReactQuill from 'react-quill'
-import 'react-quill/dist/quill.snow.css'
 
 import UserSearchWidget from './UserSearchWidget'
 import UserSearchResults from './UserSearchResults'
+import PostEditor from './PostEditor'
+
 import { FEED_MODE } from './consts'
 import useAuthenticatedUser from "../auth/useAuthenticatedUser"
 import client from "../../services/apiClient"
@@ -44,25 +44,6 @@ export default function Feed({ mode, ...props }) {
 
     const showEditor = mode === FEED_MODE.my ? true :
         (mode === FEED_MODE.world && user?.is_admin ? true : false)
-    const [editorValue, setEditorValue] = useState('')
-    const post = async () => {
-      try {
-        await client({
-            url: `/posts/`,
-            method: 'POST',
-            token,
-            args: { new_post: {
-                post_type: mode,
-                visibility: 2,
-                title: '',
-                contents: editorValue
-            } }
-        })
-        setEditorValue('')
-        await getPosts()
-      } finally {
-      }
-    }
 
     return (
         <div className={styles.feed}>
@@ -74,25 +55,17 @@ export default function Feed({ mode, ...props }) {
                     onHide={() => setShowUserSearchResults(false)}
                 />}
             {showEditor &&
-                <>
-                    <ReactQuill 
-                        theme="snow"
-                        value={editorValue}
-                        onChange={setEditorValue}
-                    />
-                    <input 
-                        type="button"
-                        value="Post"
-                        onClick={post}
-                    />
-                </>
+                <PostEditor
+                    mode={mode}
+                    onPost={getPosts}
+                />
             }
             {posts.length &&
                     posts.map( (item) => 
                         <div 
                             className="styles.post" 
                             key={item.id}
-                            dangerouslySetInnerHTML={{__html: item.contents}}
+                            dangerouslySetInnerHTML={{__html: item.contents}}                            
                         />)
             }
         </div>
