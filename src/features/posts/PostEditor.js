@@ -21,6 +21,13 @@ export default function PostEditor({ mode, onPost, ...props }) {
 
     const [editorValue, setEditorValue] = useState('')
     const post = async () => {
+      const post_images = []
+      const deleted_images = []
+      for (const image of images)
+        if (editorValue.includes(image.url))
+            post_images.push(image.id)
+        else
+            deleted_images.push(image.id)
       try {
         await client({
             url: `/posts/`,
@@ -30,10 +37,13 @@ export default function PostEditor({ mode, onPost, ...props }) {
                 post_type: mode,
                 visibility: 2,
                 title: '',
-                contents: editorValue
+                contents: editorValue,
+                post_images,
+                deleted_images
             } }
         })
         setEditorValue('')
+        setImages([])
         onPost()
       } finally {
       }
@@ -57,7 +67,7 @@ export default function PostEditor({ mode, onPost, ...props }) {
                 ['bold', 'italic', 'underline'],  
                 [{ 'list': 'ordered' }, { 'list': 'bullet' }],  
                 [{ 'align': [] }],  
-                ['link', 'image'],  
+                ['link', 'image', 'video'],  
                 ['clean'],  
                 [{ 'color': [] }]  
             ]
