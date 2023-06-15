@@ -19,14 +19,26 @@ export default function Modal({
   const [confirmChecked, setConfirmChecked] = useState(!confirmCheckbox)
   const nodeRef = useRef(null)
 
-  const setResult = (result) => {
-    if (result && requestSubmit && !requestSubmit()) {
-        return
-    }
+  const close = (result) => {
     setShow(false)
     modalResult(result)
   }
 
+  const setResult = (result) => {
+    if (result && requestSubmit) {
+        const requestSubmitCheck = requestSubmit()
+        if (requestSubmitCheck instanceof Promise) {
+            requestSubmitCheck
+                .then((requestSubmitResult) => {
+                    if (requestSubmitResult)
+                        close(result)
+                })
+            return
+        } else if (!requestSubmitCheck)
+            return
+    } 
+    close(result)
+  }
 
   return (
     <CSSTransition

@@ -10,17 +10,23 @@ import client from "../../services/apiClient"
 import { mediaUpload } from "../profile/profileSlice"
 import { MEDIA_TYPE } from '../../enums.js'
 
-import styles from './PostEditor.module.css'
+import { Modal } from "../../components"
+
+import styles from './EditPostForm.module.css'
 
 Quill.register("modules/imageUploader", ImageUploader)
 
-export default function PostEditor({ mode, onPost, ...props }) {
+export default function EditPostForm({ mode, modalResult, ...props }) {
     const dispatch = useDispatch()
 
     const { user, token } = useAuthenticatedUser()
 
     const [editorValue, setEditorValue] = useState('')
+    const [ images, setImages ] = useState([])
+
     const post = async () => {
+      if (editorValue.length === 0)
+        return false
       const post_images = []
       const deleted_images = []
       for (const image of images)
@@ -44,12 +50,12 @@ export default function PostEditor({ mode, onPost, ...props }) {
         })
         setEditorValue('')
         setImages([])
-        onPost()
-      } finally {
+        return true
+      } catch {
+        return false
       }
     }
 
-    const [ images, setImages ] = useState([])
     const imageHandler = useCallback(async (file) => {
         try {
             const uploadResult = await dispatch(mediaUpload({ mediaType: MEDIA_TYPE.postMedia, file }))
@@ -78,18 +84,17 @@ export default function PostEditor({ mode, onPost, ...props }) {
     }), [])
 
     return (
-                <div className="editor">
-                    <ReactQuill 
-                        theme="snow"
-                        value={editorValue}
-                        onChange={setEditorValue}
-						modules={modules}
-                    />
-                    <input 
-                        type="button"
-                        value="Post"
-                        onClick={post}
-                    />
-                </div>
+        <Modal
+            modalResult={(result) =>  modalResult(result)}
+            requestSubmit={post}
+            confirmButton={{label: 'Post'}}
+            styles={{container: styles.modalContainer}}>
+                <ReactQuill 
+                    theme="snow"
+                    value={editorValue}
+                    onChange={setEditorValue}
+                    modules={modules}
+                />
+        </Modal>
     )
 }

@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 
 import UserSearchWidget from './UserSearchWidget'
 import UserSearchResults from './UserSearchResults'
-import PostEditor from './PostEditor'
+import EditPostForm from './EditPostForm'
 
 import { FEED_MODE } from './consts'
 import useAuthenticatedUser from "../auth/useAuthenticatedUser"
@@ -42,8 +42,15 @@ export default function Feed({ mode, ...props }) {
         _load()
     }, [])
 
-    const showEditor = mode === FEED_MODE.my ? true :
+    const editPostFormModalResult = (result) => {
+        setShowEditPostForm(false)
+        if (result)
+            getPosts()
+    }
+
+    const canEdit = mode === FEED_MODE.my ? true :
         (mode === FEED_MODE.world && user?.is_admin ? true : false)
+    const [showEditPostForm, setShowEditPostForm] = useState(false)
 
     return (
         <div className={styles.feed}>
@@ -54,10 +61,17 @@ export default function Feed({ mode, ...props }) {
                     results={userSearchResults}
                     onHide={() => setShowUserSearchResults(false)}
                 />}
-            {showEditor &&
-                <PostEditor
+            {canEdit &&
+                    <span 
+                        className={styles.addPost}
+                        onClick={() => setShowEditPostForm(true)}>
+                        New post
+                    </span>
+            }
+            {showEditPostForm &&
+                <EditPostForm
                     mode={mode}
-                    onPost={getPosts}
+                    modalResult={editPostFormModalResult}
                 />
             }
             {posts.length &&
