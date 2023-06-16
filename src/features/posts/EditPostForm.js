@@ -9,6 +9,7 @@ import useAuthenticatedUser from "../auth/useAuthenticatedUser"
 import client from "../../services/apiClient"
 import { mediaUpload } from "../profile/profileSlice"
 import { MEDIA_TYPE } from '../../enums.js'
+import useModal from "../../components/Modal/useModal"
 
 import { Modal } from "../../components"
 
@@ -16,17 +17,24 @@ import styles from './EditPostForm.module.css'
 
 Quill.register("modules/imageUploader", ImageUploader)
 
-export default function EditPostForm({ mode, modalResult, ...props }) {
+export default function EditPostForm({ mode, postInEditor, modalResult, ...props }) {
     const dispatch = useDispatch()
 
     const { user, token } = useAuthenticatedUser()
+    const confirmModal = useModal()
 
-    const [editorValue, setEditorValue] = useState('')
-    const [ images, setImages ] = useState([])
+    const [ editorValue, setEditorValue ] = useState(postInEditor?.contents ?? '')
+    const [ images, setImages ] = useState(postInEditor?.images ?? [])
 
     const post = async () => {
+
       if (editorValue.length === 0)
         return false
+      if (postInEditor && !(await confirmModal({
+         children: "Save changes? Recovery is impossible."
+      })))
+        return false
+
       const post_images = []
       const deleted_images = []
       for (const image of images)
@@ -35,18 +43,27 @@ export default function EditPostForm({ mode, modalResult, ...props }) {
         else
             deleted_images.push(image.id)
       try {
-        await client({
-            url: `/posts/`,
-            method: 'POST',
-            token,
-            args: { new_post: {
+        const post_update = {
                 post_type: mode,
                 visibility: 2,
                 title: '',
                 contents: editorValue,
                 post_images,
                 deleted_images
-            } }
+            }
+        if (postInEditor) 
+          await client({
+            url: `/posts/${postInEditor.id}`,
+            method: 'PUT',
+            token,
+            args: { post_update }
+          })
+        else
+          await client({
+            url: `/posts/`,
+            method: 'POST',
+            token,
+            args: { new_post: post_update }
         })
         setEditorValue('')
         setImages([])
